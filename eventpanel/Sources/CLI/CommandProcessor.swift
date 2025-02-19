@@ -15,7 +15,7 @@ final class CommandProcessor {
             do {
                 try command.execute(with: commandArguments)
             } catch {
-                print("Error: \(error.localizedDescription)")
+                print(error.localizedDescription)
                 exit(1)
             }
         } else {
