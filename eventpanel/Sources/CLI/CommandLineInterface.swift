@@ -10,14 +10,14 @@ final class CommandLineInterface {
         self.commandRegistry = commandRegistry
     }
     
-    func start() {
+    func start() async {
         let arguments = Array(CommandLine.arguments.dropFirst())
         guard !arguments.isEmpty else {
             printUsage()
             return
         }
         
-        commandProcessor.process(arguments)
+        await commandProcessor.process(arguments)
     }
     
     private func printUsage() {

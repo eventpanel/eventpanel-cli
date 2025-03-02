@@ -4,7 +4,7 @@ final class UpdateCommand: Command {
     let name = "update"
     let description = "Update outdated events"
     
-    func execute(with arguments: [String]) throws {
+    func execute(with arguments: [String]) async throws {
         ConsoleLogger.message("Updating events...")
         // TODO: Implementation
     }

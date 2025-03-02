@@ -10,7 +10,7 @@ final class DeintegrateCommand: Command {
         self.fileManager = fileManager
     }
     
-    func execute(with arguments: [String]) throws {
+    func execute(with arguments: [String]) async throws {
         let currentPath = fileManager.currentDirectoryPath
         let configPath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
         

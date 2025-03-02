@@ -33,7 +33,7 @@ final class AddCommand: Command {
         self.fileManager = fileManager
     }
     
-    func execute(with arguments: [String]) throws {
+    func execute(with arguments: [String]) async throws {
         guard !arguments.isEmpty else {
             throw AddCommandError.missingArguments
         }

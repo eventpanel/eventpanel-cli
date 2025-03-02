@@ -10,7 +10,7 @@ final class HelpCommand: Command {
         self.commandRegistry = commandRegistry
     }
     
-    func execute(with arguments: [String]) throws {
+    func execute(with arguments: [String]) async throws {
         ConsoleLogger.message("\nAvailable commands:")
         for command in commandRegistry.availableCommands {
             ConsoleLogger.message("- \(command.name): \(command.description)")

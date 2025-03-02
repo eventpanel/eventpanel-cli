@@ -7,11 +7,11 @@
 
 import Foundation
 
-// Entry point of the application
+@main
 struct EventPanel {
-    static func main() {
+    static func main() async throws {
         let app = Application()
-        app.run()
+        await app.run()
     }
 }
 
@@ -23,11 +23,7 @@ final class Application {
         self.commandLineInterface = CommandLineInterface()
     }
     
-    func run() {
-        commandLineInterface.start()
+    func run() async {
+        await commandLineInterface.start()
     }
 }
-
-// Start the application
-EventPanel.main()
-
