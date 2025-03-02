@@ -2,9 +2,12 @@ import Foundation
 
 final class CommandLineInterface {
     private let commandProcessor: CommandProcessor
+    private let commandRegistry: CommandRegistry
     
-    init(commandProcessor: CommandProcessor = CommandProcessor()) {
+    init(commandProcessor: CommandProcessor = CommandProcessor(), 
+         commandRegistry: CommandRegistry = CommandRegistry()) {
         self.commandProcessor = commandProcessor
+        self.commandRegistry = commandRegistry
     }
     
     func start() {
@@ -19,10 +22,17 @@ final class CommandLineInterface {
     
     private func printUsage() {
         print("""
-        Usage: eventpanel <command> [options]
-        
-        For available commands, run:
-        eventpanel help
+        Usage:
+            $ eventpanel COMMAND
+
+            EventPanel, the event management system.
+
+        Commands:
+        \(commandRegistry.getFormattedCommandList())
+
+        Options:
+            --verbose      Show more debugging information
+            --help        Show help banner of specified command
         """)
     }
 } 
