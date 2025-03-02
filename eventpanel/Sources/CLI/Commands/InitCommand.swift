@@ -12,30 +12,33 @@ final class InitCommand: Command {
     
     func execute(with arguments: [String]) throws {
         let currentPath = fileManager.currentDirectoryPath
-        let eventfilePath = (currentPath as NSString).appendingPathComponent("Eventfile")
+        let eventfilePath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
         
         if fileManager.fileExists(atPath: eventfilePath) {
-            throw CommandError.fileAlreadyExists("[!] Existing Eventfile found in directory")
+            throw CommandError.fileAlreadyExists("[!] Existing EventPanel.yaml found in directory")
         }
         
         try createEventfile(at: eventfilePath)
-        print("✨ Created Eventfile at path: \(eventfilePath)")
+        print("✨ Created EventPanel.yaml")
     }
     
     private func createEventfile(at path: String) throws {
         let template = """
-        # Uncomment the next line to define a global platform for your project
-        # platform :ios, '15.0'
-        
-        target 'YourApp' do
-          # Define events for your target here
-          # 'App Launch'
-          # 'User Sign In'
-          # 'Purchase Complete', '2'
-        end
-        
+        # EventPanel configuration file
+
+        # Global settings
+        # platform: ios
+        # minimum_version: '15.0'
+
+        # Events configuration
+        # events:
+        #  - name: "App Launch"
+        #  - name: "User Sign In"
+        #  - name: "Purchase Complete"
+        #    version: "2"
+
         """
-        
+
         try template.write(toFile: path, atomically: true, encoding: .utf8)
     }
 }
