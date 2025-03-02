@@ -19,14 +19,8 @@ final class InitCommand: Command {
         }
         
         let projectInfo = try detectProject(in: currentPath)
-        try createEventfile(at: eventfilePath, projectInfo: projectInfo)
+        try EventPanelYaml.createDefault(at: eventfilePath, projectInfo: projectInfo)
         ConsoleLogger.success("Created EventPanel.yaml")
-    }
-    
-    private struct ProjectInfo {
-        let name: String
-        let platform: String
-        let defaultVersion: String
     }
     
     private func detectProject(in directory: String) throws -> ProjectInfo {
@@ -55,39 +49,5 @@ final class InitCommand: Command {
         }
         
         return (projectPath as NSString).deletingPathExtension
-    }
-    
-    private func createEventfile(at path: String, projectInfo: ProjectInfo) throws {
-        let template = """
-        # EventPanel configuration file
-
-        # Global settings
-        platform: \(projectInfo.platform)
-        minimum_version: '\(projectInfo.defaultVersion)'
-
-        # Target configurations
-        targets:
-          # Main app target
-          \(projectInfo.name):
-            events:
-            #  - name: "App Launch"
-            #  - name: "User Sign In"
-            #  - name: "Purchase Complete"
-            #    version: "2"
-
-          # Watch app target
-          # \(projectInfo.name)Watch:
-          #   events:
-          #     - name: "Watch App Launch"
-          #     - name: "Workout Started"
-
-          # Widget target
-          # \(projectInfo.name)Widget:
-          #   events:
-          #     - name: "Widget Viewed"
-
-        """
-        
-        try template.write(toFile: path, atomically: true, encoding: .utf8)
     }
 }

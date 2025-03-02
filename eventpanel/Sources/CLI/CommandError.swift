@@ -5,6 +5,7 @@ enum CommandError: LocalizedError {
     case fileSystemError(String)
     case fileAlreadyExists(String)
     case invalidProject(String)
+    case projectIsNotInitilized(String)
 
     var errorDescription: String? {
         switch self {
@@ -15,6 +16,8 @@ enum CommandError: LocalizedError {
         case .fileAlreadyExists(let message):
             return message
         case .invalidProject(let message):
+            return message
+        case .projectIsNotInitilized(let message):
             return message
         }
     }
