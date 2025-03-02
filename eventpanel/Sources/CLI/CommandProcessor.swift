@@ -15,11 +15,11 @@ final class CommandProcessor {
             do {
                 try command.execute(with: commandArguments)
             } catch {
-                print(error.localizedDescription)
+                ConsoleLogger.error(error.localizedDescription)
                 exit(1)
             }
         } else {
-            print("Unknown command '\(commandName)'. Run 'eventpanel help' for available commands.")
+            ConsoleLogger.error("Unknown command '\(commandName)'. Run 'eventpanel help' for available commands.")
             exit(1)
         }
     }

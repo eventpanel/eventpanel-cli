@@ -5,7 +5,7 @@ final class OutdatedCommand: Command {
     let description = "Show outdated events"
     
     func execute(with arguments: [String]) throws {
-        print("Checking for outdated events...")
+        ConsoleLogger.message("Checking for outdated events...")
         // TODO: Implementation
     }
 } 

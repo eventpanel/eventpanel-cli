@@ -10,7 +10,7 @@ final class InstallCommand: Command {
         // 2. Parse the events configuration
         // 3. Install/update events as specified
         
-        print("Installing events from configuration...")
+        ConsoleLogger.message("Installing events from configuration...")
         // Implementation will go here
     }
 } 

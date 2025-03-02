@@ -21,7 +21,7 @@ final class CommandLineInterface {
     }
     
     private func printUsage() {
-        print("""
+        ConsoleLogger.message("""
         Usage:
             $ eventpanel COMMAND
 

@@ -16,9 +16,9 @@ final class DeintegrateCommand: Command {
         
         if fileManager.fileExists(atPath: configPath) {
             try fileManager.removeItem(atPath: configPath)
-            print("Successfully removed EventPanel.yaml")
+            ConsoleLogger.success("Successfully removed EventPanel.yaml")
         } else {
-            print("[!] No EventPanel.yaml found in current directory")
+            ConsoleLogger.error("No EventPanel.yaml found in current directory")
         }
     }
 } 

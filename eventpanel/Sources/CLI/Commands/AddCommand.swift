@@ -9,7 +9,7 @@ final class AddCommand: Command {
             throw CommandError.invalidArguments("Usage: eventpanel add <event_name> [version]")
         }
         
-        print("Adding event to EventPanel.yaml...")
+        ConsoleLogger.message("Adding event to EventPanel.yaml...")
         // TODO: Implementation
     }
 } 

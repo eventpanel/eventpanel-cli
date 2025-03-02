@@ -15,11 +15,11 @@ final class InitCommand: Command {
         let eventfilePath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
         
         if fileManager.fileExists(atPath: eventfilePath) {
-            throw CommandError.fileAlreadyExists("[!] Existing EventPanel.yaml found in directory")
+            throw CommandError.fileAlreadyExists("Existing EventPanel.yaml found in directory")
         }
         
         try createEventfile(at: eventfilePath)
-        print("Created EventPanel.yaml")
+        ConsoleLogger.success("Created EventPanel.yaml")
     }
     
     private func createEventfile(at path: String) throws {

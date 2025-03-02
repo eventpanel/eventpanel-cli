@@ -5,7 +5,7 @@ final class ListCommand: Command {
     let description = "List events"
     
     func execute(with arguments: [String]) throws {
-        print("Listing events...")
+        ConsoleLogger.message("Listing events...")
         // TODO: Implementation
     }
 } 

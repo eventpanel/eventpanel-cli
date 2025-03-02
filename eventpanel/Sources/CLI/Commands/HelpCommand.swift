@@ -11,9 +11,9 @@ final class HelpCommand: Command {
     }
     
     func execute(with arguments: [String]) throws {
-        print("\nAvailable commands:")
+        ConsoleLogger.message("\nAvailable commands:")
         for command in commandRegistry.availableCommands {
-            print("- \(command.name): \(command.description)")
+            ConsoleLogger.message("- \(command.name): \(command.description)")
         }
     }
 } 
