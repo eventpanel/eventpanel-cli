@@ -1,5 +1,19 @@
 import Foundation
 
+private enum InitCommandError: LocalizedError {
+    case fileAlreadyExists
+    case noSupportedProject
+    
+    var errorDescription: String? {
+        switch self {
+        case .fileAlreadyExists:
+            return "Existing EventPanel.yaml found in directory"
+        case .noSupportedProject:
+            return "No supported project found in the current directory"
+        }
+    }
+}
+
 final class InitCommand: Command {
     let name = "init"
     let description = "Initializes EventPanel in the project by creating the necessary configuration files"
@@ -15,7 +29,7 @@ final class InitCommand: Command {
         let eventfilePath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
         
         if fileManager.fileExists(atPath: eventfilePath) {
-            throw CommandError.fileAlreadyExists("Existing EventPanel.yaml found in directory")
+            throw InitCommandError.fileAlreadyExists
         }
         
         let projectInfo = try detectProject(in: currentPath)
@@ -34,8 +48,7 @@ final class InitCommand: Command {
         }
         
         // For now, if no project is found, throw an error
-        // Later we can add Android project detection here
-        throw CommandError.invalidProject("No supported project found in the current directory")
+        throw InitCommandError.noSupportedProject
     }
     
     private func findXcodeProject(in directory: String) -> String? {
