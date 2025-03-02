@@ -19,7 +19,7 @@ final class InitCommand: Command {
         }
         
         try createEventfile(at: eventfilePath)
-        print("✨ Created EventPanel.yaml")
+        print("Created EventPanel.yaml")
     }
     
     private func createEventfile(at path: String) throws {
@@ -30,15 +30,29 @@ final class InitCommand: Command {
         # platform: ios
         # minimum_version: '15.0'
 
-        # Events configuration
-        # events:
-        #  - name: "App Launch"
-        #  - name: "User Sign In"
-        #  - name: "Purchase Complete"
-        #    version: "2"
+        # Target configurations
+        targets:
+          # Main app target
+          # MyApp:
+          #   events:
+          #     - name: "App Launch"
+          #     - name: "User Sign In"
+          #     - name: "Purchase Complete"
+          #       version: "2"
+
+          # Watch app target
+          # MyAppWatch:
+          #   events:
+          #     - name: "Watch App Launch"
+          #     - name: "Workout Started"
+
+          # Widget target
+          # MyAppWidget:
+          #   events:
+          #     - name: "Widget Viewed"
 
         """
-
+        
         try template.write(toFile: path, atomically: true, encoding: .utf8)
     }
 }

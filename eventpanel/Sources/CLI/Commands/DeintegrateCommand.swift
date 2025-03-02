@@ -4,8 +4,21 @@ final class DeintegrateCommand: Command {
     let name = "deintegrate"
     let description = "Deintegrate EventPanel from your project"
     
+    private let fileManager: FileManager
+    
+    init(fileManager: FileManager = .default) {
+        self.fileManager = fileManager
+    }
+    
     func execute(with arguments: [String]) throws {
-        print("Deintegrating EventPanel from project...")
-        // TODO: Implementation
+        let currentPath = fileManager.currentDirectoryPath
+        let configPath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
+        
+        if fileManager.fileExists(atPath: configPath) {
+            try fileManager.removeItem(atPath: configPath)
+            print("Successfully removed EventPanel.yaml")
+        } else {
+            print("[!] No EventPanel.yaml found in current directory")
+        }
     }
 } 
