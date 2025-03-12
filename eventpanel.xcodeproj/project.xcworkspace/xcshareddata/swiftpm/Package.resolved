@@ -1,6 +1,15 @@
 {
-  "originHash" : "81702b8f7fa6fc73458821cd4dfa7dde6684a9d1d4b6d63ecde0b6b832d8d75e",
+  "originHash" : "2b589a0af0a5c9eb0816570eef2afa9193f0722d8e4ffe63bd129952527b7fcd",
   "pins" : [
+    {
+      "identity" : "get",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:kean/Get.git",
+      "state" : {
+        "revision" : "31249885da1052872e0ac91a2943f62567c0d96d",
+        "version" : "2.2.1"
+      }
+    },
     {
       "identity" : "yams",
       "kind" : "remoteSourceControl",
