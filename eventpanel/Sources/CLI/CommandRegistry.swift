@@ -11,7 +11,7 @@ final class CommandRegistry {
     
     private func registerCommands() {
         availableCommands = [
-            AddCommand(),
+            AddCommand(networkClient: networkClient),
             DeintegrateCommand(),
             GenerateCommand(),
             HelpCommand(commandRegistry: self),

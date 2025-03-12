@@ -20,7 +20,12 @@ final class Application {
     private let commandLineInterface: CommandLineInterface
     
     init() {
-        let networkClient = NetworkClient(baseURL: URL(string: "https://api.github.com"))
+        let authAPIClientDelegate = AuthAPIClientDelegate(
+            accessToken: "n0MajbT5rzBVRp59NHvQ7IM9G3234zW2BlInzAVZ7BqamdxLWGr1s6tWht9eC0d2mGiS76PXyzb1pCkhWHVH6uRhNKvTZsxFHOwesdcZgAyO1hIsYA7RCU3iMPBL4oHb"
+        )
+        let networkClient = NetworkClient(baseURL: URL(string: "http://localhost:3002/")) {
+            $0.delegate = authAPIClientDelegate
+        }
         let commandRegistry = CommandRegistry(networkClient: networkClient)
         let commandProcessor = CommandProcessor(commandRegistry: commandRegistry)
         self.commandLineInterface = CommandLineInterface(

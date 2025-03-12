@@ -19,4 +19,10 @@ enum ConsoleLogger {
     static func message(_ message: String) {
         print(message)
     }
-} 
+
+    static func debug(_ message: String) {
+        #if DEBUG
+        print(message)
+        #endif
+    }
+}

@@ -1,21 +1,32 @@
 import Foundation
 import Yams
 
+enum EventPanelYamlError: LocalizedError {
+    case invalidYamlStructure(String)
+    case targetNotFound(String)
+    case eventAlreadyExists(eventId: String, target: String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidYamlStructure(let message):
+            return "Invalid YAML structure: \(message)"
+        case .targetNotFound(let target):
+            return "Target '\(target)' not found in configuration"
+        case .eventAlreadyExists(let eventId, let target):
+            return "Event '\(eventId)' already exists in target '\(target)'"
+        }
+    }
+}
+
 final class EventPanelYaml {
     private var yaml: [String: Any]
     private let path: String
-    
-    enum Error: Swift.Error {
-        case invalidYamlStructure(String)
-        case targetNotFound(String)
-        case eventAlreadyExists(String, String)
-    }
-    
+
     init(path: String) throws {
         self.path = path
         let yamlString = try String(contentsOfFile: path, encoding: .utf8)
         guard let parsedYaml = try Yams.load(yaml: yamlString) as? [String: Any] else {
-            throw Error.invalidYamlStructure("Invalid YAML structure")
+            throw EventPanelYamlError.invalidYamlStructure("Invalid YAML structure")
         }
         self.yaml = parsedYaml
     }
@@ -56,22 +67,29 @@ final class EventPanelYaml {
         try template.write(toFile: path, atomically: true, encoding: .utf8)
     }
     
-    func addEvent(name: String, to targetName: String) throws {
+    private func checkEventExists(name: String, in events: [[String: Any]]) -> Bool {
+        return events.contains(where: { ($0["name"] as? String) == name })
+    }
+    
+    func addEvent(eventId: String, to targetName: String) throws {
         // Get or create targets dictionary
         var targets = yaml["targets"] as? [String: Any] ?? [:]
         guard var target = targets[targetName] as? [String: Any] else {
-            throw Error.targetNotFound("Target '\(targetName)' not found")
+            throw EventPanelYamlError.targetNotFound("Target '\(targetName)' not found")
         }
         
         var events = target["events"] as? [[String: Any]] ?? []
         
-        // Check if event already exists
-        if events.contains(where: { ($0["name"] as? String) == name }) {
-            throw Error.eventAlreadyExists(name, targetName)
+        // Check if event already exists using the dedicated function
+        if checkEventExists(name: eventId, in: events) {
+            throw EventPanelYamlError.eventAlreadyExists(
+                eventId: eventId,
+                target: targetName
+            )
         }
         
         // Add new event
-        events.append(["name": name])
+        events.append(["name": eventId])
         
         // Update the YAML structure
         target["events"] = events

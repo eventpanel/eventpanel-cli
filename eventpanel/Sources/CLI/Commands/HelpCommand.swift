@@ -1,8 +1,8 @@
 import Foundation
 
 final class HelpCommand: Command {
-    private let commandRegistry: CommandRegistry
-    
+    private weak var commandRegistry: CommandRegistry?
+
     let name = "help"
     let description = "Show this help message"
     
@@ -11,6 +11,7 @@ final class HelpCommand: Command {
     }
     
     func execute(with arguments: [String]) async throws {
+        guard let commandRegistry else { return }
         ConsoleLogger.message("\nAvailable commands:")
         for command in commandRegistry.availableCommands {
             ConsoleLogger.message("- \(command.name): \(command.description)")
