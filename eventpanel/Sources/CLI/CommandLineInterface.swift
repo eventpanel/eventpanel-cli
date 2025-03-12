@@ -4,8 +4,10 @@ final class CommandLineInterface {
     private let commandProcessor: CommandProcessor
     private let commandRegistry: CommandRegistry
     
-    init(commandProcessor: CommandProcessor = CommandProcessor(), 
-         commandRegistry: CommandRegistry = CommandRegistry()) {
+    init(
+        commandProcessor: CommandProcessor,
+        commandRegistry: CommandRegistry
+    ) {
         self.commandProcessor = commandProcessor
         self.commandRegistry = commandRegistry
     }

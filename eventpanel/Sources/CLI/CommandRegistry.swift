@@ -2,8 +2,10 @@ import Foundation
 
 final class CommandRegistry {
     private(set) var availableCommands: [Command] = []
-    
-    init() {
+    private let networkClient: NetworkClient
+
+    init(networkClient: NetworkClient) {
+        self.networkClient = networkClient
         registerCommands()
     }
     

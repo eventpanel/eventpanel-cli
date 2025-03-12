@@ -3,7 +3,7 @@ import Foundation
 final class CommandProcessor {
     private let commandRegistry: CommandRegistry
     
-    init(commandRegistry: CommandRegistry = CommandRegistry()) {
+    init(commandRegistry: CommandRegistry) {
         self.commandRegistry = commandRegistry
     }
     
