@@ -5,6 +5,7 @@ enum EventPanelYamlError: LocalizedError {
     case invalidYamlStructure(String)
     case targetNotFound(String)
     case eventAlreadyExists(eventId: String, target: String)
+    case eventNotFound(eventId: String)
     
     var errorDescription: String? {
         switch self {
@@ -14,6 +15,8 @@ enum EventPanelYamlError: LocalizedError {
             return "Target '\(target)' not found in configuration"
         case .eventAlreadyExists(let eventId, let target):
             return "Event '\(eventId)' already exists in target '\(target)'"
+        case .eventNotFound(let eventId):
+            return "Event not found'\(eventId)'"
         }
     }
 }
@@ -84,7 +87,7 @@ final class EventPanelYaml {
     }
 
     func getTargets() -> [String] {
-        var targets = yaml["targets"] as? [String: Any] ?? [:]
+        let targets = yaml["targets"] as? [String: Any] ?? [:]
         return Array(targets.keys)
     }
 
@@ -113,6 +116,42 @@ final class EventPanelYaml {
         targets[targetName] = target
         yaml["targets"] = targets
         
+        try save()
+    }
+    
+    func getEvents(for targetName: String) throws -> [[String: Any]] {
+        guard let targets = yaml["targets"] as? [String: Any],
+              let target = targets[targetName] as? [String: Any],
+              let events = target["events"] as? [[String: Any]] else {
+            throw EventPanelYamlError.targetNotFound(targetName)
+        }
+        return events
+    }
+    
+    func updateEvent(eventId: String, version: String) throws {
+        var targets = yaml["targets"] as? [String: Any] ?? [:]
+        var updated = false
+        
+        for (targetName, targetValue) in targets {
+            guard var target = targetValue as? [String: Any] else { continue }
+            guard var events = target["events"] as? [[String: Any]] else { continue }
+            
+            if let eventIndex = events.firstIndex(where: { ($0["name"] as? String) == eventId }) {
+                var event = events[eventIndex]
+                event["version"] = version
+                events[eventIndex] = event
+                
+                target["events"] = events
+                targets[targetName] = target
+                updated = true
+            }
+        }
+        
+        if !updated {
+            throw EventPanelYamlError.eventNotFound(eventId: eventId)
+        }
+        
+        yaml["targets"] = targets
         try save()
     }
     
