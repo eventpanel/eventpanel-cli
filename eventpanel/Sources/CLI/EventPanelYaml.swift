@@ -16,13 +16,13 @@ enum EventPanelYamlError: LocalizedError {
         case .eventAlreadyExists(let eventId, let target):
             return "Event '\(eventId)' already exists in target '\(target)'"
         case .eventNotFound(let eventId):
-            return "Event not found'\(eventId)'"
+            return "Event not found '\(eventId)'"
         }
     }
 }
 
 final class EventPanelYaml {
-    private var yaml: [String: Any]
+    private var config: EventPanelConfig
     private let path: String
 
     static func read(fileManager: FileManager = .default) throws -> EventPanelYaml {
@@ -40,109 +40,67 @@ final class EventPanelYaml {
     init(path: String) throws {
         self.path = path
         let yamlString = try String(contentsOfFile: path, encoding: .utf8)
-        guard let parsedYaml = try Yams.load(yaml: yamlString) as? [String: Any] else {
-            throw EventPanelYamlError.invalidYamlStructure("Invalid YAML structure")
-        }
-        self.yaml = parsedYaml
+        let decoder = YAMLDecoder()
+        self.config = try decoder.decode(EventPanelConfig.self, from: yamlString)
     }
     
-    static func createDefault(
-        at path: String,
-        projectInfo: ProjectInfo
-    ) throws {
-        let template = """
+    static func createDefault(at path: String, projectInfo: ProjectInfo) throws {
+        let config = EventPanelConfig(
+            platform: projectInfo.platform,
+            minimumVersion: projectInfo.defaultVersion,
+            targets: [
+                projectInfo.name: Target(events: [])
+            ]
+        )
+        
+        let encoder = YAMLEncoder()
+        let yamlString = try encoder.encode(config)
+        
+        // Add header comment
+        let finalYaml = """
         # EventPanel configuration file
-
-        # Global settings
-        platform: \(projectInfo.platform)
-        minimum_version: '\(projectInfo.defaultVersion)'
-
-        # Target configurations
-        targets:
-          # Main app target
-          \(projectInfo.name):
-            events:
-            #  - name: "App Launch"
-            #  - name: "User Sign In"
-            #  - name: "Purchase Complete"
-            #    version: "2"
-
-          # Watch app target
-          # \(projectInfo.name)Watch:
-          #   events:
-          #     - name: "Watch App Launch"
-          #     - name: "Workout Started"
-
-          # Widget target
-          # \(projectInfo.name)Widget:
-          #   events:
-          #     - name: "Widget Viewed"
-
+        
+        \(yamlString)
         """
-        try template.write(toFile: path, atomically: true, encoding: .utf8)
-    }
-    
-    private func checkEventExists(name: String, in events: [[String: Any]]) -> Bool {
-        return events.contains(where: { ($0["name"] as? String) == name })
+        
+        try finalYaml.write(toFile: path, atomically: true, encoding: .utf8)
     }
 
     func getTargets() -> [String] {
-        let targets = yaml["targets"] as? [String: Any] ?? [:]
-        return Array(targets.keys)
+        return Array(config.targets.keys)
     }
 
     func addEvent(eventId: String, to targetName: String) throws {
-        // Get or create targets dictionary
-        var targets = yaml["targets"] as? [String: Any] ?? [:]
-        guard var target = targets[targetName] as? [String: Any] else {
-            throw EventPanelYamlError.targetNotFound("Target '\(targetName)' not found")
+        guard var target = config.targets[targetName] else {
+            throw EventPanelYamlError.targetNotFound(targetName)
         }
         
-        var events = target["events"] as? [[String: Any]] ?? []
-        
-        // Check if event already exists using the dedicated function
-        if checkEventExists(name: eventId, in: events) {
+        if target.events.contains(where: { $0.name == eventId }) {
             throw EventPanelYamlError.eventAlreadyExists(
                 eventId: eventId,
                 target: targetName
             )
         }
         
-        // Add new event
-        events.append(["name": eventId])
-        
-        // Update the YAML structure
-        target["events"] = events
-        targets[targetName] = target
-        yaml["targets"] = targets
-        
+        target.events.append(Event(name: eventId))
+        config.targets[targetName] = target
         try save()
     }
     
-    func getEvents(for targetName: String) throws -> [[String: Any]] {
-        guard let targets = yaml["targets"] as? [String: Any],
-              let target = targets[targetName] as? [String: Any],
-              let events = target["events"] as? [[String: Any]] else {
+    func getEvents(for targetName: String) throws -> [Event] {
+        guard let target = config.targets[targetName] else {
             throw EventPanelYamlError.targetNotFound(targetName)
         }
-        return events
+        return target.events
     }
     
     func updateEvent(eventId: String, version: String) throws {
-        var targets = yaml["targets"] as? [String: Any] ?? [:]
         var updated = false
         
-        for (targetName, targetValue) in targets {
-            guard var target = targetValue as? [String: Any] else { continue }
-            guard var events = target["events"] as? [[String: Any]] else { continue }
-            
-            if let eventIndex = events.firstIndex(where: { ($0["name"] as? String) == eventId }) {
-                var event = events[eventIndex]
-                event["version"] = version
-                events[eventIndex] = event
-                
-                target["events"] = events
-                targets[targetName] = target
+        for (targetName, var target) in config.targets {
+            if let eventIndex = target.events.firstIndex(where: { $0.name == eventId }) {
+                target.events[eventIndex].version = version
+                config.targets[targetName] = target
                 updated = true
             }
         }
@@ -151,13 +109,13 @@ final class EventPanelYaml {
             throw EventPanelYamlError.eventNotFound(eventId: eventId)
         }
         
-        yaml["targets"] = targets
         try save()
     }
     
     private func save() throws {
-        let updatedYaml = try Yams.dump(object: yaml)
-        try updatedYaml.write(toFile: path, atomically: true, encoding: .utf8)
+        let encoder = YAMLEncoder()
+        let yamlString = try encoder.encode(config)
+        try yamlString.write(toFile: path, atomically: true, encoding: .utf8)
     }
 }
 

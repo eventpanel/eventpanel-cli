@@ -47,7 +47,7 @@ final class UpdateCommand: Command {
         var eventFound = false
         for target in eventPanelYaml.getTargets() {
             let events = try eventPanelYaml.getEvents(for: target)
-            if events.contains(where: { ($0["name"] as? String) == eventId }) {
+            if events.contains(where: { $0.name == eventId }) {
                 eventFound = true
                 break
             }
@@ -77,8 +77,8 @@ final class UpdateCommand: Command {
     }
     
     private func updateAllEvents() async throws {
-        ConsoleLogger.message("Update all pods")
-
+        ConsoleLogger.message("Checking for event updates...")
+        
         // Read YAML file
         let eventPanelYaml = try EventPanelYaml.read()
         let targets = eventPanelYaml.getTargets()
@@ -91,26 +91,24 @@ final class UpdateCommand: Command {
             let events = try eventPanelYaml.getEvents(for: target)
             
             for event in events {
-                guard let eventId = event["name"] as? String else { continue }
-                
                 // Skip if we've already processed this event
-                guard !processedEvents.contains(eventId) else { continue }
-                processedEvents.insert(eventId)
+                guard !processedEvents.contains(event.name) else { continue }
+                processedEvents.insert(event.name)
                 
                 do {
                     // Check if event has a new version
                     let response: Response<EventLatestResponse> = try await networkClient.send(
-                        Request(path: "api/external/event/latest/\(eventId)", method: .get)
+                        Request(path: "api/external/event/latest/\(event.name)", method: .get)
                     )
 
-                    let currentVersion = event["version"] as? String ?? "1"
+                    let currentVersion = event.version ?? "1"
                     if response.value.version != currentVersion {
                         // Update event version
                         try eventPanelYaml.updateEvent(
-                            eventId: eventId,
+                            eventId: event.name,
                             version: response.value.version
                         )
-                        ConsoleLogger.success("Updated event '\(eventId)' to version \(response.value.version)")
+                        ConsoleLogger.success("Updated event '\(event.name)' to version \(response.value.version)")
                         updatedCount += 1
                     }
                 } catch let error as APIError {
