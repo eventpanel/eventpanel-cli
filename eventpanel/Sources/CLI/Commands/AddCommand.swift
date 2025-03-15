@@ -41,11 +41,9 @@ final class AddCommand: Command {
     let description = "Add event to EventPanel.yaml"
     
     private let networkClient: NetworkClient
-    private let fileManager: FileManager
-    
-    init(networkClient: NetworkClient, fileManager: FileManager = .default) {
+
+    init(networkClient: NetworkClient) {
         self.networkClient = networkClient
-        self.fileManager = fileManager
     }
     
     func execute(with arguments: [String]) async throws {
@@ -70,16 +68,23 @@ final class AddCommand: Command {
         }
         
         let eventId = arguments[0]
-        
-        guard arguments.count >= 3,
-              arguments[1] == "--target",
-              !arguments[2].isEmpty else {
-            throw AddCommandError.missingTarget
+
+        let eventPanelYaml = try EventPanelYaml.read()
+        let targets = eventPanelYaml.getTargets()
+
+        let target: String
+        if targets.count == 1 {
+            target = targets.first!
+        } else {
+            guard arguments.count >= 3, arguments[1] == "--target", !arguments[2].isEmpty else {
+                throw AddCommandError.missingTarget
+            }
+            target = arguments[2]
         }
-        
+
         return AddCommandArguments(
             eventId: eventId,
-            targetName: arguments[2]
+            targetName: target
         )
     }
     
@@ -104,14 +109,7 @@ final class AddCommand: Command {
     
     /// Adds the validated event to the YAML configuration
     private func addEventToYaml(eventId: String, target: String) throws {
-        let currentPath = fileManager.currentDirectoryPath
-        let eventfilePath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
-        
-        guard fileManager.fileExists(atPath: eventfilePath) else {
-            throw CommandError.projectIsNotInitialized
-        }
-        
-        let eventPanelYaml = try EventPanelYaml(path: eventfilePath)
+        let eventPanelYaml = try EventPanelYaml.read()
         try eventPanelYaml.addEvent(eventId: eventId, to: target)
     }
 }

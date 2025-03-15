@@ -22,6 +22,18 @@ final class EventPanelYaml {
     private var yaml: [String: Any]
     private let path: String
 
+    static func read(fileManager: FileManager = .default) throws -> EventPanelYaml {
+        let currentPath = fileManager.currentDirectoryPath
+        let eventfilePath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
+
+        guard fileManager.fileExists(atPath: eventfilePath) else {
+            throw CommandError.projectIsNotInitialized
+        }
+
+        let eventPanelYaml = try EventPanelYaml(path: eventfilePath)
+        return eventPanelYaml
+    }
+
     init(path: String) throws {
         self.path = path
         let yamlString = try String(contentsOfFile: path, encoding: .utf8)
@@ -70,7 +82,12 @@ final class EventPanelYaml {
     private func checkEventExists(name: String, in events: [[String: Any]]) -> Bool {
         return events.contains(where: { ($0["name"] as? String) == name })
     }
-    
+
+    func getTargets() -> [String] {
+        var targets = yaml["targets"] as? [String: Any] ?? [:]
+        return Array(targets.keys)
+    }
+
     func addEvent(eventId: String, to targetName: String) throws {
         // Get or create targets dictionary
         var targets = yaml["targets"] as? [String: Any] ?? [:]
