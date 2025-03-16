@@ -60,7 +60,7 @@ final class UpdateCommand: Command {
         do {
             // Check if event has a new version
             let response: Response<EventLatestResponse> = try await networkClient.send(
-                Request(path: "api/external/event/latest/\(eventId)", method: .get)
+                Request(path: "api/external/events/latest/\(eventId)", method: .get)
             )
             
             // Update event version

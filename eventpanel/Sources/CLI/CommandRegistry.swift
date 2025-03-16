@@ -18,7 +18,7 @@ final class CommandRegistry {
             InitCommand(),
             InstallCommand(),
             ListCommand(),
-            OutdatedCommand(),
+            OutdatedCommand(networkClient: networkClient),
             UpdateCommand(networkClient: networkClient)
         ]
     }
