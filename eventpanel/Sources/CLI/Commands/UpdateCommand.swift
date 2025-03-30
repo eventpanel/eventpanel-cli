@@ -76,14 +76,17 @@ final class UpdateCommand: Command {
                 )
             )
             
-            if let updatedEvent = response.value.events.first(where: { $0.eventId == eventId }),
-               updatedEvent.version != currentVersion {
-                // Update event version
-                try eventPanelYaml.updateEvent(
-                    eventId: eventId,
-                    version: updatedEvent.version
-                )
-                ConsoleLogger.success("Updated event '\(eventId)' to version \(updatedEvent.version)")
+            if let updatedEvent = response.value.events.first(where: { $0.eventId == eventId }) {
+                if updatedEvent.version != currentVersion {
+                    // Update event version
+                    try eventPanelYaml.updateEvent(
+                        eventId: eventId,
+                        version: updatedEvent.version
+                    )
+                    ConsoleLogger.success("Updated event '\(eventId)' to version \(updatedEvent.version)")
+                } else {
+                    ConsoleLogger.success("The event '\(eventId)' has latest version")
+                }
             }
         } catch let error as APIError {
             throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
