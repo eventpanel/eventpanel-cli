@@ -19,9 +19,9 @@ struct Target: Codable {
 
 struct Event: Codable {
     var name: String
-    var version: String?
-    
-    init(name: String, version: String? = nil) {
+    var version: Int?
+
+    init(name: String, version: Int? = nil) {
         self.name = name
         self.version = version
     }

@@ -94,7 +94,7 @@ final class EventPanelYaml {
         return target.events
     }
     
-    func updateEvent(eventId: String, version: String) throws {
+    func updateEvent(eventId: String, version: Int) throws {
         var updated = false
         
         for (targetName, var target) in config.targets {

@@ -45,10 +45,12 @@ final class UpdateCommand: Command {
         
         // Verify event exists in configuration
         var eventFound = false
+        var currentVersion = 1
         for target in eventPanelYaml.getTargets() {
             let events = try eventPanelYaml.getEvents(for: target)
-            if events.contains(where: { $0.name == eventId }) {
+            if let event = events.first(where: { $0.name == eventId }) {
                 eventFound = true
+                currentVersion = event.version ?? 1
                 break
             }
         }
@@ -59,16 +61,30 @@ final class UpdateCommand: Command {
         
         do {
             // Check if event has a new version
+            let requestBody = EventLatestRequest(events: [
+                EventLatestRequestItem(
+                    eventId: eventId,
+                    version: currentVersion
+                )
+            ])
+            
             let response: Response<EventLatestResponse> = try await networkClient.send(
-                Request(path: "api/external/events/latest/\(eventId)", method: .get)
+                Request(
+                    path: "api/external/events/latest",
+                    method: .post,
+                    body: requestBody
+                )
             )
             
-            // Update event version
-            try eventPanelYaml.updateEvent(
-                eventId: eventId,
-                version: response.value.version
-            )
-            ConsoleLogger.success("Updated event '\(eventId)' to version \(response.value.version)")
+            if let updatedEvent = response.value.events.first(where: { $0.eventId == eventId }),
+               updatedEvent.version != currentVersion {
+                // Update event version
+                try eventPanelYaml.updateEvent(
+                    eventId: eventId,
+                    version: updatedEvent.version
+                )
+                ConsoleLogger.success("Updated event '\(eventId)' to version \(updatedEvent.version)")
+            }
         } catch let error as APIError {
             throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
         } catch {
@@ -96,19 +112,31 @@ final class UpdateCommand: Command {
                 processedEvents.insert(event.name)
                 
                 do {
+                    let currentVersion = event.version ?? 1
+                    let requestBody = EventLatestRequest(events: [
+                        EventLatestRequestItem(
+                            eventId: event.name,
+                            version: currentVersion
+                        )
+                    ])
+                    
                     // Check if event has a new version
                     let response: Response<EventLatestResponse> = try await networkClient.send(
-                        Request(path: "api/external/event/latest/\(event.name)", method: .get)
+                        Request(
+                            path: "api/external/events/latest",
+                            method: .post,
+                            body: requestBody
+                        )
                     )
 
-                    let currentVersion = event.version ?? "1"
-                    if response.value.version != currentVersion {
+                    if let updatedEvent = response.value.events.first(where: { $0.eventId == event.name }),
+                       updatedEvent.version != currentVersion {
                         // Update event version
                         try eventPanelYaml.updateEvent(
                             eventId: event.name,
-                            version: response.value.version
+                            version: updatedEvent.version
                         )
-                        ConsoleLogger.success("Updated event '\(event.name)' to version \(response.value.version)")
+                        ConsoleLogger.success("Updated event '\(event.name)' to version \(updatedEvent.version)")
                         updatedCount += 1
                     }
                 } catch let error as APIError {
@@ -129,6 +157,15 @@ final class UpdateCommand: Command {
 
 // MARK: - Network Models
 
+private struct EventLatestRequest: Encodable {
+    let events: [EventLatestRequestItem]
+}
+
+private struct EventLatestRequestItem: Codable {
+    let eventId: String
+    let version: Int
+}
+
 private struct EventLatestResponse: Decodable {
-    let version: String
+    let events: [EventLatestRequestItem]
 } 

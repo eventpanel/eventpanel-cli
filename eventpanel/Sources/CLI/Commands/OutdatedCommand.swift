@@ -19,8 +19,8 @@ enum OutdatedCommandError: LocalizedError {
 
 private struct OutdatedEvent {
     let eventId: String
-    let currentVersion: String
-    let latestVersion: String
+    let currentVersion: Int
+    let latestVersion: Int
     
     var displayString: String {
         "- \(eventId) (`id`) \(currentVersion) -> latest version \(latestVersion)"
@@ -92,16 +92,28 @@ final class OutdatedCommand: Command {
     
     private func checkEventForUpdates(_ event: Event) async throws -> OutdatedEvent? {
         do {
+            let requestBody = EventLatestRequest(events: [
+                EventLatestRequestItem(
+                    eventId: event.name,
+                    version: event.version ?? 1
+                )
+            ])
+            
             let response: Response<EventLatestResponse> = try await networkClient.send(
-                Request(path: "api/external/events/latest/\(event.name)", method: .get)
+                Request(
+                    path: "api/external/events/latest",
+                    method: .post,
+                    body: requestBody
+                )
             )
             
-            let currentVersion = event.version ?? "1"
-            if response.value.version != currentVersion {
+            let currentVersion = event.version ?? 1
+            if let updatedEvent = response.value.events.first(where: { $0.eventId == event.name }),
+               updatedEvent.version != currentVersion {
                 return OutdatedEvent(
                     eventId: event.name,
                     currentVersion: currentVersion,
-                    latestVersion: response.value.version
+                    latestVersion: updatedEvent.version
                 )
             }
         } catch let error as APIError {
@@ -128,6 +140,15 @@ final class OutdatedCommand: Command {
 
 // MARK: - Network Models
 
+private struct EventLatestRequest: Encodable {
+    let events: [EventLatestRequestItem]
+}
+
+private struct EventLatestRequestItem: Codable {
+    let eventId: String
+    let version: Int
+}
+
 private struct EventLatestResponse: Decodable {
-    let version: String
-} 
+    let events: [EventLatestRequestItem]
+}
