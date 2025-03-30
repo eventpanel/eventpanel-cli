@@ -23,7 +23,7 @@ private struct OutdatedEvent {
     let latestVersion: Int
     
     var displayString: String {
-        "- \(eventId) (`id`) \(currentVersion) -> latest version \(latestVersion)"
+        "- \(eventId) \(currentVersion) -> latest version \(latestVersion)"
     }
 }
 
