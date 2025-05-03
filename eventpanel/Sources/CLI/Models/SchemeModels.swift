@@ -26,7 +26,7 @@ struct EventDefinition: Codable {
         case id
         case name
         case description
-        case categoryIds = "category_ids"
+        case categoryIds
         case sources
         case properties
     }

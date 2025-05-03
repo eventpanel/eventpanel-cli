@@ -74,6 +74,7 @@ final class PullCommand: Command {
     
     private func saveScheme(_ scheme: SchemeResponse) throws {
         let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         
         do {
@@ -90,7 +91,6 @@ final class PullCommand: Command {
             // Save scheme.json
             let schemeURL = eventPanelDir.appendingPathComponent("scheme.json")
             try data.write(to: schemeURL)
-            print(schemeURL)
 
             // Reload scheme manager if it exists
             if let schemeManager = try? SchemeManager.read(fileManager: fileManager) {
