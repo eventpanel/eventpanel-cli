@@ -42,7 +42,7 @@ final class InitCommand: Command {
         if let projectName = findXcodeProject(in: directory) {
             return ProjectInfo(
                 name: projectName,
-                platform: "ios",
+                platform: Platform.iOS,
                 defaultVersion: "15.0"
             )
         }

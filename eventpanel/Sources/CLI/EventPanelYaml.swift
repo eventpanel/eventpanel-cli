@@ -70,7 +70,7 @@ final class EventPanelYaml {
         return Array(config.targets.keys)
     }
 
-    func getPlatform() -> String {
+    func getPlatform() -> Platform {
         return config.platform
     }
 
@@ -130,6 +130,6 @@ final class EventPanelYaml {
 // Move ProjectInfo here since it's related to YAML configuration
 struct ProjectInfo {
     let name: String
-    let platform: String
+    let platform: Platform
     let defaultVersion: String
 } 

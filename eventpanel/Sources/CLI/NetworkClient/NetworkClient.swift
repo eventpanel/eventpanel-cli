@@ -20,4 +20,8 @@ final class AuthAPIClientDelegate: APIClientDelegate {
     func client(_ client: APIClient, willSendRequest request: inout URLRequest) async throws {
         request.setValue(accessToken, forHTTPHeaderField: "x-api-key")
     }
+
+    func client(_ client: APIClient, validateResponse response: HTTPURLResponse, data: Data, task: URLSessionTask) throws {
+        print(String(data: data, encoding: .utf8))
+    }
 }

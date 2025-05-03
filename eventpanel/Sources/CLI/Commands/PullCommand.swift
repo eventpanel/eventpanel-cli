@@ -49,14 +49,14 @@ final class PullCommand: Command {
     
     // MARK: - Private Methods
     
-    private func fetchScheme(platform: String, events: [Event]) async throws -> SchemeResponse {
+    private func fetchScheme(platform: Platform, events: [Event]) async throws -> SchemeResponse {
         do {
             let response: Response<SchemeResponse> = try await networkClient.send(
                 Request(
                     path: "api/external/events/generate/list",
                     method: .post,
                     body: SchemeRequest(
-                        platform: platform,
+                        platform: platform.rawValue,
                         events: events.map {
                             EventDefenition(eventId: $0.name, version: $0.version ?? 1)
                         }

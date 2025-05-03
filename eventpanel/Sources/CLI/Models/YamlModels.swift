@@ -2,7 +2,7 @@ import Foundation
 
 struct EventPanelConfig: Codable {
     /// Global settings
-    var platform: String
+    var platform: Platform
     var minimumVersion: String
     var targets: [String: Target]
     
