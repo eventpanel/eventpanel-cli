@@ -32,10 +32,15 @@ final class PullCommand: Command {
     
     func execute(with arguments: [String]) async throws {
         ConsoleLogger.message("Fetching latest scheme...")
-        
+
+        let eventPanelYaml = try EventPanelYaml.read()
+
         // Fetch scheme from server
-        let scheme = try await fetchScheme()
-        
+        let scheme = try await fetchScheme(
+            platform: eventPanelYaml.getPlatform(),
+            events: eventPanelYaml.getEvents()
+        )
+
         // Save scheme to disk
         try saveScheme(scheme)
         
@@ -44,15 +49,25 @@ final class PullCommand: Command {
     
     // MARK: - Private Methods
     
-    private func fetchScheme() async throws -> SchemeResponse {
+    private func fetchScheme(platform: String, events: [Event]) async throws -> SchemeResponse {
         do {
             let response: Response<SchemeResponse> = try await networkClient.send(
-                Request(path: "api/external/events/generate/all", method: .post)
+                Request(
+                    path: "api/external/events/generate/list",
+                    method: .post,
+                    body: SchemeRequest(
+                        platform: platform,
+                        events: events.map {
+                            EventDefenition(eventId: $0.name, version: $0.version ?? 1)
+                        }
+                    )
+                )
             )
             return response.value
         } catch let error as APIError {
             throw PullCommandError.fetchFailed(error.localizedDescription)
         } catch {
+            print(error)
             throw PullCommandError.fetchFailed(error.localizedDescription)
         }
     }
@@ -75,7 +90,8 @@ final class PullCommand: Command {
             // Save scheme.json
             let schemeURL = eventPanelDir.appendingPathComponent("scheme.json")
             try data.write(to: schemeURL)
-            
+            print(schemeURL)
+
             // Reload scheme manager if it exists
             if let schemeManager = try? SchemeManager.read(fileManager: fileManager) {
                 try schemeManager.reload()
@@ -92,3 +108,13 @@ final class PullCommand: Command {
             .appendingPathComponent(".eventpanel"))
     }
 } 
+
+private struct SchemeRequest: Encodable {
+    let platform: String
+    let events: [EventDefenition]
+}
+
+private struct EventDefenition: Codable {
+    let eventId: String
+    let version: Int
+}

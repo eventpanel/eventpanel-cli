@@ -70,6 +70,10 @@ final class EventPanelYaml {
         return Array(config.targets.keys)
     }
 
+    func getPlatform() -> String {
+        return config.platform
+    }
+
     func addEvent(eventId: String, to targetName: String) throws {
         guard var target = config.targets[targetName] else {
             throw EventPanelYamlError.targetNotFound(targetName)
@@ -86,7 +90,11 @@ final class EventPanelYaml {
         config.targets[targetName] = target
         try save()
     }
-    
+
+    func getEvents() throws -> [Event] {
+        return config.targets.flatMap(\.value.events)
+    }
+
     func getEvents(for targetName: String) throws -> [Event] {
         guard let target = config.targets[targetName] else {
             throw EventPanelYamlError.targetNotFound(targetName)

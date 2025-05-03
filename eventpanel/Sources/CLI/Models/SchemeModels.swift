@@ -44,7 +44,7 @@ struct PropertyDefinition: Codable {
         case id
         case name
         case description
-        case dataType = "data_type"
+        case dataType
         case required
         case value
     }
