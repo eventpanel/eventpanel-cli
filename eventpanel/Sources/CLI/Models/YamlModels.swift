@@ -3,12 +3,12 @@ import Foundation
 struct EventPanelConfig: Codable {
     /// Global settings
     var platform: Platform
-    var minimumVersion: String
+    var plugin: Plugin
     var targets: [String: Target]
     
     enum CodingKeys: String, CodingKey {
         case platform
-        case minimumVersion = "minimum_version"
+        case plugin
         case targets
     }
 }

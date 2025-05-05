@@ -5,13 +5,6 @@ struct SchemeResponse: Codable {
     let events: [EventDefinition]
     let customTypes: [CustomType]?
     let categories: [Category]?
-
-    enum CodingKeys: String, CodingKey {
-        case workspace
-        case events
-        case customTypes = "custom_types"
-        case categories
-    }
 }
 
 struct EventDefinition: Codable {
@@ -21,15 +14,6 @@ struct EventDefinition: Codable {
     let categoryIds: [String]?
     let sources: [String]?
     let properties: [PropertyDefinition]?
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case description
-        case categoryIds
-        case sources
-        case properties
-    }
 }
 
 struct PropertyDefinition: Codable {
@@ -55,13 +39,6 @@ struct CustomType: Codable {
     let type: String
     let dataType: String
     let cases: [String]
-    
-    enum CodingKeys: String, CodingKey {
-        case name
-        case type
-        case dataType = "data_type"
-        case cases
-    }
 }
 
 struct Category: Codable {

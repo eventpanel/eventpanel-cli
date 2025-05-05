@@ -43,7 +43,7 @@ final class InitCommand: Command {
             return ProjectInfo(
                 name: projectName,
                 platform: Platform.iOS,
-                defaultVersion: "15.0"
+                plugin: .swiftgen
             )
         }
         

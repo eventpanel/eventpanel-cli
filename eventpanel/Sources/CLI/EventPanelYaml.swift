@@ -47,7 +47,7 @@ final class EventPanelYaml {
     static func createDefault(at path: String, projectInfo: ProjectInfo) throws {
         let config = EventPanelConfig(
             platform: projectInfo.platform,
-            minimumVersion: projectInfo.defaultVersion,
+            plugin: projectInfo.plugin,
             targets: [
                 projectInfo.name: Target(events: [])
             ]
@@ -72,6 +72,10 @@ final class EventPanelYaml {
 
     func getPlatform() -> Platform {
         return config.platform
+    }
+
+    func getPlugin() -> Plugin {
+        return config.plugin
     }
 
     func addEvent(eventId: String, to targetName: String) throws {
@@ -131,5 +135,5 @@ final class EventPanelYaml {
 struct ProjectInfo {
     let name: String
     let platform: Platform
-    let defaultVersion: String
-} 
+    let plugin: Plugin
+}

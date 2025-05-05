@@ -22,6 +22,6 @@ final class AuthAPIClientDelegate: APIClientDelegate {
     }
 
     func client(_ client: APIClient, validateResponse response: HTTPURLResponse, data: Data, task: URLSessionTask) throws {
-        print(String(data: data, encoding: .utf8))
+        ConsoleLogger.debug(String(data: data, encoding: .utf8)!)
     }
 }
