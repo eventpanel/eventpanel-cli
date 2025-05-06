@@ -54,10 +54,4 @@ final class DependencyContainer {
     
     // MARK: - Private Initializer
     private init() {}
-    
-    // MARK: - Reset (useful for testing)
-    func reset() {
-        // Reset all dependencies to their initial state
-        // This is particularly useful for testing
-    }
 } 
