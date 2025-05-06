@@ -19,19 +19,32 @@ enum EventPanelYamlError: LocalizedError {
 }
 
 final class EventPanelYaml {
+    private static var path: String?
+
     private var config: EventPanelConfig
     private let path: String
 
     static func read(fileManager: FileManager = .default) throws -> EventPanelYaml {
-        let currentPath = fileManager.currentDirectoryPath
-        let eventfilePath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
-
-        guard fileManager.fileExists(atPath: eventfilePath) else {
-            throw CommandError.projectIsNotInitialized
-        }
-
+        let eventfilePath = try Self.getConfigPath(fileManager: fileManager)
         let eventPanelYaml = try EventPanelYaml(path: eventfilePath)
         return eventPanelYaml
+    }
+
+    static func setConfigPath(_ path: String) {
+        Self.path = path
+    }
+
+    private static func getConfigPath(fileManager: FileManager) throws -> String {
+        guard let path = Self.path else {
+            let currentPath = fileManager.currentDirectoryPath
+            let eventfilePath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
+
+            guard fileManager.fileExists(atPath: eventfilePath) else {
+                throw CommandError.projectIsNotInitialized
+            }
+            return eventfilePath
+        }
+        return path
     }
 
     init(path: String) throws {
