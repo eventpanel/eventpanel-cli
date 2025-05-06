@@ -62,8 +62,6 @@ final class AddCommand: Command {
         
         let eventId = arguments[0]
 
-        let eventPanelYaml = try EventPanelYaml.read()
-
         return AddCommandArguments(eventId: eventId)
     }
     
