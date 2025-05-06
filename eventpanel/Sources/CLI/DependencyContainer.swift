@@ -18,10 +18,14 @@ final class DependencyContainer {
     private(set) lazy var fileManager: FileManager = {
         return .default
     }()
-    
+
+    private(set) lazy var eventPanelYaml: EventPanelYaml = {
+        try! EventPanelYaml.read()
+    }()
+
     // MARK: - Commands
     private(set) lazy var addCommand: AddCommand = {
-        return AddCommand(networkClient: networkClient)
+        return AddCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml)
     }()
     
     private(set) lazy var deintegrateCommand: DeintegrateCommand = {
@@ -29,7 +33,7 @@ final class DependencyContainer {
     }()
     
     private(set) lazy var generateCommand: GenerateCommand = {
-        return GenerateCommand()
+        return GenerateCommand(eventPanelYaml: eventPanelYaml)
     }()
     
     private(set) lazy var initCommand: InitCommand = {
@@ -37,19 +41,19 @@ final class DependencyContainer {
     }()
     
     private(set) lazy var listCommand: ListCommand = {
-        return ListCommand(networkClient: networkClient)
+        return ListCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml)
     }()
     
     private(set) lazy var outdatedCommand: OutdatedCommand = {
-        return OutdatedCommand(networkClient: networkClient)
+        return OutdatedCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml)
     }()
     
     private(set) lazy var pullCommand: PullCommand = {
-        return PullCommand(networkClient: networkClient, fileManager: fileManager)
+        return PullCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml, fileManager: fileManager)
     }()
     
     private(set) lazy var updateCommand: UpdateCommand = {
-        return UpdateCommand(networkClient: networkClient)
+        return UpdateCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml)
     }()
     
     // MARK: - Private Initializer

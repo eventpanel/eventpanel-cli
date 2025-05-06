@@ -30,13 +30,12 @@ enum AddCommandError: LocalizedError {
 }
 
 final class AddCommand: Command {
-    let name = "add"
-    let description = "Add event to EventPanel.yaml"
-    
     private let networkClient: NetworkClient
+    private let eventPanelYaml: EventPanelYaml
 
-    init(networkClient: NetworkClient) {
+    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml) {
         self.networkClient = networkClient
+        self.eventPanelYaml = eventPanelYaml
     }
     
     func execute(with arguments: [String]) async throws {
@@ -86,7 +85,6 @@ final class AddCommand: Command {
     
     /// Adds the validated event to the YAML configuration
     private func addEventToYaml(eventId: String) throws {
-        let eventPanelYaml = try EventPanelYaml.read()
         try eventPanelYaml.addEvent(eventId: eventId)
     }
 }

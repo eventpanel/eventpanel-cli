@@ -25,19 +25,17 @@ private struct OutdatedEvent {
 }
 
 final class OutdatedCommand: Command {
-    let name = "outdated"
-    let description = "Show outdated events"
-    
     private let networkClient: NetworkClient
-    
-    init(networkClient: NetworkClient) {
+    private let eventPanelYaml: EventPanelYaml
+
+    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml) {
         self.networkClient = networkClient
+        self.eventPanelYaml = eventPanelYaml
     }
     
     func execute(with arguments: [String]) async throws {
         ConsoleLogger.message("Checking for outdated events...")
-        
-        let eventPanelYaml = try EventPanelYaml.read()
+
         let events = eventPanelYaml.getEvents()
         
         let outdatedEvents = try await checkEventsForUpdates(events)

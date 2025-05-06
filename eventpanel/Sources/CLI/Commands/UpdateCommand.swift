@@ -19,13 +19,12 @@ enum UpdateCommandError: LocalizedError {
 }
 
 final class UpdateCommand: Command {
-    let name = "update"
-    let description = "Update outdated events"
-    
     private let networkClient: NetworkClient
-    
-    init(networkClient: NetworkClient) {
+    private let eventPanelYaml: EventPanelYaml
+
+    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml) {
         self.networkClient = networkClient
+        self.eventPanelYaml = eventPanelYaml
     }
     
     func execute(with arguments: [String]) async throws {
@@ -40,8 +39,7 @@ final class UpdateCommand: Command {
     
     private func updateSingleEvent(eventId: String) async throws {
         ConsoleLogger.message("Checking for updates to event '\(eventId)'...")
-        
-        let eventPanelYaml = try EventPanelYaml.read()
+
         let events = eventPanelYaml.getEvents()
         
         // Verify event exists in configuration
@@ -91,7 +89,6 @@ final class UpdateCommand: Command {
         ConsoleLogger.message("Checking for event updates...")
         
         // Read YAML file
-        let eventPanelYaml = try EventPanelYaml.read()
         let events = eventPanelYaml.getEvents()
         
         guard !events.isEmpty else {

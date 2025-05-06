@@ -19,6 +19,9 @@ struct EventPanel: AsyncParsableCommand {
         ]
     )
 
+    @Option(name: .long, help: "Path to EventPanel.yaml configuration file")
+    var config: String?
+
     func run() throws {
         // This is the default command that runs when no subcommand is specified
         print(EventPanel.helpMessage())

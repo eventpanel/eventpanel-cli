@@ -1,9 +1,6 @@
 import Foundation
 
 final class DeintegrateCommand: Command {
-    let name = "deintegrate"
-    let description = "Deintegrate EventPanel from your project"
-    
     private let fileManager: FileManager
     
     init(fileManager: FileManager = .default) {

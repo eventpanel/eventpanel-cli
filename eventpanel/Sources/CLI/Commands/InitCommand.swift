@@ -15,9 +15,6 @@ private enum InitCommandError: LocalizedError {
 }
 
 final class InitCommand: Command {
-    let name = "init"
-    let description = "Initializes EventPanel in the project by creating the necessary configuration files"
-    
     private let fileManager: FileManager
     
     init(fileManager: FileManager = .default) {

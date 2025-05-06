@@ -17,20 +17,17 @@ struct ListCommandArgs {
 }
 
 final class ListCommand: Command {
-    let name = "list"
-    let description = "List events (use --page-size to set items per page)"
-    
     private let networkClient: NetworkClient
+    private let eventPanelYaml: EventPanelYaml
     private let pageSize: Int
     
-    init(networkClient: NetworkClient, pageSize: Int = 20) {
+    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml, pageSize: Int = 20) {
         self.networkClient = networkClient
+        self.eventPanelYaml = eventPanelYaml
         self.pageSize = pageSize
     }
     
     func execute(with arguments: [String]) async throws {
-        let eventPanelYaml = try EventPanelYaml.read()
-        
         // Parse arguments
         let args = try parseArguments(arguments)
 

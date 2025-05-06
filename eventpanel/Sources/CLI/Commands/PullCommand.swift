@@ -19,21 +19,18 @@ enum PullCommandError: LocalizedError {
 }
 
 final class PullCommand: Command {
-    let name = "pull"
-    let description = "Fetch and store the latest scheme from the server"
-    
     private let networkClient: NetworkClient
+    private let eventPanelYaml: EventPanelYaml
     private let fileManager: FileManager
     
-    init(networkClient: NetworkClient, fileManager: FileManager = .default) {
+    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml, fileManager: FileManager = .default) {
         self.networkClient = networkClient
+        self.eventPanelYaml = eventPanelYaml
         self.fileManager = fileManager
     }
     
     func execute(with arguments: [String]) async throws {
         ConsoleLogger.message("Fetching latest scheme...")
-
-        let eventPanelYaml = try EventPanelYaml.read()
 
         // Fetch scheme from server
         let scheme = try await fetchScheme(
