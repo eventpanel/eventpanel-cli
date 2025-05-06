@@ -42,22 +42,14 @@ final class UpdateCommand: Command {
         ConsoleLogger.message("Checking for updates to event '\(eventId)'...")
         
         let eventPanelYaml = try EventPanelYaml.read()
+        let events = eventPanelYaml.getEvents()
         
         // Verify event exists in configuration
-        var eventFound = false
-        var currentVersion = 1
-        for target in eventPanelYaml.getTargets() {
-            let events = try eventPanelYaml.getEvents(for: target)
-            if let event = events.first(where: { $0.name == eventId }) {
-                eventFound = true
-                currentVersion = event.version ?? 1
-                break
-            }
-        }
-        
-        guard eventFound else {
+        guard let event = events.first(where: { $0.name == eventId }) else {
             throw UpdateCommandError.eventNotFound(eventId)
         }
+        
+        let currentVersion = event.version ?? 1
         
         do {
             // Check if event has a new version
@@ -100,53 +92,48 @@ final class UpdateCommand: Command {
         
         // Read YAML file
         let eventPanelYaml = try EventPanelYaml.read()
-        let targets = eventPanelYaml.getTargets()
+        let events = eventPanelYaml.getEvents()
+        
+        guard !events.isEmpty else {
+            throw UpdateCommandError.noEventsToUpdate
+        }
         
         var updatedCount = 0
-        var processedEvents = Set<String>() // Keep track of processed events
         
-        // Check each target's events
-        for target in targets {
-            let events = try eventPanelYaml.getEvents(for: target)
-            
-            for event in events {
-                // Skip if we've already processed this event
-                guard !processedEvents.contains(event.name) else { continue }
-                processedEvents.insert(event.name)
-                
-                do {
-                    let currentVersion = event.version ?? 1
-                    let requestBody = EventLatestRequest(events: [
-                        EventLatestRequestItem(
-                            eventId: event.name,
-                            version: currentVersion
-                        )
-                    ])
-                    
-                    // Check if event has a new version
-                    let response: Response<EventLatestResponse> = try await networkClient.send(
-                        Request(
-                            path: "api/external/events/latest",
-                            method: .post,
-                            body: requestBody
-                        )
+        // Check each event
+        for event in events {
+            do {
+                let currentVersion = event.version ?? 1
+                let requestBody = EventLatestRequest(events: [
+                    EventLatestRequestItem(
+                        eventId: event.name,
+                        version: currentVersion
                     )
+                ])
+                
+                // Check if event has a new version
+                let response: Response<EventLatestResponse> = try await networkClient.send(
+                    Request(
+                        path: "api/external/events/latest",
+                        method: .post,
+                        body: requestBody
+                    )
+                )
 
-                    if let updatedEvent = response.value.events.first(where: { $0.eventId == event.name }),
-                       updatedEvent.version != currentVersion {
-                        // Update event version
-                        try eventPanelYaml.updateEvent(
-                            eventId: event.name,
-                            version: updatedEvent.version
-                        )
-                        ConsoleLogger.success("Updated event '\(event.name)' to version \(updatedEvent.version)")
-                        updatedCount += 1
-                    }
-                } catch let error as APIError {
-                    throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
-                } catch {
-                    throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
+                if let updatedEvent = response.value.events.first(where: { $0.eventId == event.name }),
+                   updatedEvent.version != currentVersion {
+                    // Update event version
+                    try eventPanelYaml.updateEvent(
+                        eventId: event.name,
+                        version: updatedEvent.version
+                    )
+                    ConsoleLogger.success("Updated event '\(event.name)' to version \(updatedEvent.version)")
+                    updatedCount += 1
                 }
+            } catch let error as APIError {
+                throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
+            } catch {
+                throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
             }
         }
         

@@ -4,17 +4,13 @@ struct EventPanelConfig: Codable {
     /// Global settings
     var platform: Platform
     var plugin: Plugin
-    var targets: [String: Target]
-    
+    var events: [Event]
+
     enum CodingKeys: String, CodingKey {
         case platform
         case plugin
-        case targets
+        case events
     }
-}
-
-struct Target: Codable {
-    var events: [Event]
 }
 
 struct Event: Codable {

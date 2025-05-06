@@ -3,14 +3,11 @@ import Get
 
 enum OutdatedCommandError: LocalizedError {
     case eventCheckFailed(String)
-    case targetNotFound(String)
     
     var errorDescription: String? {
         switch self {
         case .eventCheckFailed(let message):
             return "Failed to check event updates: \(message)"
-        case .targetNotFound(let target):
-            return "Target '\(target)' not found in configuration"
         }
     }
 }
@@ -41,49 +38,20 @@ final class OutdatedCommand: Command {
         ConsoleLogger.message("Checking for outdated events...")
         
         let eventPanelYaml = try EventPanelYaml.read()
-        let targets = eventPanelYaml.getTargets()
+        let events = eventPanelYaml.getEvents()
         
-        let target = try parseTargetArgument(arguments, from: targets)
-        let targetsToCheck = target.map { [$0] } ?? targets
-        
-        let outdatedEvents = try await checkEventsForUpdates(
-            in: targetsToCheck,
-            using: eventPanelYaml
-        )
-        
+        let outdatedEvents = try await checkEventsForUpdates(events)
         displayResults(outdatedEvents)
     }
     
     // MARK: - Private Methods
     
-    private func parseTargetArgument(_ arguments: [String], from targets: [String]) throws -> String? {
-        if arguments.count >= 2, arguments[0] == "--target" {
-            let target = arguments[1]
-            guard targets.contains(target) else {
-                throw OutdatedCommandError.targetNotFound(target)
-            }
-            return target
-        }
-        return nil
-    }
-    
-    private func checkEventsForUpdates(
-        in targets: [String],
-        using eventPanelYaml: EventPanelYaml
-    ) async throws -> [OutdatedEvent] {
+    private func checkEventsForUpdates(_ events: [Event]) async throws -> [OutdatedEvent] {
         var outdatedEvents: [OutdatedEvent] = []
-        var processedEvents = Set<String>()
         
-        for target in targets {
-            let events = try eventPanelYaml.getEvents(for: target)
-            
-            for event in events {
-                guard !processedEvents.contains(event.name) else { continue }
-                processedEvents.insert(event.name)
-                
-                if let outdatedEvent = try await checkEventForUpdates(event) {
-                    outdatedEvents.append(outdatedEvent)
-                }
+        for event in events {
+            if let outdatedEvent = try await checkEventForUpdates(event) {
+                outdatedEvents.append(outdatedEvent)
             }
         }
         

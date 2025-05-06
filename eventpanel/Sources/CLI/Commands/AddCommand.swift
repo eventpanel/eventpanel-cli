@@ -4,14 +4,11 @@ import Get
 /// Represents the parsed arguments for the add command
 private struct AddCommandArguments {
     let eventId: String
-    let targetName: String
 }
 
 enum AddCommandError: LocalizedError {
     case missingArguments
-    case missingTarget
-    case targetNotFound(String)
-    case eventAlreadyExists(event: String, target: String)
+    case eventAlreadyExists(event: String)
     case eventValidationFailed(String)
     case eventNotFound(eventId: String)
 
@@ -19,15 +16,11 @@ enum AddCommandError: LocalizedError {
         switch self {
         case .missingArguments:
             return """
-                Usage: eventpanel add <event_name> --target <target_name>
-                Example: eventpanel add 'Button Tapped' --target 'MyApp'
+                Usage: eventpanel add <event_name>
+                Example: eventpanel add 'Button Tapped'
                 """
-        case .missingTarget:
-            return "Target must be specified with --target flag"
-        case .targetNotFound(let message):
-            return message
-        case .eventAlreadyExists(let event, let target):
-            return "Event '\(event)' already exists in target '\(target)'"
+        case .eventAlreadyExists(let event):
+            return "Event '\(event)' already exists"
         case .eventValidationFailed(let message):
             return "Event validation failed: \(message)"
         case .eventNotFound(let eventId):
@@ -54,9 +47,9 @@ final class AddCommand: Command {
         try await validateEvent(eventId: parsedArgs.eventId)
 
         // Part 3: Add event to YAML file
-        try addEventToYaml(eventId: parsedArgs.eventId, target: parsedArgs.targetName)
+        try addEventToYaml(eventId: parsedArgs.eventId)
 
-        ConsoleLogger.success("Added event '\(parsedArgs.eventId)' to target '\(parsedArgs.targetName)'")
+        ConsoleLogger.success("Added event '\(parsedArgs.eventId)'")
     }
     
     // MARK: - Private Methods
@@ -70,22 +63,8 @@ final class AddCommand: Command {
         let eventId = arguments[0]
 
         let eventPanelYaml = try EventPanelYaml.read()
-        let targets = eventPanelYaml.getTargets()
 
-        let target: String
-        if targets.count == 1 {
-            target = targets.first!
-        } else {
-            guard arguments.count >= 3, arguments[1] == "--target", !arguments[2].isEmpty else {
-                throw AddCommandError.missingTarget
-            }
-            target = arguments[2]
-        }
-
-        return AddCommandArguments(
-            eventId: eventId,
-            targetName: target
-        )
+        return AddCommandArguments(eventId: eventId)
     }
     
     /// Validates the event name with the server
@@ -108,9 +87,9 @@ final class AddCommand: Command {
     }
     
     /// Adds the validated event to the YAML configuration
-    private func addEventToYaml(eventId: String, target: String) throws {
+    private func addEventToYaml(eventId: String) throws {
         let eventPanelYaml = try EventPanelYaml.read()
-        try eventPanelYaml.addEvent(eventId: eventId, to: target)
+        try eventPanelYaml.addEvent(eventId: eventId)
     }
 }
 
