@@ -12,54 +12,20 @@ enum ListCommandError: LocalizedError {
     }
 }
 
-struct ListCommandArgs {
-    let pageSize: Int
-}
-
-final class ListCommand: Command {
+final class ListCommand {
     private let networkClient: NetworkClient
     private let eventPanelYaml: EventPanelYaml
-    private let pageSize: Int
     
-    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml, pageSize: Int = 20) {
+    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml) {
         self.networkClient = networkClient
         self.eventPanelYaml = eventPanelYaml
-        self.pageSize = pageSize
     }
     
-    func execute(with arguments: [String]) async throws {
-        // Parse arguments
-        let args = try parseArguments(arguments)
-
+    func execute(pageSize: Int) async throws {
         let events = eventPanelYaml.getEvents()
         
         // Display events with pagination
-        displayEvents(events, pageSize: args.pageSize)
-    }
-    
-    // MARK: - Private Methods
-    
-    private func parseArguments(_ arguments: [String]) throws -> ListCommandArgs {
-        var pageSize = self.pageSize
-        
-        var i = 0
-        while i < arguments.count {
-            switch arguments[i] {
-            case "--page-size":
-                guard i + 1 < arguments.count,
-                      let size = Int(arguments[i + 1]),
-                      size > 0 else {
-                    throw ListCommandError.invalidPageSize(arguments[i + 1])
-                }
-                pageSize = size
-                i += 2
-                
-            default:
-                i += 1
-            }
-        }
-        
-        return ListCommandArgs(pageSize: pageSize)
+        displayEvents(events, pageSize: pageSize)
     }
     
     private func displayEvents(_ events: [Event], pageSize: Int) {

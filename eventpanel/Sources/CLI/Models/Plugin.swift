@@ -1,5 +1,5 @@
 //
-//  Platform 2.swift
+//  Language 2.swift
 //  eventpanel
 //
 //  Created by Sukhanov Evgenii on 05.05.2025.

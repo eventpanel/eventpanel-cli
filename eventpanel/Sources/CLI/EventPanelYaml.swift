@@ -5,6 +5,7 @@ enum EventPanelYamlError: LocalizedError {
     case invalidYamlStructure(String)
     case eventAlreadyExists(eventId: String)
     case eventNotFound(eventId: String)
+    case missingRequiredField(String)
     
     var errorDescription: String? {
         switch self {
@@ -14,6 +15,8 @@ enum EventPanelYamlError: LocalizedError {
             return "Event '\(eventId)' already exists"
         case .eventNotFound(let eventId):
             return "Event not found '\(eventId)'"
+        case .missingRequiredField(let field):
+            return "Invalid YAML. Missing required field: '\(field)'"
         }
     }
 }
@@ -51,12 +54,26 @@ final class EventPanelYaml {
         self.path = path
         let yamlString = try String(contentsOfFile: path, encoding: .utf8)
         let decoder = YAMLDecoder()
-        self.config = try decoder.decode(EventPanelConfig.self, from: yamlString)
+        
+        do {
+            self.config = try decoder.decode(EventPanelConfig.self, from: yamlString)
+        } catch let error as DecodingError {
+            switch error {
+            case .keyNotFound(let key, _):
+                throw EventPanelYamlError.missingRequiredField(key.stringValue)
+            case .typeMismatch(_, let context):
+                throw EventPanelYamlError.invalidYamlStructure("Type mismatch for field '\(context.codingPath.last?.stringValue ?? "unknown")'")
+            case .valueNotFound(_, let context):
+                throw EventPanelYamlError.missingRequiredField(context.codingPath.last?.stringValue ?? "unknown")
+            default:
+                throw EventPanelYamlError.invalidYamlStructure(error.localizedDescription)
+            }
+        }
     }
     
     static func createDefault(at path: String, projectInfo: ProjectInfo) throws {
         let config = EventPanelConfig(
-            platform: projectInfo.platform,
+            language: projectInfo.language,
             plugin: projectInfo.plugin,
             events: []
         )
@@ -74,8 +91,8 @@ final class EventPanelYaml {
         try finalYaml.write(toFile: path, atomically: true, encoding: .utf8)
     }
 
-    func getPlatform() -> Platform {
-        return config.platform
+    func getLanguage() -> Language {
+        return config.language
     }
 
     func getPlugin() -> Plugin {
@@ -114,6 +131,6 @@ final class EventPanelYaml {
 // Move ProjectInfo here since it's related to YAML configuration
 struct ProjectInfo {
     let name: String
-    let platform: Platform
+    let language: Language
     let plugin: Plugin
 }

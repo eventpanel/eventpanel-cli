@@ -1,13 +1,13 @@
 import Foundation
 
-final class DeintegrateCommand: Command {
+final class DeintegrateCommand {
     private let fileManager: FileManager
     
     init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
     }
     
-    func execute(with arguments: [String]) async throws {
+    func execute() async throws {
         let currentPath = fileManager.currentDirectoryPath
         let configPath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
         

@@ -9,6 +9,14 @@ import Foundation
 
 actor Swiftgen: CodeGeneratorPlugin {
     func run() throws {
+        // generate swiftgen.yaml
+        // generate swift scheme
+        try generate()
+        // remove swiftgen.yaml
+        // remove swift scheme
+    }
+
+    private func generate() throws {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
         process.arguments = ["swiftgen"]

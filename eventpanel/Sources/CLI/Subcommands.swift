@@ -18,7 +18,7 @@ struct Add: AsyncParsableCommand {
     var eventName: String
 
     func run() async throws {
-        try await DependencyContainer.shared.addCommand.execute(with: [eventName])
+        try await DependencyContainer.shared.addCommand.execute(eventId: eventName)
     }
 }
 
@@ -30,7 +30,7 @@ struct Deintegrate: AsyncParsableCommand {
     )
 
     func run() async throws {
-        try await DependencyContainer.shared.deintegrateCommand.execute(with: [])
+        try await DependencyContainer.shared.deintegrateCommand.execute()
     }
 }
 
@@ -42,7 +42,7 @@ struct Generate: AsyncParsableCommand {
     )
 
     func run() async throws {
-        try await DependencyContainer.shared.generateCommand.execute(with: [])
+        try await DependencyContainer.shared.generateCommand.execute()
     }
 }
 
@@ -66,7 +66,7 @@ struct Init: AsyncParsableCommand {
     )
 
     func run() async throws {
-        try await DependencyContainer.shared.initCommand.execute(with: [])
+        try await DependencyContainer.shared.initCommand.execute()
     }
 }
 
@@ -81,7 +81,7 @@ struct List: AsyncParsableCommand {
     var pageSize: Int = 20
 
     func run() async throws {
-        try await DependencyContainer.shared.listCommand.execute(with: ["--page-size", String(pageSize)])
+        try await DependencyContainer.shared.listCommand.execute(pageSize: pageSize)
     }
 }
 
@@ -93,7 +93,7 @@ struct Outdated: AsyncParsableCommand {
     )
 
     func run() async throws {
-        try await DependencyContainer.shared.outdatedCommand.execute(with: [])
+        try await DependencyContainer.shared.outdatedCommand.execute()
     }
 }
 
@@ -105,7 +105,7 @@ struct Pull: AsyncParsableCommand {
     )
 
     func run() async throws {
-        try await DependencyContainer.shared.pullCommand.execute(with: [])
+        try await DependencyContainer.shared.pullCommand.execute()
     }
 }
 
@@ -120,6 +120,6 @@ struct Update: AsyncParsableCommand {
     var eventName: String?
 
     func run() async throws {
-        try await DependencyContainer.shared.updateCommand.execute(with: eventName.map { [$0] } ?? [])
+        try await DependencyContainer.shared.updateCommand.execute(eventId: eventName)
     }
 }

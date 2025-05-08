@@ -17,14 +17,14 @@ enum GenerateCommandError: LocalizedError {
     }
 }
 
-final class GenerateCommand: Command {
+final class GenerateCommand {
     private let eventPanelYaml: EventPanelYaml
 
     init(eventPanelYaml: EventPanelYaml) {
         self.eventPanelYaml = eventPanelYaml
     }
 
-    func execute(with arguments: [String]) async throws {
+    func execute() async throws {
         ConsoleLogger.message("Generating events from EventPanel.yaml...")
 
         let plugin = eventPanelYaml.getPlugin()

@@ -18,7 +18,7 @@ enum UpdateCommandError: LocalizedError {
     }
 }
 
-final class UpdateCommand: Command {
+final class UpdateCommand {
     private let networkClient: NetworkClient
     private let eventPanelYaml: EventPanelYaml
 
@@ -27,11 +27,11 @@ final class UpdateCommand: Command {
         self.eventPanelYaml = eventPanelYaml
     }
     
-    func execute(with arguments: [String]) async throws {
-        if arguments.isEmpty {
-            try await updateAllEvents()
+    func execute(eventId: String?) async throws {
+        if let eventId {
+            try await updateSingleEvent(eventId: eventId)
         } else {
-            try await updateSingleEvent(eventId: arguments[0])
+            try await updateAllEvents()
         }
     }
     

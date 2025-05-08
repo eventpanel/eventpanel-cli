@@ -18,7 +18,7 @@ enum PullCommandError: LocalizedError {
     }
 }
 
-final class PullCommand: Command {
+final class PullCommand {
     private let networkClient: NetworkClient
     private let eventPanelYaml: EventPanelYaml
     private let fileManager: FileManager
@@ -29,12 +29,11 @@ final class PullCommand: Command {
         self.fileManager = fileManager
     }
     
-    func execute(with arguments: [String]) async throws {
+    func execute() async throws {
         ConsoleLogger.message("Fetching latest scheme...")
 
         // Fetch scheme from server
         let scheme = try await fetchScheme(
-            platform: eventPanelYaml.getPlatform(),
             events: eventPanelYaml.getEvents()
         )
 
@@ -46,14 +45,13 @@ final class PullCommand: Command {
     
     // MARK: - Private Methods
     
-    private func fetchScheme(platform: Platform, events: [Event]) async throws -> SchemeResponse {
+    private func fetchScheme(events: [Event]) async throws -> SchemeResponse {
         do {
             let response: Response<SchemeResponse> = try await networkClient.send(
                 Request(
                     path: "api/external/events/generate/list",
                     method: .post,
                     body: SchemeRequest(
-                        platform: platform.rawValue,
                         events: events.map {
                             EventDefenition(eventId: $0.name, version: $0.version ?? 1)
                         }
@@ -107,7 +105,6 @@ final class PullCommand: Command {
 } 
 
 private struct SchemeRequest: Encodable {
-    let platform: String
     let events: [EventDefenition]
 }
 

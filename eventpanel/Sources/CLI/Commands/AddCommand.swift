@@ -29,7 +29,7 @@ enum AddCommandError: LocalizedError {
     }
 }
 
-final class AddCommand: Command {
+final class AddCommand {
     private let networkClient: NetworkClient
     private let eventPanelYaml: EventPanelYaml
 
@@ -38,31 +38,16 @@ final class AddCommand: Command {
         self.eventPanelYaml = eventPanelYaml
     }
     
-    func execute(with arguments: [String]) async throws {
-        // Part 1: Parse and validate arguments
-        let parsedArgs = try parseArguments(arguments)
-        
-        // Part 2: Validate event with network request
-        try await validateEvent(eventId: parsedArgs.eventId)
+    func execute(eventId: String) async throws {
+        try await validateEvent(eventId: eventId)
 
         // Part 3: Add event to YAML file
-        try addEventToYaml(eventId: parsedArgs.eventId)
+        try addEventToYaml(eventId: eventId)
 
-        ConsoleLogger.success("Added event '\(parsedArgs.eventId)'")
+        ConsoleLogger.success("Added event '\(eventId)'")
     }
     
     // MARK: - Private Methods
-    
-    /// Parses and validates command line arguments
-    private func parseArguments(_ arguments: [String]) throws -> AddCommandArguments {
-        guard !arguments.isEmpty else {
-            throw AddCommandError.missingArguments
-        }
-        
-        let eventId = arguments[0]
-
-        return AddCommandArguments(eventId: eventId)
-    }
     
     /// Validates the event name with the server
     private func validateEvent(eventId: String) async throws {

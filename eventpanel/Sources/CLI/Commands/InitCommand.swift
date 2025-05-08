@@ -14,14 +14,14 @@ private enum InitCommandError: LocalizedError {
     }
 }
 
-final class InitCommand: Command {
+final class InitCommand {
     private let fileManager: FileManager
     
     init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
     }
     
-    func execute(with arguments: [String]) async throws {
+    func execute() async throws {
         let currentPath = fileManager.currentDirectoryPath
         let eventfilePath = (currentPath as NSString).appendingPathComponent("EventPanel.yaml")
         
@@ -39,7 +39,7 @@ final class InitCommand: Command {
         if let projectName = findXcodeProject(in: directory) {
             return ProjectInfo(
                 name: projectName,
-                platform: Platform.iOS,
+                language: Language.swift,
                 plugin: .swiftgen
             )
         }
