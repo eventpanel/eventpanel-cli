@@ -28,7 +28,7 @@ final class InitCommand {
         if fileManager.fileExists(atPath: eventfilePath) {
             throw InitCommandError.fileAlreadyExists
         }
-        
+
         let projectInfo = try detectProject(in: currentPath)
         try EventPanelYaml.createDefault(at: eventfilePath, projectInfo: projectInfo)
         ConsoleLogger.success("Created EventPanel.yaml")
@@ -40,7 +40,7 @@ final class InitCommand {
             return ProjectInfo(
                 name: projectName,
                 language: Language.swift,
-                plugin: .swiftgen
+                plugin: .swiftgen(.default)
             )
         }
         

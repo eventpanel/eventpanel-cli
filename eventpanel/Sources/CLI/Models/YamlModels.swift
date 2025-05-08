@@ -27,4 +27,4 @@ struct Event: Codable {
         self.name = name
         self.version = version
     }
-} 
+}

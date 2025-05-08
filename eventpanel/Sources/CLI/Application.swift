@@ -33,7 +33,6 @@ struct EventPanel: AsyncParsableCommand {
                 EventPanelYaml.setConfigPath(configPath)
             }
         }
-        _ = try EventPanelYaml.read()
     }
 
     func run() throws {

@@ -8,7 +8,7 @@
 import ArgumentParser
 
 // MARK: - Add Command
-struct Add: AsyncParsableCommand {
+struct Add: AsyncParsableCommand, ConfigRelatedCommand {
     static var configuration = CommandConfiguration(
         commandName: "add",
         abstract: "Add event to EventPanel.yaml"
@@ -17,17 +17,25 @@ struct Add: AsyncParsableCommand {
     @Argument(help: "Event name to add")
     var eventName: String
 
+    func validate() throws {
+        try validateConfig()
+    }
+
     func run() async throws {
         try await DependencyContainer.shared.addCommand.execute(eventId: eventName)
     }
 }
 
 // MARK: - Deintegrate Command
-struct Deintegrate: AsyncParsableCommand {
+struct Deintegrate: AsyncParsableCommand, ConfigRelatedCommand {
     static var configuration = CommandConfiguration(
         commandName: "deintegrate",
         abstract: "Deintegrate EventPanel from your project"
     )
+
+    func validate() throws {
+        try validateConfig()
+    }
 
     func run() async throws {
         try await DependencyContainer.shared.deintegrateCommand.execute()
@@ -35,11 +43,15 @@ struct Deintegrate: AsyncParsableCommand {
 }
 
 // MARK: - Generate Command
-struct Generate: AsyncParsableCommand {
+struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
     static var configuration = CommandConfiguration(
         commandName: "generate",
         abstract: "Generate events according to versions from a EventPanel.yaml"
     )
+
+    func validate() throws {
+        try validateConfig()
+    }
 
     func run() async throws {
         try await DependencyContainer.shared.generateCommand.execute()
@@ -71,7 +83,7 @@ struct Init: AsyncParsableCommand {
 }
 
 // MARK: - List Command
-struct List: AsyncParsableCommand {
+struct List: AsyncParsableCommand, ConfigRelatedCommand {
     static var configuration = CommandConfiguration(
         commandName: "list",
         abstract: "List events"
@@ -80,17 +92,25 @@ struct List: AsyncParsableCommand {
     @Option(name: .long, help: "Number of items per page")
     var pageSize: Int = 20
 
+    func validate() throws {
+        try validateConfig()
+    }
+
     func run() async throws {
         try await DependencyContainer.shared.listCommand.execute(pageSize: pageSize)
     }
 }
 
 // MARK: - Outdated Command
-struct Outdated: AsyncParsableCommand {
+struct Outdated: AsyncParsableCommand, ConfigRelatedCommand {
     static var configuration = CommandConfiguration(
         commandName: "outdated",
         abstract: "Show outdated events"
     )
+
+    func validate() throws {
+        try validateConfig()
+    }
 
     func run() async throws {
         try await DependencyContainer.shared.outdatedCommand.execute()
@@ -98,11 +118,15 @@ struct Outdated: AsyncParsableCommand {
 }
 
 // MARK: - Pull Command
-struct Pull: AsyncParsableCommand {
+struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
     static var configuration = CommandConfiguration(
         commandName: "pull",
         abstract: "Fetch and store the latest scheme from the server"
     )
+
+    func validate() throws {
+        try validateConfig()
+    }
 
     func run() async throws {
         try await DependencyContainer.shared.pullCommand.execute()
@@ -110,7 +134,7 @@ struct Pull: AsyncParsableCommand {
 }
 
 // MARK: - Update Command
-struct Update: AsyncParsableCommand {
+struct Update: AsyncParsableCommand, ConfigRelatedCommand {
     static var configuration = CommandConfiguration(
         commandName: "update",
         abstract: "Update outdated events"
@@ -118,6 +142,10 @@ struct Update: AsyncParsableCommand {
 
     @Argument(help: "Event name to update (optional)")
     var eventName: String?
+
+    func validate() throws {
+        try validateConfig()
+    }
 
     func run() async throws {
         try await DependencyContainer.shared.updateCommand.execute(eventId: eventName)
