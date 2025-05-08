@@ -17,27 +17,21 @@ enum Plugin: Codable {
         }
     }
 
-    enum CodingKeys: String {
+    enum CodingKeys: String, CodingKey {
         case swiftgen
     }
 
     init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let dict = try container.decode([String: [String: AnyCodable]].self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        guard let (type, rawData) = dict.first else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "No plugin found.")
-        }
-
-        let pluginData = try JSONSerialization.data(withJSONObject: rawData, options: [])
-        let decoder = JSONDecoder()
-
-        switch type {
-        case "swiftgen":
-            let plugin = try decoder.decode(SwiftgenPlugin.self, from: pluginData)
+        if container.contains(.swiftgen) {
+            let plugin = try container.decode(SwiftgenPlugin.self, forKey: .swiftgen)
             self = .swiftgen(plugin)
-        default:
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown plugin type: \(type)")
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: try decoder.singleValueContainer(),
+                debugDescription: "Unknown plugin type"
+            )
         }
     }
 

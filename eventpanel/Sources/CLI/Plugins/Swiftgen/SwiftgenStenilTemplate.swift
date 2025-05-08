@@ -5,15 +5,7 @@
 //  Created by Sukhanov Evgenii on 08.05.2025.
 //
 
-func writeSwiftgenTemplate(path: String) {
-    do {
-        try swiftgenStenillTemplate.write(toFile: path, atomically: true, encoding: .utf8)
-    } catch {
-        print("Error writing Swiftgen template to file: \(error)")
-    }
-}
-
-private var swiftgenStenillTemplate: String {
+var swiftgenStenillTemplate: String {
     """
     // swiftlint:disable all
     // Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen

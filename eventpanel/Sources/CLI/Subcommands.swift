@@ -33,10 +33,6 @@ struct Deintegrate: AsyncParsableCommand, ConfigRelatedCommand {
         abstract: "Deintegrate EventPanel from your project"
     )
 
-    func validate() throws {
-        try validateConfig()
-    }
-
     func run() async throws {
         try await DependencyContainer.shared.deintegrateCommand.execute()
     }

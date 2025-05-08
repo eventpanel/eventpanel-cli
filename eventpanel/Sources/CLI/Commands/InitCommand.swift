@@ -31,6 +31,7 @@ final class InitCommand {
 
         let projectInfo = try detectProject(in: currentPath)
         try EventPanelYaml.createDefault(at: eventfilePath, projectInfo: projectInfo)
+        try await projectInfo.plugin.generator.initilize()
         ConsoleLogger.success("Created EventPanel.yaml")
     }
     

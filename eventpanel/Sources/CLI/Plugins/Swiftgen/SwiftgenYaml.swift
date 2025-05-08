@@ -1,11 +1,11 @@
 //
-//  SwiftgenConfig.swift
+//  SwiftgenYaml.swift
 //  eventpanel
 //
 //  Created by Sukhanov Evgenii on 08.05.2025.
 //
 
-struct SwiftgenConfig: Codable {
+struct SwiftgenYaml: Codable {
     struct JSONConfig: Codable {
         let inputs: String
         let outputs: OutputConfig
@@ -29,14 +29,9 @@ struct SwiftgenConfig: Codable {
         let documentation: Bool
     }
 
-
-    let inputDir: String
-    let outputDir: String
     let json: JSONConfig
     
     enum CodingKeys: String, CodingKey {
-        case inputDir = "input_dir"
-        case outputDir = "output_dir"
         case json
     }
 }
