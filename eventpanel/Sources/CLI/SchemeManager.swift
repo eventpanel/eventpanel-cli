@@ -15,7 +15,7 @@ enum SchemeManagerError: LocalizedError {
 }
 
 final class SchemeManager {
-    private var scheme: SchemeResponse?
+    private var scheme: WorkspaceScheme?
     private let fileManager: FileManager
     private let path: String
     
@@ -42,39 +42,39 @@ final class SchemeManager {
     
     // MARK: - Public Methods
     
-    func getEvent(id: String) -> EventDefinition? {
+    func getEvent(id: String) -> WorkspaceScheme.EventDefinition? {
         scheme?.events.first { $0.id == id }
     }
     
-    func getEvent(name: String) -> EventDefinition? {
+    func getEvent(name: String) -> WorkspaceScheme.EventDefinition? {
         scheme?.events.first { $0.name == name }
     }
     
-    func getEvents() -> [EventDefinition] {
+    func getEvents() -> [WorkspaceScheme.EventDefinition] {
         scheme?.events ?? []
     }
     
-    func getEvents(inCategory categoryId: String) -> [EventDefinition] {
+    func getEvents(inCategory categoryId: String) -> [WorkspaceScheme.EventDefinition] {
         scheme?.events.filter { $0.categoryIds?.contains(categoryId) ?? false } ?? []
     }
     
-    func getCategory(id: String) -> Category? {
+    func getCategory(id: String) -> WorkspaceScheme.Category? {
         scheme?.categories?.first { $0.id == id }
     }
     
-    func getCategory(name: String) -> Category? {
+    func getCategory(name: String) -> WorkspaceScheme.Category? {
         scheme?.categories?.first { $0.name == name }
     }
     
-    func getCategories() -> [Category] {
+    func getCategories() -> [WorkspaceScheme.Category] {
         scheme?.categories ?? []
     }
     
-    func getCustomType(name: String) -> CustomType? {
+    func getCustomType(name: String) -> WorkspaceScheme.CustomType? {
         scheme?.customTypes?.first { $0.name == name }
     }
     
-    func getCustomTypes() -> [CustomType] {
+    func getCustomTypes() -> [WorkspaceScheme.CustomType] {
         scheme?.customTypes ?? []
     }
     
@@ -83,14 +83,18 @@ final class SchemeManager {
     }
     
     // MARK: - Private Methods
-    
-    private func loadScheme() throws {
+
+    @discardableResult
+    func loadScheme() throws -> WorkspaceScheme {
         let data = try Data(contentsOf: URL(fileURLWithPath: path))
         let decoder = JSONDecoder()
-        scheme = try decoder.decode(SchemeResponse.self, from: data)
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let scheme = try decoder.decode(WorkspaceScheme.self, from: data)
+        self.scheme = scheme
+        return scheme
     }
     
     func reload() throws {
         try loadScheme()
     }
-} 
+}

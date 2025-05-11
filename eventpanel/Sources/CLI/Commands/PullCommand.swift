@@ -45,9 +45,9 @@ final class PullCommand {
     
     // MARK: - Private Methods
     
-    private func fetchScheme(events: [Event]) async throws -> SchemeResponse {
+    private func fetchScheme(events: [Event]) async throws -> WorkspaceScheme {
         do {
-            let response: Response<SchemeResponse> = try await networkClient.send(
+            let response: Response<WorkspaceScheme> = try await networkClient.send(
                 Request(
                     path: "api/external/events/generate/list",
                     method: .post,
@@ -67,7 +67,7 @@ final class PullCommand {
         }
     }
     
-    private func saveScheme(_ scheme: SchemeResponse) throws {
+    private func saveScheme(_ scheme: WorkspaceScheme) throws {
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]

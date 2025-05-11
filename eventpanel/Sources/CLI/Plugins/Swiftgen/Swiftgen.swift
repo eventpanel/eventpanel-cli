@@ -10,17 +10,18 @@ import Yams
 
 actor Swiftgen: CodeGeneratorPlugin {
     private let config: SwiftgenPlugin
-
-    init(config: SwiftgenPlugin) {
+    private let fileManager: FileManager
+    
+    init(config: SwiftgenPlugin, fileManager: FileManager = .default) {
         self.config = config
+        self.fileManager = fileManager
     }
 
     func run() throws {
-        // generate swiftgen.yaml
-        // generate swift scheme
+        let scheme = try SchemeManager.read().loadScheme()
+        let swiftgenScheme = try SwiftgenWorkspaceScheme(from: scheme)
+        try saveScheme(swiftgenScheme)
         try generate()
-        // remove swiftgen.yaml
-        // remove swift scheme
     }
 
     func initilize() async throws {
@@ -32,9 +33,9 @@ actor Swiftgen: CodeGeneratorPlugin {
         let encoder = YAMLEncoder()
         let yaml = SwiftgenYaml(
             json: SwiftgenYaml.JSONConfig(
-                inputs: "scheme.json",
+                inputs: "swiftgen_scheme.json",
                 outputs: SwiftgenYaml.OutputConfig(
-                    templatePath: config.templatePath.replacingOccurrences(of: config.root, with: ""),
+                    templatePath: config.templatePath.replacingOccurrences(of: config.inputDir, with: ""),
                     output: config.generatedEventsPath,
                     params: SwiftgenYaml.OutputParams(
                         enumName: config.namespace,
@@ -58,6 +59,36 @@ actor Swiftgen: CodeGeneratorPlugin {
         } catch {
             ConsoleLogger.error("Error writing Swiftgen template to file: \(error)")
         }
+    }
+
+    private func saveScheme(_ scheme: SwiftgenWorkspaceScheme) throws {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+
+        do {
+            let data = try encoder.encode(scheme)
+
+            let eventPanelDir = try getEventPanelDirectory()
+            try fileManager.createDirectory(
+                at: eventPanelDir,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+
+            // Save scheme.json
+            let schemeURL = eventPanelDir.appendingPathComponent("swiftgen_scheme.json")
+            try data.write(to: schemeURL)
+
+        } catch {
+            throw PullCommandError.saveFailed(error.localizedDescription)
+        }
+    }
+
+    private func getEventPanelDirectory() throws -> URL {
+        let currentPath = fileManager.currentDirectoryPath
+        return URL(fileURLWithPath: (currentPath as NSString)
+            .appendingPathComponent(".eventpanel"))
     }
 
     private func generate() throws {

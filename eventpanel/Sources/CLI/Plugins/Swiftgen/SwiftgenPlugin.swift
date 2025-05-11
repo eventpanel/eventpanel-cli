@@ -8,6 +8,7 @@
 struct SwiftgenPlugin: Codable {
     static var `default`: SwiftgenPlugin {
         .init(
+            inputDir: ".eventpanel",
             templatePath: ".eventpanel/event-panel-template.stencil",
             swiftgenYamlPath: ".eventpanel/swiftgen.yaml",
             generatedEventsPath: "../GeneratedAnalyticsEvents.swift",
@@ -17,10 +18,7 @@ struct SwiftgenPlugin: Codable {
         )
     }
 
-    var root: String {
-        ".eventpanel"
-    }
-
+    let inputDir: String
     let templatePath: String
     let swiftgenYamlPath: String
     let generatedEventsPath: String
