@@ -11,7 +11,7 @@ import Foundation
 typealias NetworkClient = APIClient
 
 final class AuthAPIClientDelegate: APIClientDelegate {
-    private var accessToken: String = ""
+    private let accessToken: String
 
     init(accessToken: String) {
         self.accessToken = accessToken
@@ -22,6 +22,6 @@ final class AuthAPIClientDelegate: APIClientDelegate {
     }
 
     func client(_ client: APIClient, validateResponse response: HTTPURLResponse, data: Data, task: URLSessionTask) throws {
-        ConsoleLogger.debug(String(data: data, encoding: .utf8)!)
+        // ConsoleLogger.debug(String(data: data, encoding: .utf8)!)
     }
 }

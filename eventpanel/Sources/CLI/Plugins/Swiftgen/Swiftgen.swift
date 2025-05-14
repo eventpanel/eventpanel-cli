@@ -17,7 +17,8 @@ actor Swiftgen: CodeGeneratorPlugin {
         self.fileManager = fileManager
     }
 
-    func run() throws {
+    func run() async throws {
+        try await initilize()
         let scheme = try SchemeManager.read().loadScheme()
         let swiftgenScheme = try SwiftgenWorkspaceScheme(from: scheme)
         try saveScheme(swiftgenScheme)
@@ -47,7 +48,7 @@ actor Swiftgen: CodeGeneratorPlugin {
             json: SwiftgenYaml.JSONConfig(
                 inputs: "swiftgen_scheme.json",
                 outputs: SwiftgenYaml.OutputConfig(
-                    templatePath: config.templatePath.replacingOccurrences(of: config.inputDir, with: ""),
+                    templatePath: config.templatePath.replacingOccurrences(of: "\(config.inputDir)/", with: ""),
                     output: config.generatedEventsPath,
                     params: SwiftgenYaml.OutputParams(
                         enumName: config.namespace,
