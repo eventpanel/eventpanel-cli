@@ -25,8 +25,20 @@ actor Swiftgen: CodeGeneratorPlugin {
     }
 
     func initilize() async throws {
+        try createFolderIfNeeded()
         writeSwiftgenTemplate(path: config.templatePath)
         writeSwiftgenYaml(path: config.swiftgenYamlPath)
+    }
+
+    private func createFolderIfNeeded() throws {
+        let rootPath = try getEventPanelDirectory()
+        if !fileManager.fileExists(atPath: rootPath.path) {
+            try fileManager.createDirectory(
+                at: rootPath,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+        }
     }
 
     private func writeSwiftgenYaml(path: String) {
