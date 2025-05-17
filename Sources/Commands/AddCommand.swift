@@ -42,7 +42,7 @@ final class AddCommand {
         try await validateEvent(eventId: eventId)
 
         // Part 3: Add event to YAML file
-        try addEventToYaml(eventId: eventId)
+        try await addEventToYaml(eventId: eventId)
 
         ConsoleLogger.success("Added event '\(eventId)'")
     }
@@ -69,8 +69,8 @@ final class AddCommand {
     }
     
     /// Adds the validated event to the YAML configuration
-    private func addEventToYaml(eventId: String) throws {
-        try eventPanelYaml.addEvent(eventId: eventId)
+    private func addEventToYaml(eventId: String) async throws {
+        try await eventPanelYaml.addEvent(eventId: eventId)
     }
 }
 

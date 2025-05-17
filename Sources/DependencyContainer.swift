@@ -1,11 +1,11 @@
 import Foundation
 
-final class DependencyContainer {
+final class DependencyContainer: @unchecked Sendable {
     // MARK: - Shared Instance
     static let shared = DependencyContainer()
     
     // MARK: - Dependencies
-    private(set) lazy var networkClient: NetworkClient = {
+    private let networkClient: NetworkClient = {
         let authAPIClientDelegate = AuthAPIClientDelegate(
             accessToken: "n0MajbT5rzBVRp59NHvQ7IM9G3234zW2BlInzAVZ7BqamdxLWGr1s6tWht9eC0d2mGiS76PXyzb1pCkhWHVH6uRhNKvTZsxFHOwesdcZgAyO1hIsYA7RCU3iMPBL4oHb"
         )

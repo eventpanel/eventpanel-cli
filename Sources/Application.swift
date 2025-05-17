@@ -2,8 +2,8 @@ import Foundation
 import ArgumentParser
 
 @main
-struct EventPanel: AsyncParsableCommand {
-    static var configuration = CommandConfiguration(
+public struct EventPanel: AsyncParsableCommand {
+    public static let configuration = CommandConfiguration(
         commandName: "eventpanel",
         abstract: "EventPanel, the event management system.",
         subcommands: [
@@ -20,9 +20,11 @@ struct EventPanel: AsyncParsableCommand {
     )
 
     @Option(name: .long, help: "Path to EventPanel.yaml configuration file")
-    var config: String?
+    public var config: String?
 
-    func validate() throws {
+    public init() {}
+
+    public func validate() throws {
         // Add your pre-execution checks here
         // For example, checking if config file exists when specified
         if let configPath = config {
@@ -35,7 +37,7 @@ struct EventPanel: AsyncParsableCommand {
         }
     }
 
-    func run() throws {
+    public func run() throws {
         // This is the default command that runs when no subcommand is specified
         print(EventPanel.helpMessage())
     }

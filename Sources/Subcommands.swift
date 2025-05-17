@@ -9,13 +9,15 @@ import ArgumentParser
 
 // MARK: - Add Command
 struct Add: AsyncParsableCommand, ConfigRelatedCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "add",
         abstract: "Add event to EventPanel.yaml"
     )
-
+    
     @Argument(help: "Event name to add")
     var eventName: String
+    
+    init() {}
 
     func validate() throws {
         try validateConfig()
@@ -28,10 +30,12 @@ struct Add: AsyncParsableCommand, ConfigRelatedCommand {
 
 // MARK: - Deintegrate Command
 struct Deintegrate: AsyncParsableCommand, ConfigRelatedCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "deintegrate",
         abstract: "Deintegrate EventPanel from your project"
     )
+
+    init() {}
 
     func run() async throws {
         try await DependencyContainer.shared.deintegrateCommand.execute()
@@ -40,10 +44,12 @@ struct Deintegrate: AsyncParsableCommand, ConfigRelatedCommand {
 
 // MARK: - Generate Command
 struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "generate",
         abstract: "Generate events according to versions from a EventPanel.yaml"
     )
+
+    init() {}
 
     func validate() throws {
         try validateConfig()
@@ -56,10 +62,12 @@ struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
 
 // MARK: - Help Command
 struct Help: AsyncParsableCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "help",
         abstract: "Show this help message"
     )
+
+    init() {}
 
     func run() async throws {
         print(EventPanel.helpMessage())
@@ -68,10 +76,12 @@ struct Help: AsyncParsableCommand {
 
 // MARK: - Init Command
 struct Init: AsyncParsableCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "init",
         abstract: "Initializes EventPanel in the project by creating the necessary configuration files"
     )
+
+    init() {}
 
     func run() async throws {
         try await DependencyContainer.shared.initCommand.execute()
@@ -80,13 +90,15 @@ struct Init: AsyncParsableCommand {
 
 // MARK: - List Command
 struct List: AsyncParsableCommand, ConfigRelatedCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "list",
         abstract: "List events"
     )
 
     @Option(name: .long, help: "Number of items per page")
     var pageSize: Int = 20
+
+    init() {}
 
     func validate() throws {
         try validateConfig()
@@ -99,10 +111,12 @@ struct List: AsyncParsableCommand, ConfigRelatedCommand {
 
 // MARK: - Outdated Command
 struct Outdated: AsyncParsableCommand, ConfigRelatedCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "outdated",
         abstract: "Show outdated events"
     )
+
+    init() {}
 
     func validate() throws {
         try validateConfig()
@@ -115,10 +129,12 @@ struct Outdated: AsyncParsableCommand, ConfigRelatedCommand {
 
 // MARK: - Pull Command
 struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "pull",
         abstract: "Fetch and store the latest scheme from the server"
     )
+
+    init() {}
 
     func validate() throws {
         try validateConfig()
@@ -131,13 +147,15 @@ struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
 
 // MARK: - Update Command
 struct Update: AsyncParsableCommand, ConfigRelatedCommand {
-    static var configuration = CommandConfiguration(
+    static let configuration = CommandConfiguration(
         commandName: "update",
         abstract: "Update outdated events"
     )
 
     @Argument(help: "Event name to update (optional)")
     var eventName: String?
+
+    init() {}
 
     func validate() throws {
         try validateConfig()

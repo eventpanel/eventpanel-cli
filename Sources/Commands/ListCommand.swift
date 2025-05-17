@@ -22,7 +22,7 @@ final class ListCommand {
     }
     
     func execute(pageSize: Int) async throws {
-        let events = eventPanelYaml.getEvents()
+        let events = await eventPanelYaml.getEvents()
         
         // Display events with pagination
         displayEvents(events, pageSize: pageSize)

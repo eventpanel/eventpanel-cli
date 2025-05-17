@@ -36,7 +36,7 @@ final class OutdatedCommand {
     func execute() async throws {
         ConsoleLogger.message("Checking for outdated events...")
 
-        let events = eventPanelYaml.getEvents()
+        let events = await eventPanelYaml.getEvents()
         
         let outdatedEvents = try await checkEventsForUpdates(events)
         displayResults(outdatedEvents)

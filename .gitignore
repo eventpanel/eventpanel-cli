@@ -1,2 +1,6 @@
 
 eventpanel.xcodeproj/xcuserdata/*
+
+.build/
+
+.swiftpm/

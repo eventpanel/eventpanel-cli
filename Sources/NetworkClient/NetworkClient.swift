@@ -10,7 +10,7 @@ import Foundation
 
 typealias NetworkClient = APIClient
 
-final class AuthAPIClientDelegate: APIClientDelegate {
+final class AuthAPIClientDelegate: APIClientDelegate, Sendable {
     private let accessToken: String
 
     init(accessToken: String) {

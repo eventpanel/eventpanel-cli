@@ -27,7 +27,7 @@ final class GenerateCommand {
     func execute() async throws {
         ConsoleLogger.message("Generating events from EventPanel.yaml...")
 
-        let plugin = eventPanelYaml.getPlugin()
+        let plugin = await eventPanelYaml.getPlugin()
 
         do {
             try await plugin.generator.run()

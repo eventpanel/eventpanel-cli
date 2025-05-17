@@ -40,7 +40,7 @@ final class UpdateCommand {
     private func updateSingleEvent(eventId: String) async throws {
         ConsoleLogger.message("Checking for updates to event '\(eventId)'...")
 
-        let events = eventPanelYaml.getEvents()
+        let events = await eventPanelYaml.getEvents()
         
         // Verify event exists in configuration
         guard let event = events.first(where: { $0.name == eventId }) else {
@@ -60,7 +60,7 @@ final class UpdateCommand {
             let updatedEvent = response.value
             if updatedEvent.version != currentVersion {
                 // Update event version
-                try eventPanelYaml.updateEvent(
+                try await eventPanelYaml.updateEvent(
                     eventId: eventId,
                     version: updatedEvent.version
                 )
@@ -79,8 +79,8 @@ final class UpdateCommand {
         ConsoleLogger.message("Checking for event updates...")
         
         // Read YAML file
-        let events = eventPanelYaml.getEvents()
-        
+        let events = await eventPanelYaml.getEvents()
+
         guard !events.isEmpty else {
             throw UpdateCommandError.noEventsToUpdate
         }
@@ -110,7 +110,7 @@ final class UpdateCommand {
                 if let updatedEvent = response.value.events.first(where: { $0.eventId == event.name }),
                    updatedEvent.version != currentVersion {
                     // Update event version
-                    try eventPanelYaml.updateEvent(
+                    try await eventPanelYaml.updateEvent(
                         eventId: event.name,
                         version: updatedEvent.version
                     )
