@@ -50,33 +50,23 @@ final class UpdateCommand {
         let currentVersion = event.version ?? 1
         
         do {
-            // Check if event has a new version
-            let requestBody = EventLatestRequest(events: [
-                EventLatestRequestItem(
-                    eventId: eventId,
-                    version: currentVersion
-                )
-            ])
-            
-            let response: Response<EventLatestResponse> = try await networkClient.send(
+            let response: Response<EventLatestRequestItem> = try await networkClient.send(
                 Request(
-                    path: "api/external/events/latest",
-                    method: .post,
-                    body: requestBody
+                    path: "api/external/events/latest/\(eventId)",
+                    method: .get
                 )
             )
-            
-            if let updatedEvent = response.value.events.first(where: { $0.eventId == eventId }) {
-                if updatedEvent.version != currentVersion {
-                    // Update event version
-                    try eventPanelYaml.updateEvent(
-                        eventId: eventId,
-                        version: updatedEvent.version
-                    )
-                    ConsoleLogger.success("Updated event '\(eventId)' to version \(updatedEvent.version)")
-                } else {
-                    ConsoleLogger.success("The event '\(eventId)' has latest version")
-                }
+
+            let updatedEvent = response.value
+            if updatedEvent.version != currentVersion {
+                // Update event version
+                try eventPanelYaml.updateEvent(
+                    eventId: eventId,
+                    version: updatedEvent.version
+                )
+                ConsoleLogger.success("Updated event '\(eventId)' to version \(updatedEvent.version)")
+            } else {
+                ConsoleLogger.success("The event '\(eventId)' has latest version")
             }
         } catch let error as APIError {
             throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
