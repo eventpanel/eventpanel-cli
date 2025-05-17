@@ -8,6 +8,7 @@ public struct EventPanel: AsyncParsableCommand {
         abstract: "EventPanel, the event management system.",
         subcommands: [
             Add.self,
+            Auth.self,
             Deintegrate.self,
             Generate.self,
             Help.self,

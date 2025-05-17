@@ -165,3 +165,46 @@ struct Update: AsyncParsableCommand, ConfigRelatedCommand {
         try await DependencyContainer.shared.updateCommand.execute(eventId: eventName)
     }
 }
+
+// MARK: - Auth Command
+struct Auth: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "auth",
+        abstract: "Manage API authentication",
+        subcommands: [
+            SetToken.self,
+            RemoveToken.self
+        ]
+    )
+}
+
+// MARK: - Set Token Command
+struct SetToken: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "set-token",
+        abstract: "Set API token"
+    )
+    
+    @Argument(help: "API token to store")
+    var token: String
+    
+    init() {}
+    
+    func run() async throws {
+        try await DependencyContainer.shared.authCommand.setToken(token)
+    }
+}
+
+// MARK: - Remove Token Command
+struct RemoveToken: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "remove-token",
+        abstract: "Remove stored API token"
+    )
+    
+    init() {}
+    
+    func run() async throws {
+        try await DependencyContainer.shared.authCommand.removeToken()
+    }
+}
