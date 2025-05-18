@@ -11,14 +11,15 @@ import Foundation
 typealias NetworkClient = APIClient
 
 final class AuthAPIClientDelegate: APIClientDelegate, Sendable {
-    private let accessToken: String
+    private let authService: AuthService
 
-    init(accessToken: String) {
-        self.accessToken = accessToken
+    init(authService: AuthService) {
+        self.authService = authService
     }
 
     func client(_ client: APIClient, willSendRequest request: inout URLRequest) async throws {
-        request.setValue(accessToken, forHTTPHeaderField: "x-api-key")
+        let token = try authService.getToken()
+        request.setValue(token, forHTTPHeaderField: "x-api-key")
     }
 
     func client(_ client: APIClient, validateResponse response: HTTPURLResponse, data: Data, task: URLSessionTask) throws {

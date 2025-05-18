@@ -5,21 +5,20 @@ final class DependencyContainer: @unchecked Sendable {
     static let shared = DependencyContainer()
     
     // MARK: - Dependencies
+    private let authService: AuthService = {
+        return AuthService()
+    }()
+    
     private(set) lazy var authCommand: AuthCommand = {
-        return AuthCommand()
+        return AuthCommand(authService: authService)
     }()
     
     private lazy var networkClient: NetworkClient = {
-        do {
-            let token = try authCommand.getToken()
-            let authAPIClientDelegate = AuthAPIClientDelegate(accessToken: token)
-            let networkClient = NetworkClient(baseURL: URL(string: "http://localhost:3002/")) {
-                $0.delegate = authAPIClientDelegate
-            }
-            return networkClient
-        } catch {
-            fatalError("Failed to initialize network client: \(error.localizedDescription)")
+        let authAPIClientDelegate = AuthAPIClientDelegate(authService: authService)
+        let networkClient = NetworkClient(baseURL: URL(string: "http://localhost:3002/")) {
+            $0.delegate = authAPIClientDelegate
         }
+        return networkClient
     }()
     
     private(set) lazy var fileManager: FileManager = {

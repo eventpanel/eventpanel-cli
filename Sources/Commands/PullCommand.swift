@@ -62,7 +62,6 @@ final class PullCommand {
         } catch let error as APIError {
             throw PullCommandError.fetchFailed(error.localizedDescription)
         } catch {
-            print(error)
             throw PullCommandError.fetchFailed(error.localizedDescription)
         }
     }
