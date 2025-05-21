@@ -49,6 +49,9 @@ struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
         abstract: "Generate events according to versions from a EventPanel.yaml"
     )
 
+    @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
+    var schemeUpdate: Bool = false
+
     init() {}
 
     func validate() throws {
@@ -56,6 +59,9 @@ struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
     }
 
     func run() async throws {
+        if schemeUpdate {
+            try await DependencyContainer.shared.pullCommand.execute()
+        }
         try await DependencyContainer.shared.generateCommand.execute()
     }
 }
@@ -70,7 +76,7 @@ struct Help: AsyncParsableCommand {
     init() {}
 
     func run() async throws {
-        print(EventPanel.helpMessage())
+        ConsoleLogger.message(EventPanel.helpMessage())
     }
 }
 
