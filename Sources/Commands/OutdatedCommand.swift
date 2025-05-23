@@ -45,41 +45,34 @@ final class OutdatedCommand {
     // MARK: - Private Methods
     
     private func checkEventsForUpdates(_ events: [Event]) async throws -> [OutdatedEvent] {
-        var outdatedEvents: [OutdatedEvent] = []
-        
-        for event in events {
-            if let outdatedEvent = try await checkEventForUpdates(event) {
-                outdatedEvents.append(outdatedEvent)
-            }
-        }
-        
-        return outdatedEvents
-    }
-    
-    private func checkEventForUpdates(_ event: Event) async throws -> OutdatedEvent? {
         do {
-            let requestBody = EventLatestRequest(events: [
+            let requestBody = EventLatestRequest(events: events.map { event in
                 EventLatestRequestItem(
                     eventId: event.name,
                     version: event.version ?? 1
                 )
-            ])
-            
+            })
+            let eventVersions = events.reduce(into: [String: Int]()) { result, event in
+                result[event.name] = event.version
+            }
+
             let response: Response<EventLatestResponse> = try await networkClient.send(
                 Request(
-                    path: "api/external/events/latest",
+                    path: "api/external/events/latest/list",
                     method: .post,
                     body: requestBody
                 )
             )
-            
-            let currentVersion = event.version ?? 1
-            if let updatedEvent = response.value.events.first(where: { $0.eventId == event.name }),
-               updatedEvent.version != currentVersion {
+
+            return response.value.events.compactMap { event in
+                guard
+                    let currentVersion = eventVersions[event.eventId],
+                    currentVersion < event.version
+                else { return nil }
                 return OutdatedEvent(
-                    eventId: event.name,
+                    eventId: event.eventId,
                     currentVersion: currentVersion,
-                    latestVersion: updatedEvent.version
+                    latestVersion: event.version
                 )
             }
         } catch let error as APIError {
@@ -87,8 +80,6 @@ final class OutdatedCommand {
         } catch {
             throw OutdatedCommandError.eventCheckFailed(error.localizedDescription)
         }
-        
-        return nil
     }
     
     private func displayResults(_ outdatedEvents: [OutdatedEvent]) {
@@ -97,7 +88,7 @@ final class OutdatedCommand {
             return
         }
         
-        ConsoleLogger.message("The following event updates are available:")
+        ConsoleLogger.message("\nThe following event updates are available:")
         for event in outdatedEvents {
             ConsoleLogger.message(event.displayString)
         }
