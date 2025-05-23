@@ -22,12 +22,15 @@ public struct EventPanel: AsyncParsableCommand {
 
     @Option(name: .long, help: "Path to EventPanel.yaml configuration file")
     public var config: String?
+    
+    @Flag(name: .long, help: "Enable verbose output")
+    public var verbose = false
 
     public init() {}
 
     public func validate() throws {
-        // Add your pre-execution checks here
-        // For example, checking if config file exists when specified
+        ConsoleLogger.isVerbose = verbose
+        
         if let configPath = config {
             let fileManager = FileManager.default
             if !fileManager.fileExists(atPath: configPath) {
@@ -39,7 +42,6 @@ public struct EventPanel: AsyncParsableCommand {
     }
 
     public func run() throws {
-        // This is the default command that runs when no subcommand is specified
-        print(EventPanel.helpMessage())
+        ConsoleLogger.message(EventPanel.helpMessage())
     }
 }

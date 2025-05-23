@@ -1,11 +1,6 @@
 import Foundation
 import Get
 
-/// Represents the parsed arguments for the add command
-private struct AddCommandArguments {
-    let eventId: String
-}
-
 enum AddCommandError: LocalizedError {
     case missingArguments
     case eventAlreadyExists(event: String)

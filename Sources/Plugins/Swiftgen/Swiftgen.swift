@@ -11,7 +11,8 @@ import Yams
 actor Swiftgen: CodeGeneratorPlugin {
     private let config: SwiftgenPlugin
     private let fileManager: FileManager
-    
+    private let schemeFileName = "swiftgen_scheme.json"
+
     init(config: SwiftgenPlugin, fileManager: FileManager = .default) {
         self.config = config
         self.fileManager = fileManager
@@ -46,9 +47,9 @@ actor Swiftgen: CodeGeneratorPlugin {
         let encoder = YAMLEncoder()
         let yaml = SwiftgenYaml(
             json: SwiftgenYaml.JSONConfig(
-                inputs: "swiftgen_scheme.json",
+                inputs: schemeFileName,
                 outputs: SwiftgenYaml.OutputConfig(
-                    templatePath: config.templatePath.replacingOccurrences(of: "\(config.inputDir)/", with: ""),
+                    templatePath: config.getRelativePath(from: config.templatePath),
                     output: config.generatedEventsPath,
                     params: SwiftgenYaml.OutputParams(
                         enumName: config.namespace,
@@ -89,8 +90,7 @@ actor Swiftgen: CodeGeneratorPlugin {
                 attributes: nil
             )
 
-            // Save scheme.json
-            let schemeURL = eventPanelDir.appendingPathComponent("swiftgen_scheme.json")
+            let schemeURL = eventPanelDir.appendingPathComponent(schemeFileName)
             try data.write(to: schemeURL)
 
         } catch {

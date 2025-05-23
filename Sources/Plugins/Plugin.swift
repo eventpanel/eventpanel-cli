@@ -13,7 +13,7 @@ enum Plugin: Codable {
     var generator: CodeGeneratorPlugin {
         switch self {
         case .swiftgen(let plugin):
-            return plugin.generator
+            return Swiftgen(config: plugin)
         }
     }
 
