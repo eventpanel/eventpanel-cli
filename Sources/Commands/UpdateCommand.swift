@@ -5,7 +5,8 @@ enum UpdateCommandError: LocalizedError {
     case eventCheckFailed(String)
     case noEventsToUpdate
     case eventNotFound(String)
-    
+    case eventsAreNotAdded([String])
+
     var errorDescription: String? {
         switch self {
         case .eventCheckFailed(let message):
@@ -14,6 +15,8 @@ enum UpdateCommandError: LocalizedError {
             return "No events to update"
         case .eventNotFound(let eventId):
             return "Unable to find a specification for '\(eventId)'"
+        case .eventsAreNotAdded(let eventIds):
+            return "The following events are not added to EventPanel.yaml: \(eventIds.joined(separator: ", "))"
         }
     }
 }
@@ -27,16 +30,18 @@ final class UpdateCommand {
         self.eventPanelYaml = eventPanelYaml
     }
     
-    func execute(eventId: String?) async throws {
-        if let eventId {
+    func execute(eventIds: [String]) async throws {
+        if eventIds.count == 1, let eventId = eventIds.first {
             try await updateSingleEvent(eventId: eventId)
-        } else {
+        } else if eventIds.isEmpty {
             try await updateAllEvents()
+        } else {
+            try await updateEvents(eventIds: Set(eventIds))
         }
     }
     
     // MARK: - Private Methods
-    
+
     private func updateSingleEvent(eventId: String) async throws {
         ConsoleLogger.message("Checking for updates to event '\(eventId)'...")
 
@@ -76,18 +81,26 @@ final class UpdateCommand {
     }
     
     private func updateAllEvents() async throws {
+        try await updateEvents(eventIds: nil)
+    }
+
+    private func updateEvents(eventIds: Set<String>?) async throws {
         ConsoleLogger.message("Checking for event updates...")
-        
+
         // Read YAML file
         let events = await eventPanelYaml.getEvents()
         let eventVersions = events.reduce(into: [String: Int]()) { result, event in
             result[event.name] = event.version
         }
 
+        if let eventIds {
+            try validateEventsAreExist(events: events, updateEventIds: eventIds)
+        }
+
         guard !events.isEmpty else {
             throw UpdateCommandError.noEventsToUpdate
         }
-        
+
         do {
             let requestBody = EventLatestRequest(events: events.map {
                 EventLatestRequestItem(
@@ -106,7 +119,7 @@ final class UpdateCommand {
             )
 
             var updatedEvents = 0
-            for event in response.value.events {
+            for event in response.value.events where eventIds?.contains(event.eventId) ?? true {
                 guard eventVersions[event.eventId] != event.version else { continue }
                 try await eventPanelYaml.updateEvent(
                     eventId: event.eventId,
@@ -123,6 +136,14 @@ final class UpdateCommand {
             throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
         } catch {
             throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
+        }
+    }
+
+    private func validateEventsAreExist(events:  [Event], updateEventIds: Set<String>) throws {
+        let yamlFileEventIds = Set(events.map(\.name))
+        let notExistedEvents = updateEventIds.subtracting(yamlFileEventIds)
+        if !notExistedEvents.isEmpty {
+            throw UpdateCommandError.eventsAreNotAdded(Array(notExistedEvents))
         }
     }
 }

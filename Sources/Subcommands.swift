@@ -24,7 +24,6 @@ struct Add: AsyncParsableCommand, ConfigRelatedCommand {
         
         EXAMPLES:
             eventpanel add DWnQMGoYrvUyaTGpbmvr9
-            eventpanel add DWnQMGoYrvUyaTGpbmvr9, cKMpDL-DtggQFHxOoKLnq
         """
     )
     
@@ -229,29 +228,33 @@ struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
 struct Update: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "update",
-        abstract: "Update outdated events",
+        abstract: "Update events to their latest versions",
         discussion: """
-        Updates events to their latest versions.
+        Updates the events identified by event id, which is a space-delimited list of event IDs.
+        If no events are specified, it updates all outdated events.
         
         USAGE:
-            eventpanel update [<event-name>]
+            eventpanel update [<event-id>...]
         
         ARGUMENTS:
-            <event-name>    (Optional) Specific event to update. If not provided, updates all outdated events.
+            <event-id>...    Space-delimited list of event IDs to update. If not provided, updates all outdated events.
         
         EXAMPLES:
             eventpanel update
-            eventpanel update user-login
+            
+            eventpanel update DWnQMGoYrvUyaTGpbmvr9
+            
+            eventpanel update DWnQMGoYrvUyaTGpbmvr9 cKMpDL-DtggQFHxOoKLnq
         
         This command will:
-        - Check for available updates
-        - Update the specified event or all outdated events
+        - Check for available updates for the specified events
+        - Update the events to their latest versions
         - Update your EventPanel.yaml configuration
         """
     )
 
-    @Argument(help: "Event name to update (optional)")
-    var eventName: String?
+    @Argument(help: "Event ids to update (if not provided, updates all outdated events)")
+    var eventIds: [String] = []
 
     init() {}
 
@@ -260,7 +263,7 @@ struct Update: AsyncParsableCommand, ConfigRelatedCommand {
     }
 
     func run() async throws {
-        try await DependencyContainer.shared.updateCommand.execute(eventId: eventName)
+        try await DependencyContainer.shared.updateCommand.execute(eventIds: eventIds)
     }
 }
 
