@@ -99,12 +99,13 @@ public actor EventPanelYaml {
         return config.plugin
     }
 
-    func addEvent(eventId: String) throws {
+    func addEvent(eventId: String, eventVersion: Int) throws {
         if config.events.contains(where: { $0.name == eventId }) {
             throw EventPanelYamlError.eventAlreadyExists(eventId: eventId)
         }
-        
-        config.events.append(Event(name: eventId))
+
+        let version = eventVersion == 1 ? nil : eventVersion
+        config.events.append(Event(name: eventId, version: version))
         try save()
     }
 

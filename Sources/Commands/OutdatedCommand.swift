@@ -103,18 +103,3 @@ final class OutdatedCommand {
         }
     }
 }
-
-// MARK: - Network Models
-
-private struct EventLatestRequest: Encodable {
-    let events: [EventLatestRequestItem]
-}
-
-private struct EventLatestRequestItem: Codable {
-    let eventId: String
-    let version: Int
-}
-
-private struct EventLatestResponse: Decodable {
-    let events: [EventLatestRequestItem]
-}

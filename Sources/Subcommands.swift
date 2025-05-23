@@ -14,9 +14,12 @@ struct Add: AsyncParsableCommand, ConfigRelatedCommand {
         abstract: "Add event to EventPanel.yaml"
     )
     
-    @Argument(help: "Event name to add")
-    var eventName: String
-    
+    @Argument(help: "Event id")
+    var eventId: String
+
+    @Argument(help: "Event version")
+    var version: Int?
+
     init() {}
 
     func validate() throws {
@@ -24,7 +27,7 @@ struct Add: AsyncParsableCommand, ConfigRelatedCommand {
     }
 
     func run() async throws {
-        try await DependencyContainer.shared.addCommand.execute(eventId: eventName)
+        try await DependencyContainer.shared.addCommand.execute(eventId: eventId, version: version)
     }
 }
 
