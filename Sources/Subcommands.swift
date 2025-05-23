@@ -11,7 +11,21 @@ import ArgumentParser
 struct Add: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "add",
-        abstract: "Add event to EventPanel.yaml"
+        abstract: "Add event to EventPanel.yaml",
+        discussion: """
+        Adds a new event to your EventPanel.yaml configuration file.
+        
+        USAGE:
+            eventpanel add <event-id> [<version>]
+        
+        ARGUMENTS:
+            <event-id>    The unique identifier of the event to add
+            <version>     (Optional) Specific version of the event to add
+        
+        EXAMPLES:
+            eventpanel add DWnQMGoYrvUyaTGpbmvr9
+            eventpanel add DWnQMGoYrvUyaTGpbmvr9, cKMpDL-DtggQFHxOoKLnq
+        """
     )
     
     @Argument(help: "Event id")
@@ -35,7 +49,19 @@ struct Add: AsyncParsableCommand, ConfigRelatedCommand {
 struct Deintegrate: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "deintegrate",
-        abstract: "Deintegrate EventPanel from your project"
+        abstract: "Deintegrate EventPanel from your project",
+        discussion: """
+        Removes EventPanel integration from your project by cleaning up all configuration files
+        and generated code.
+        
+        USAGE:
+            eventpanel deintegrate
+        
+        This command will:
+        - Remove EventPanel.yaml configuration
+        - Clean up generated event files
+        - Remove any EventPanel-related build settings
+        """
     )
 
     init() {}
@@ -49,7 +75,21 @@ struct Deintegrate: AsyncParsableCommand, ConfigRelatedCommand {
 struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "generate",
-        abstract: "Generate events according to versions from a EventPanel.yaml"
+        abstract: "Generate events according to versions from a EventPanel.yaml",
+        discussion: """
+        Generates event code based on the versions specified in your EventPanel.yaml file.
+        
+        USAGE:
+            eventpanel generate [--scheme-update]
+        
+        OPTIONS:
+            --scheme-update    Updates the scheme before generating events
+        
+        This command will:
+        - Read your EventPanel.yaml configuration
+        - Generate event code for all configured events
+        - Update your project's scheme if --scheme-update is specified
+        """
     )
 
     @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
@@ -101,7 +141,20 @@ struct Init: AsyncParsableCommand {
 struct List: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "list",
-        abstract: "List events"
+        abstract: "List events",
+        discussion: """
+        Lists all events configured in your EventPanel.yaml file.
+        
+        USAGE:
+            eventpanel list [--page-size <number>]
+        
+        OPTIONS:
+            --page-size <number>    Number of items to display per page (default: 20)
+        
+        The list shows:
+        - Event ID
+        - Current version
+        """
     )
 
     @Option(name: .long, help: "Number of items per page")
@@ -122,7 +175,15 @@ struct List: AsyncParsableCommand, ConfigRelatedCommand {
 struct Outdated: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "outdated",
-        abstract: "Show outdated events"
+        abstract: "Show outdated events",
+        discussion: """
+        Checks for outdated events by comparing local versions with the latest available versions.
+        
+        USAGE:
+            eventpanel outdated
+        
+        Display a list of events that have updates available
+        """
     )
 
     init() {}
@@ -140,7 +201,17 @@ struct Outdated: AsyncParsableCommand, ConfigRelatedCommand {
 struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "pull",
-        abstract: "Fetch and store the latest scheme from the server"
+        abstract: "Fetch and store the latest scheme from the server",
+        discussion: """
+        Fetches the latest event scheme from the server and updates your local configuration.
+        
+        USAGE:
+            eventpanel pull
+        
+        This command will:
+        - Connect to the EventPanel server
+        - Download the latest event scheme
+        """
     )
 
     init() {}
@@ -158,7 +229,25 @@ struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
 struct Update: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "update",
-        abstract: "Update outdated events"
+        abstract: "Update outdated events",
+        discussion: """
+        Updates events to their latest versions.
+        
+        USAGE:
+            eventpanel update [<event-name>]
+        
+        ARGUMENTS:
+            <event-name>    (Optional) Specific event to update. If not provided, updates all outdated events.
+        
+        EXAMPLES:
+            eventpanel update
+            eventpanel update user-login
+        
+        This command will:
+        - Check for available updates
+        - Update the specified event or all outdated events
+        - Update your EventPanel.yaml configuration
+        """
     )
 
     @Argument(help: "Event name to update (optional)")
@@ -180,10 +269,18 @@ struct Auth: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "auth",
         abstract: "Manage API authentication",
-        subcommands: [
-            SetToken.self,
-            RemoveToken.self
-        ]
+        discussion: """
+        Manages authentication for the EventPanel API.
+        
+        USAGE:
+            eventpanel auth <subcommand>
+        
+        SUBCOMMANDS:
+            set-token     Set your API token
+            remove-token  Remove stored API token
+        
+        Authentication is required for commands that interact with the EventPanel server.
+        """
     )
 }
 
@@ -191,7 +288,18 @@ struct Auth: AsyncParsableCommand {
 struct SetToken: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "set-token",
-        abstract: "Set API token"
+        abstract: "Set API token",
+        discussion: """
+        Stores your EventPanel API token for authentication.
+        
+        USAGE:
+            eventpanel auth set-token <token>
+        
+        ARGUMENTS:
+            <token>    Your EventPanel API token
+        
+        The token will be securely stored and used for all authenticated requests.
+        """
     )
     
     @Argument(help: "API token to store")
@@ -208,7 +316,15 @@ struct SetToken: AsyncParsableCommand {
 struct RemoveToken: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "remove-token",
-        abstract: "Remove stored API token"
+        abstract: "Remove stored API token",
+        discussion: """
+        Removes your stored EventPanel API token.
+        
+        USAGE:
+            eventpanel auth remove-token
+        
+        This will remove the stored API token and require re-authentication for future commands.
+        """
     )
     
     init() {}
