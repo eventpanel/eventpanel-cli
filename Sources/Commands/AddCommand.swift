@@ -2,7 +2,6 @@ import Foundation
 import Get
 
 enum AddCommandError: LocalizedError {
-    case missingArguments
     case eventAlreadyExists(event: String)
     case eventValidationFailed(String)
     case eventNotFound(eventId: String)
@@ -10,11 +9,6 @@ enum AddCommandError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .missingArguments:
-            return """
-                Usage: eventpanel add <event_name>
-                Example: eventpanel add 'Button Tapped'
-                """
         case .eventAlreadyExists(let event):
             return "Event '\(event)' already exists"
         case .eventValidationFailed(let message):

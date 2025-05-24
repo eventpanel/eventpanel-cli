@@ -1,0 +1,14 @@
+import ArgumentParser
+
+struct Help: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "help",
+        abstract: "Show this help message"
+    )
+
+    init() {}
+
+    func run() async throws {
+        ConsoleLogger.message(EventPanel.helpMessage())
+    }
+} 
