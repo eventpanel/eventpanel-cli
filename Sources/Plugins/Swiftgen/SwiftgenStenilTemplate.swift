@@ -1,10 +1,3 @@
-//
-//  StenillTemplate.swift
-//  eventpanel
-//
-//  Created by Sukhanov Evgenii on 08.05.2025.
-//
-
 var swiftgenStenillTemplate: String {
     """
     // swiftlint:disable all

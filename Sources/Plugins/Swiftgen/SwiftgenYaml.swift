@@ -1,10 +1,3 @@
-//
-//  SwiftgenYaml.swift
-//  eventpanel
-//
-//  Created by Sukhanov Evgenii on 08.05.2025.
-//
-
 struct SwiftgenYaml: Codable {
     struct JSONConfig: Codable {
         let inputs: String

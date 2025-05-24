@@ -1,10 +1,3 @@
-//
-//  AnyCodable.swift
-//  eventpanel
-//
-//  Created by Sukhanov Evgenii on 08.05.2025.
-//
-
 import Foundation
 
 // We put unchecked  @unchecked Sendable without any lock mechanism

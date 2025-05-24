@@ -1,10 +1,3 @@
-//
-//  WorkspaceScheme 2.swift
-//  eventpanel
-//
-//  Created by Sukhanov Evgenii on 11.05.2025.
-//
-
 import Foundation
 
 struct SwiftgenWorkspaceScheme: Codable {

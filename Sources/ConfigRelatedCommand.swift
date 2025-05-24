@@ -1,10 +1,3 @@
-//
-//  ConfigRelatedCommand.swift
-//  eventpanel
-//
-//  Created by Sukhanov Evgenii on 08.05.2025.
-//
-
 import Foundation
 
 protocol ConfigRelatedCommand {
