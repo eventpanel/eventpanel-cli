@@ -25,11 +25,11 @@ private struct OutdatedEvent {
 }
 
 final class OutdatedCommand {
-    private let networkClient: NetworkClient
+    private let apiService: EventPanelAPIService
     private let eventPanelYaml: EventPanelYaml
 
-    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml) {
-        self.networkClient = networkClient
+    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml) {
+        self.apiService = apiService
         self.eventPanelYaml = eventPanelYaml
     }
     
@@ -46,25 +46,21 @@ final class OutdatedCommand {
     
     private func checkEventsForUpdates(_ events: [Event]) async throws -> [OutdatedEvent] {
         do {
-            let requestBody = EventLatestRequest(events: events.map { event in
-                EventLatestRequestItem(
+            let requestEvents = events.map { event in
+                LocalEventDefenitionData(
                     eventId: event.id,
                     version: event.version ?? 1
                 )
-            })
+            }
             let eventVersions = events.reduce(into: [String: Int]()) { result, event in
                 result[event.id] = event.version
             }
 
-            let response: Response<EventLatestResponse> = try await networkClient.send(
-                Request(
-                    path: "api/external/events/latest/list",
-                    method: .post,
-                    body: requestBody
-                )
+            let response = try await apiService.getLatestEvents(
+                events: EventLatestRequest(events: requestEvents)
             )
 
-            return response.value.events.compactMap { event in
+            return response.events.compactMap { event in
                 guard
                     let currentVersion = eventVersions[event.eventId],
                     currentVersion < event.version

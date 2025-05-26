@@ -22,11 +22,11 @@ enum UpdateCommandError: LocalizedError {
 }
 
 final class UpdateCommand {
-    private let networkClient: NetworkClient
+    private let apiService: EventPanelAPIService
     private let eventPanelYaml: EventPanelYaml
 
-    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml) {
-        self.networkClient = networkClient
+    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml) {
+        self.apiService = apiService
         self.eventPanelYaml = eventPanelYaml
     }
     
@@ -55,14 +55,8 @@ final class UpdateCommand {
         let currentVersion = event.version ?? 1
         
         do {
-            let response: Response<EventLatestRequestItem> = try await networkClient.send(
-                Request(
-                    path: "api/external/events/latest/\(eventId)",
-                    method: .get
-                )
-            )
+            let updatedEvent = try await apiService.getLatestEvent(eventId: eventId)
 
-            let updatedEvent = response.value
             if updatedEvent.version != currentVersion {
                 // Update event version
                 try await eventPanelYaml.updateEvent(
@@ -102,24 +96,22 @@ final class UpdateCommand {
         }
 
         do {
-            let requestBody = EventLatestRequest(events: events.map {
-                EventLatestRequestItem(
+            let requestEvents = events.map {
+                LocalEventDefenitionData(
                     eventId: $0.id,
                     version: $0.version ?? 1
                 )
-            })
+            }
 
             // Check if event has a new version
-            let response: Response<EventLatestResponse> = try await networkClient.send(
-                Request(
-                    path: "api/external/events/latest/list",
-                    method: .post,
-                    body: requestBody
+            let response = try await apiService.getLatestEvents(
+                events: EventLatestRequest(
+                    events: requestEvents
                 )
             )
 
             var updatedEvents = 0
-            for event in response.value.events where eventIds?.contains(event.eventId) ?? true {
+            for event in response.events where eventIds?.contains(event.eventId) ?? true {
                 guard eventVersions[event.eventId] != event.version else { continue }
                 try await eventPanelYaml.updateEvent(
                     eventId: event.eventId,

@@ -22,12 +22,12 @@ enum PullCommandError: LocalizedError {
 }
 
 final class PullCommand {
-    private let networkClient: NetworkClient
+    private let apiService: EventPanelAPIService
     private let eventPanelYaml: EventPanelYaml
     private let fileManager: FileManager
     
-    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml, fileManager: FileManager = .default) {
-        self.networkClient = networkClient
+    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml, fileManager: FileManager = .default) {
+        self.apiService = apiService
         self.eventPanelYaml = eventPanelYaml
         self.fileManager = fileManager
     }
@@ -54,18 +54,10 @@ final class PullCommand {
     
     private func fetchScheme(events: [Event]) async throws -> WorkspaceScheme {
         do {
-            let response: Response<WorkspaceScheme> = try await networkClient.send(
-                Request(
-                    path: "api/external/events/generate/list",
-                    method: .post,
-                    body: SchemeRequest(
-                        events: events.map {
-                            EventDefenition(eventId: $0.id, version: $0.version ?? 1)
-                        }
-                    )
-                )
-            )
-            return response.value
+            let eventDefinitions = events.map {
+                LocalEventDefenitionData(eventId: $0.id, version: $0.version ?? 1)
+            }
+            return try await apiService.generateScheme(events: eventDefinitions)
         } catch let error as APIError {
             throw PullCommandError.fetchFailed(error.localizedDescription)
         } catch {
@@ -108,13 +100,4 @@ final class PullCommand {
         return URL(fileURLWithPath: (currentPath as NSString)
             .appendingPathComponent(".eventpanel"))
     }
-} 
-
-private struct SchemeRequest: Encodable {
-    let events: [EventDefenition]
-}
-
-private struct EventDefenition: Codable {
-    let eventId: String
-    let version: Int
 }

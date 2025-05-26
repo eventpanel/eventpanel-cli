@@ -21,6 +21,10 @@ final class DependencyContainer: @unchecked Sendable {
         return networkClient
     }()
     
+    private lazy var apiService: EventPanelAPIService = {
+        return EventPanelAPIService(networkClient: networkClient)
+    }()
+    
     private(set) lazy var fileManager: FileManager = {
         return .default
     }()
@@ -31,7 +35,7 @@ final class DependencyContainer: @unchecked Sendable {
 
     // MARK: - Commands
     private(set) lazy var addCommand: AddCommand = {
-        return AddCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml)
+        return AddCommand(apiService: apiService, eventPanelYaml: eventPanelYaml)
     }()
     
     private(set) lazy var deintegrateCommand: DeintegrateCommand = {
@@ -51,15 +55,15 @@ final class DependencyContainer: @unchecked Sendable {
     }()
     
     private(set) lazy var outdatedCommand: OutdatedCommand = {
-        return OutdatedCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml)
+        return OutdatedCommand(apiService: apiService, eventPanelYaml: eventPanelYaml)
     }()
     
     private(set) lazy var pullCommand: PullCommand = {
-        return PullCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml, fileManager: fileManager)
+        return PullCommand(apiService: apiService, eventPanelYaml: eventPanelYaml, fileManager: fileManager)
     }()
     
     private(set) lazy var updateCommand: UpdateCommand = {
-        return UpdateCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml)
+        return UpdateCommand(apiService: apiService, eventPanelYaml: eventPanelYaml)
     }()
     
     // MARK: - Private Initializer

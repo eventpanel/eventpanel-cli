@@ -22,11 +22,11 @@ enum AddCommandError: LocalizedError {
 }
 
 final class AddCommand {
-    private let networkClient: NetworkClient
+    private let apiService: EventPanelAPIService
     private let eventPanelYaml: EventPanelYaml
 
-    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml) {
-        self.networkClient = networkClient
+    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml) {
+        self.apiService = apiService
         self.eventPanelYaml = eventPanelYaml
     }
     
@@ -47,20 +47,14 @@ final class AddCommand {
             throw AddCommandError.eventVersionIsNotValid(version: version)
         }
         do {
-            // Make a GET request to validate the event name
-            let response: Response<EventLatestRequestItem> = try await networkClient.send(
-                Request(
-                    path: "api/external/events/latest/\(eventId)",
-                    method: .get
-                )
-            )
+            let response = try await apiService.getLatestEvent(eventId: eventId)
 
-            if let version, version > response.value.version {
+            if let version, version > response.version {
                 throw AddCommandError.eventVersionIsNotValid(version: version)
             }
 
             ConsoleLogger.debug("Event '\(eventId)' validation successful")
-            return response.value.version
+            return response.version
         } catch let error as APIError {
             if case .unacceptableStatusCode(404) = error {
                 throw AddCommandError.eventNotFound(eventId: eventId)
