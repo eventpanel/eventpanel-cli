@@ -100,12 +100,12 @@ public actor EventPanelYaml {
     }
 
     func addEvent(eventId: String, eventVersion: Int) throws {
-        if config.events.contains(where: { $0.name == eventId }) {
+        if config.events.contains(where: { $0.id == eventId }) {
             throw EventPanelYamlError.eventAlreadyExists(eventId: eventId)
         }
 
         let version = eventVersion == 1 ? nil : eventVersion
-        config.events.append(Event(name: eventId, version: version))
+        config.events.append(Event(id: eventId, version: version))
         try save()
     }
 
@@ -114,7 +114,7 @@ public actor EventPanelYaml {
     }
     
     func updateEvent(eventId: String, version: Int) throws {
-        guard let eventIndex = config.events.firstIndex(where: { $0.name == eventId }) else {
+        guard let eventIndex = config.events.firstIndex(where: { $0.id == eventId }) else {
             throw EventPanelYamlError.eventNotFound(eventId: eventId)
         }
         

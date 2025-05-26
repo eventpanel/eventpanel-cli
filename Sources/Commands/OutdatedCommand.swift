@@ -48,12 +48,12 @@ final class OutdatedCommand {
         do {
             let requestBody = EventLatestRequest(events: events.map { event in
                 EventLatestRequestItem(
-                    eventId: event.name,
+                    eventId: event.id,
                     version: event.version ?? 1
                 )
             })
             let eventVersions = events.reduce(into: [String: Int]()) { result, event in
-                result[event.name] = event.version
+                result[event.id] = event.version
             }
 
             let response: Response<EventLatestResponse> = try await networkClient.send(

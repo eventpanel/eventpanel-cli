@@ -48,7 +48,7 @@ final class UpdateCommand {
         let events = await eventPanelYaml.getEvents()
         
         // Verify event exists in configuration
-        guard let event = events.first(where: { $0.name == eventId }) else {
+        guard let event = events.first(where: { $0.id == eventId }) else {
             throw UpdateCommandError.eventNotFound(eventId)
         }
         
@@ -90,7 +90,7 @@ final class UpdateCommand {
         // Read YAML file
         let events = await eventPanelYaml.getEvents()
         let eventVersions = events.reduce(into: [String: Int]()) { result, event in
-            result[event.name] = event.version
+            result[event.id] = event.version
         }
 
         if let eventIds {
@@ -104,7 +104,7 @@ final class UpdateCommand {
         do {
             let requestBody = EventLatestRequest(events: events.map {
                 EventLatestRequestItem(
-                    eventId: $0.name,
+                    eventId: $0.id,
                     version: $0.version ?? 1
                 )
             })
@@ -140,7 +140,7 @@ final class UpdateCommand {
     }
 
     private func validateEventsAreExist(events:  [Event], updateEventIds: Set<String>) throws {
-        let yamlFileEventIds = Set(events.map(\.name))
+        let yamlFileEventIds = Set(events.map(\.id))
         let notExistedEvents = updateEventIds.subtracting(yamlFileEventIds)
         if !notExistedEvents.isEmpty {
             throw UpdateCommandError.eventsAreNotAdded(Array(notExistedEvents))

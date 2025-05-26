@@ -49,7 +49,7 @@ final class ListCommand {
             
             // Print events
             for event in pageEvents {
-                let eventStr = event.name.padding(toLength: 40, withPad: " ", startingAt: 0)
+                let eventStr = event.id.padding(toLength: 40, withPad: " ", startingAt: 0)
                 let versionStr = String(event.version ?? 1)
                 ConsoleLogger.message("\(eventStr)\(versionStr)")
             }

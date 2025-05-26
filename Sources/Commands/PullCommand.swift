@@ -60,7 +60,7 @@ final class PullCommand {
                     method: .post,
                     body: SchemeRequest(
                         events: events.map {
-                            EventDefenition(eventId: $0.name, version: $0.version ?? 1)
+                            EventDefenition(eventId: $0.id, version: $0.version ?? 1)
                         }
                     )
                 )

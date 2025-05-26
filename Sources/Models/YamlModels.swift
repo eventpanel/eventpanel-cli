@@ -20,11 +20,11 @@ struct EventPanelConfig: Codable {
 }
 
 struct Event: Codable {
-    var name: String
+    var id: String
     var version: Int?
 
-    init(name: String, version: Int? = nil) {
-        self.name = name
+    init(id: String, version: Int? = nil) {
+        self.id = id
         self.version = version
     }
 }
