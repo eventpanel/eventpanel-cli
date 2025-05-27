@@ -27,6 +27,9 @@ let package = Package(
                 .product(name: "Get", package: "Get"),
                 .product(name: "Yams", package: "Yams"),
                 .product(name: "StencilSwiftKit", package: "StencilSwiftKit")
+            ],
+            resources: [
+                .process("Plugins/Swiftgen/swift5.stencil")
             ]
         ),
     ]

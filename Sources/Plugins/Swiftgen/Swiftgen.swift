@@ -34,7 +34,7 @@ actor Swiftgen: CodeGeneratorPlugin {
     }
 
     private func render(swiftgenScheme: SwiftgenWorkspaceScheme) throws -> String {
-        let stencillTemplate = SwiftgenStenillTemplate.default
+        let stencillTemplate = try SwiftgenStenillTemplate.default()
         let environment = stencilSwiftEnvironment(
             templates: [stencillTemplate.name: stencillTemplate.template],
             templateClass: StencilSwiftTemplate.self,
