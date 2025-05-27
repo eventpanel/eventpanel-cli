@@ -33,5 +33,6 @@ struct WorkspaceScheme: Codable {
     struct Category: Codable {
         let id: String
         let name: String
+        let description: String?
     }
 }

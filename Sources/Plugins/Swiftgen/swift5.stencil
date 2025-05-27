@@ -16,8 +16,11 @@ import Foundation
 {% endmacro %}
 {% macro categoriesBlock document %}
   {% for category in document.data.categories %}
+  {% if param.documentation %}
+  {% call categoryDocumentationBlock category %}
+  {% endif %}
   {{accessModifier}} enum {{category.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
-    {% call eventsBlock document category.id %}
+    {% call categoryBlock document category.id %}
   }
   {% endfor %}
 
@@ -38,45 +41,32 @@ import Foundation
   {% endif %}
   {% endfor %}
 {% endmacro %}
-{% macro eventDocumentationBlock event indent %}
-  {% filter indent:indent %}
+{% macro categoryDocumentationBlock category %}
+  {% if category.description.count > 0 %}
+  /// {{category.description}}
+  {% endif %}
+{%- endmacro %}
+{% macro eventDocumentationBlock event %}
   {% if event.description.count != 0 %}
   /// {{event.description}}
   {% endif %}
-  {% for property in event.properties where not property.value %}
+  {% for property in event.properties %}
   {% if property.description.count > 0 %}
   /// - Parameters:
   {% break %}
   {% endif %}
   {% endfor %}
-  {% for property in event.properties where not property.value %}
+  {% for property in event.properties %}
   {% if property.description.count > 0 %}
   ///     - {{property.name}}: {{property.description}}
   {% endif %}
   {% endfor %}
-  {% endfilter %}
-{%- endmacro %}
-{% macro functionBlock functionName arguments returnValue functionBody indent %}
-  {% filter indent:indent %}
-  {{accessModifier}} static func {{functionName}}({{arguments}}) -> {{returnValue}} {
-    {{functionBody}}      
-  }
-  {% endfilter %}
 {%- endmacro %}
 {% macro propertyType property %}
   {%- if property.type == "enum" -%}
     {{property.name|swiftIdentifier:"pretty"}}
   {%- else -%}
     {{property.data_type|swiftIdentifier:"pretty"}}
-  {%- endif -%}
-{% endmacro %}
-{% macro propertyValue property %}
-  {%- if property.value -%}
-    "{{property.value}}"
-  {%- elif property.type == "enum" -%}
-    {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}.rawValue
-  {%- else -%}
-    {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}
   {%- endif -%}
 {% endmacro %}
 {% macro typeBlock property -%}
@@ -86,65 +76,61 @@ import Foundation
   {% call propertyType property %}?
   {%- endif -%}
 {%- endmacro -%}
-{% macro enumBlock property indent %}
-  {% filter indent:indent %}
-  {% if property.type == "enum" and property.cases.count > 0 %}
-  {{accessModifier}} enum {{property.name|swiftIdentifier:"pretty"}}: {{property.data_type}} {
-    {% for case in property.cases %}
-    case {{case|swiftIdentifier:"pretty"|lowerFirstWord}} = "{{case}}"
-    {% endfor %}
-  }
-  {% endif %}
-  {% endfilter %}
-{% endmacro %}
-{% macro eventsBlock document categoryId %}
+{% macro categoryBlock document categoryId %}
   {% for event in document.data.events %}
     {% for eventCategoryId in event.category_ids %}
-    {% if eventCategoryId == categoryId %}
-    {% call eventBlock event %}
+    {% if eventCategoryId == categoryId +%}
+    {% filter indent:2," ",true %}{% call eventBlock event %}{% endfilter %}
     {% break %}
     {% endif%}
     {% endfor %}
   {% endfor %}
 {% endmacro %}
 {% macro eventBlock event %}
-    {%- set functionName %}{{event.name|swiftIdentifier:"pretty"|lowerFirstWord}}{% endset -%}
-    {%- set arguments %}{% call eventArgumentsBlock event.properties %}{% endset -%}
-    {%- set functionBody %}{% call eventInstanceBlock event 2 %}{% endset %}
-    {% if param.documentation %}
-    {%- call eventDocumentationBlock event 2 -%}
-    {% endif%}
-    {% for property in event.properties where property.type == "enum" %}
-      {% call enumBlock property 2 %}
-    {% endfor %}
-    {% call functionBlock functionName arguments eventClassName functionBody 2 %}
+  {% set functionName %}{{event.name|swiftIdentifier:"pretty"|lowerFirstWord}}{% endset %}
+  {% set arguments %}{% call eventArgumentsBlock event.properties %}{% endset %}
+  {% set functionBody %}{% call eventInstanceBlock event %}{% endset %}
+  {% if param.documentation %}
+  {%- call eventDocumentationBlock event %}
+  {% endif %}
+  {% if event.properties.count > 0 %}
+  {{accessModifier}} static func {{functionName}}(
+  {%- filter indent:2," ",true %}{{arguments}}{% endfilter %}
+  ) -> {{eventClassName}} {
+  {% else %}
+  {{accessModifier}} static func {{functionName}}() -> {{eventClassName}} {
+  {% endif %}
+  {% filter indent:2," ",true %}{{functionBody}}{% endfilter %}
+  }
 {% endmacro %}
-{% macro eventInstanceBlock event indent %}
-  {% filter indent:indent %}
+{% macro eventInstanceBlock event %}
   {{eventClassName}}(
-    name: "{{event.name}}",
-    parameters: {% call eventPropertiesBlock event.properties 2 %}
-  )
+  {% filter indent:2," ",true %}
+  name: "{{event.name}}",
+  parameters: {%+ call eventPropertiesBlock event.properties +%}
   {% endfilter %}
+  )
 {% endmacro %}
 {% macro eventArgumentsBlock properties %}
-  {%- for property in properties where not property.value -%}
-    {%- set type %}{% call typeBlock property %}{% endset %}
-    {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}: {{type}}{{ "," if not forloop.last }}
-  {% endfor -%}
+  {% if properties.count > 0 +%}
+  {% for property in properties %}
+  {% set type %}{% call typeBlock property %}{% endset %}
+  {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}: {{type}}{{ "," if not forloop.last }}
+  {% endfor %}
+  {% endif %}
 {% endmacro %}
-{% macro eventPropertiesBlock properties indent %}
-  {%- filter indent:indent -%}
+{% macro eventPropertiesBlock properties %}
   {%- if not properties -%}
   [:]
   {%- else -%}
-  [ 
+  [
+  {% filter indent:2," ",true %}
   {% for property in properties %}
-    "{{property.name}}": {% call propertyValue property %}{{ "," if not forloop.last }}
+  "{{property.name}}": {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}{{ "," if not forloop.last }}
   {% endfor %}
+  {% endfilter %}
   ]{% for property in properties %}{% if not property.required and not property.value %}.byExcludingNilValues(){% break %}{% endif %}{% endfor %}
   {% endif %}
-  {% endfilter %}
 {% endmacro %}
 
 // swiftlint:disable identifier_name line_length number_separator type_body_length

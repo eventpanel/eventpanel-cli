@@ -47,7 +47,7 @@ final class SwiftgenGeneratorTests: XCTestCase {
                 )
             ],
             categories: [
-                .init(id: "user", name: "User")
+                .init(id: "user", name: "User", description: nil)
             ]
         )
         
@@ -109,7 +109,7 @@ final class SwiftgenGeneratorTests: XCTestCase {
             ],
             customTypes: [],
             categories: [
-                .init(id: "onboarding", name: "Onboarding")
+                .init(id: "onboarding", name: "Onboarding", description: nil)
             ]
         )
 
@@ -179,7 +179,7 @@ final class SwiftgenGeneratorTests: XCTestCase {
             ],
             customTypes: [],
             categories: [
-                .init(id: "ecommerce", name: "E-commerce")
+                .init(id: "ecommerce", name: "E-commerce", description: nil)
             ]
         )
         
@@ -238,7 +238,7 @@ final class SwiftgenGeneratorTests: XCTestCase {
                 )
             ],
             categories: [
-                .init(id: "payment", name: "Payment")
+                .init(id: "payment", name: "Payment", description: nil)
             ]
         )
         
@@ -391,6 +391,48 @@ final class SwiftgenGeneratorTests: XCTestCase {
             ],
             customTypes: [],
             categories: []
+        )
+
+        // When
+        let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
+
+        // Then
+        assertSnapshot(of: output, as: .txt)
+    }
+
+    func testCategoryDescription() throws {
+        // Given
+        let config = SwiftgenPlugin.default
+        let generator = SwiftgenGenerator(config: config)
+
+        let scheme = SwiftgenWorkspaceScheme(
+            workspace: "test-workspace",
+            events: [
+                .init(
+                    id: "productView",
+                    name: "Product View",
+                    description: "User viewed a product",
+                    categoryIds: ["ecommerce"],
+                    properties: [
+                        .init(
+                            id: "product_id",
+                            name: "product_id",
+                            description: "Unique identifier of the product",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        )
+                    ]
+                )
+            ],
+            customTypes: [],
+            categories: [
+                .init(
+                    id: "ecommerce",
+                    name: "E-commerce",
+                    description: "Screen represents a lot of products"
+                )
+            ]
         )
 
         // When

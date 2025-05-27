@@ -22,9 +22,7 @@ struct SwiftgenGenerator {
     
     func generate(scheme: SwiftgenWorkspaceScheme, stencilTemplate: SwiftgenStenillTemplate) throws -> String {
         let environment = stencilSwiftEnvironment(
-            templates: [stencilTemplate.name: stencilTemplate.template],
-            templateClass: StencilSwiftTemplate.self,
-            trimBehaviour: .nothing
+            templates: [stencilTemplate.name: stencilTemplate.template]
         )
         let template = TemplateContext(files: [File(document: Document(data: scheme))])
         let parameters = try codableToDictionary(

@@ -95,6 +95,7 @@ struct SwiftgenWorkspaceScheme: Codable {
     struct Category: Codable {
         let id: String
         let name: String
+        let description: String?
     }
 }
 
@@ -111,7 +112,7 @@ extension SwiftgenWorkspaceScheme {
 
 extension SwiftgenWorkspaceScheme.Category {
     init(from category: WorkspaceScheme.Category) {
-        self.init(id: category.id, name: category.name)
+        self.init(id: category.id, name: category.name, description: category.description)
     }
 }
 
