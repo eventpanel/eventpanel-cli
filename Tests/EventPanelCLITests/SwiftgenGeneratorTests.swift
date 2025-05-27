@@ -3,6 +3,8 @@ import SnapshotTesting
 @testable import eventpanel
 
 final class SwiftgenGeneratorTests: XCTestCase {
+    let stencilTemplate = try! SwiftgenStenillTemplate.default()
+
     func testGenerateAnalyticsEvents() throws {
         // Given
         let config = SwiftgenPlugin.default
@@ -45,18 +47,15 @@ final class SwiftgenGeneratorTests: XCTestCase {
                 )
             ],
             categories: [
-                .init(id: "user", name: "User"),
-                .init(id: "app", name: "App")
+                .init(id: "user", name: "User")
             ]
         )
-        
-        let stencilTemplate = try SwiftgenStenillTemplate.default()
         
         // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
         
         // Then
-        assertSnapshot(of: output, as: .lines)
+        assertSnapshot(of: output, as: .txt)
     }
     
     func testGenerateAnalyticsEventsWithMultipleEvents() throws {
@@ -113,14 +112,12 @@ final class SwiftgenGeneratorTests: XCTestCase {
                 .init(id: "onboarding", name: "Onboarding")
             ]
         )
-        
-        let stencilTemplate = try SwiftgenStenillTemplate.default()
-        
+
         // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
         
         // Then
-        assertSnapshot(of: output, as: .lines)
+        assertSnapshot(of: output, as: .txt)
     }
     
     func testGenerateAnalyticsEventsWithComplexProperties() throws {
@@ -186,13 +183,11 @@ final class SwiftgenGeneratorTests: XCTestCase {
             ]
         )
         
-        let stencilTemplate = try SwiftgenStenillTemplate.default()
-        
         // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
         
         // Then
-        assertSnapshot(of: output, as: .lines)
+        assertSnapshot(of: output, as: .txt)
     }
     
     func testGenerateAnalyticsEventsWithCustomTypes() throws {
@@ -247,12 +242,161 @@ final class SwiftgenGeneratorTests: XCTestCase {
             ]
         )
         
-        let stencilTemplate = try SwiftgenStenillTemplate.default()
-        
         // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
         
         // Then
-        assertSnapshot(of: output, as: .lines)
+        assertSnapshot(of: output, as: .txt)
     }
-} 
+
+    func testUncategorisedEvents() throws {
+        // Given
+        let config = SwiftgenPlugin.default
+        let generator = SwiftgenGenerator(config: config)
+
+        let scheme = SwiftgenWorkspaceScheme(
+            workspace: "test-workspace",
+            events: [
+                .init(
+                    id: "paymentProcess",
+                    name: "Payment Process",
+                    description: "User processed a payment",
+                    categoryIds: [],
+                    properties: [
+                        .init(
+                            id: "payment_method",
+                            name: "payment_method",
+                            description: "Method of payment",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        ),
+                        .init(
+                            id: "payment_status",
+                            name: "payment_status",
+                            description: "Status of the payment",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        )
+                    ]
+                )
+            ],
+            customTypes: [],
+            categories: []
+        )
+
+        // When
+        let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
+
+        // Then
+        assertSnapshot(of: output, as: .txt)
+    }
+
+    func testEventWithEmptyDescription() throws {
+        // Given
+        let config = SwiftgenPlugin.default
+        let generator = SwiftgenGenerator(config: config)
+
+        let scheme = SwiftgenWorkspaceScheme(
+            workspace: "test-workspace",
+            events: [
+                .init(
+                    id: "paymentProcess",
+                    name: "Payment Process",
+                    description: "",
+                    categoryIds: [],
+                    properties: [
+                        .init(
+                            id: "payment_method",
+                            name: "payment_method",
+                            description: "Method of payment",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        ),
+                        .init(
+                            id: "payment_status",
+                            name: "payment_status",
+                            description: "Status of the payment",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        )
+                    ]
+                )
+            ],
+            customTypes: [],
+            categories: []
+        )
+
+        // When
+        let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
+
+        // Then
+        assertSnapshot(of: output, as: .txt)
+    }
+
+    func testEventWithEmptyProperties() throws {
+        // Given
+        let config = SwiftgenPlugin.default
+        let generator = SwiftgenGenerator(config: config)
+
+        let scheme = SwiftgenWorkspaceScheme(
+            workspace: "test-workspace",
+            events: [
+                .init(
+                    id: "paymentProcess",
+                    name: "Payment Process",
+                    description: "",
+                    categoryIds: [],
+                    properties: []
+                )
+            ],
+            customTypes: [],
+            categories: []
+        )
+
+        // When
+        let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
+
+        // Then
+        assertSnapshot(of: output, as: .txt)
+    }
+
+    func testEventWithPropertyWithEmptyDescription() throws {
+        // Given
+        let config = SwiftgenPlugin.default
+        let generator = SwiftgenGenerator(config: config)
+
+        let scheme = SwiftgenWorkspaceScheme(
+            workspace: "test-workspace",
+            events: [
+                .init(
+                    id: "paymentProcess",
+                    name: "Payment Process",
+                    description: "",
+                    categoryIds: [],
+                    properties: [
+                        .init(
+                            id: "payment_method",
+                            name: "payment_method",
+                            description: "",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        )
+                    ]
+                )
+            ],
+            customTypes: [],
+            categories: []
+        )
+
+        // When
+        let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
+
+        // Then
+        assertSnapshot(of: output, as: .txt)
+    }
+}

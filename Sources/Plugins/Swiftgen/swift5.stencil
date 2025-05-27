@@ -20,6 +20,12 @@ import Foundation
     {% call eventsBlock document category.id %}
   }
   {% endfor %}
+
+  {% for event in document.data.events %}
+  {% if event.category_ids.count == 0 %}
+    {% call eventBlock event %}
+  {% endif %}
+  {% endfor %}
 {% endmacro %}
 {% macro customTypesBlock document %}
   {% for customType in document.data.custom_types %}
@@ -34,7 +40,9 @@ import Foundation
 {% endmacro %}
 {% macro eventDocumentationBlock event indent %}
   {% filter indent:indent %}
+  {% if event.description.count != 0 %}
   /// {{event.description}}
+  {% endif %}
   {% for property in event.properties where not property.value %}
   {% if property.description.count > 0 %}
   /// - Parameters:
@@ -55,18 +63,11 @@ import Foundation
   }
   {% endfilter %}
 {%- endmacro %}
-{% macro mapFoundationType type %}
-  {%- if type == "Array<String>" -%}
-    [String]
-  {%- else -%}
-    {{type}}
-  {%- endif -%}
-{% endmacro %}
 {% macro propertyType property %}
   {%- if property.type == "enum" -%}
     {{property.name|swiftIdentifier:"pretty"}}
   {%- else -%}
-    {% call mapFoundationType property.data_type %}
+    {{property.data_type|swiftIdentifier:"pretty"}}
   {%- endif -%}
 {% endmacro %}
 {% macro propertyValue property %}
@@ -100,6 +101,13 @@ import Foundation
   {% for event in document.data.events %}
     {% for eventCategoryId in event.category_ids %}
     {% if eventCategoryId == categoryId %}
+    {% call eventBlock event %}
+    {% break %}
+    {% endif%}
+    {% endfor %}
+  {% endfor %}
+{% endmacro %}
+{% macro eventBlock event %}
     {%- set functionName %}{{event.name|swiftIdentifier:"pretty"|lowerFirstWord}}{% endset -%}
     {%- set arguments %}{% call eventArgumentsBlock event.properties %}{% endset -%}
     {%- set functionBody %}{% call eventInstanceBlock event 2 %}{% endset %}
@@ -110,10 +118,6 @@ import Foundation
       {% call enumBlock property 2 %}
     {% endfor %}
     {% call functionBlock functionName arguments eventClassName functionBody 2 %}
-    {% break %}
-    {% endif%}
-    {% endfor %}
-  {% endfor %}
 {% endmacro %}
 {% macro eventInstanceBlock event indent %}
   {% filter indent:indent %}
@@ -155,16 +159,14 @@ import Foundation
   {% call fileBlock files.first %}
   {% endif %}
 }
+{% for file in files %}
+{% if file.document.data.custom_types.count > 0 %}
 
 extension {{param.enumName|default:"GeneratedAnalyticsEvents"}} {
-  {% if files.count > 1 or param.forceFileNameEnum %}
-  {% for file in files %}
   {% filter indent:2," ",true %}{% call customTypesBlock file.document %}{% endfilter %}
-  {% endfor %}
-  {% else %}
-  {% call customTypesBlock files.first.document %}
-  {% endif %}
 }
+{% endif %}
+{% endfor %}
 // swiftlint:enable identifier_name line_length number_separator type_body_length
 {% else %}
 // No files found

@@ -8,25 +8,13 @@ import Foundation
 
 // swiftlint:disable identifier_name line_length number_separator type_body_length
 internal enum AnalyticsEvents {
-  internal enum User {
-    /// User logged in to the app
-    /// - Parameters:
-    ///     - login_method: Login method used
-    ///     - is_successful: Whether login was successful
-    internal static func userLogin(
-      loginMethod: String,
-      isSuccessful: Bool
-    ) -> AnalyticsEvent {
+
+    internal static func paymentProcess() -> AnalyticsEvent {
       AnalyticsEvent(
-        name: "User Login",
-        parameters: [ 
-          "login_method": loginMethod,
-          "is_successful": isSuccessful
-        ]
+        name: "Payment Process",
+        parameters: [:]
       )
     }
-  }
-
 }
 // swiftlint:enable identifier_name line_length number_separator type_body_length
 
