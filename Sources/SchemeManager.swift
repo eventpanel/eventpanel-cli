@@ -30,10 +30,10 @@ final class SchemeManager {
         guard fileManager.fileExists(atPath: schemePath) else {
             throw SchemeManagerError.schemeNotFound
         }
-        
+
         return try SchemeManager(path: schemePath, fileManager: fileManager)
     }
-    
+
     init(path: String, fileManager: FileManager = .default) throws {
         self.path = path
         self.fileManager = fileManager

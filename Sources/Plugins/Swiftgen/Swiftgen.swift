@@ -1,10 +1,24 @@
 import Foundation
 import Yams
+import StencilSwiftKit
+
+enum SwiftgenError: LocalizedError {
+    case generateFailed(String)
+    case saveFailed(String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .generateFailed(let message):
+            return "Can't generate file: \(message)"
+        case .saveFailed(let message):
+            return "Failed to save generated file: \(message)"
+        }
+    }
+}
 
 actor Swiftgen: CodeGeneratorPlugin {
     private let config: SwiftgenPlugin
     private let fileManager: FileManager
-    private let schemeFileName = "swiftgen_scheme.json"
 
     init(config: SwiftgenPlugin, fileManager: FileManager = .default) {
         self.config = config
@@ -12,117 +26,65 @@ actor Swiftgen: CodeGeneratorPlugin {
     }
 
     func run() async throws {
-        try await initilize()
         let scheme = try SchemeManager.read().loadScheme()
         let swiftgenScheme = try SwiftgenWorkspaceScheme(from: scheme)
-        try saveScheme(swiftgenScheme)
-        try generate()
+
+        let rendered = try render(swiftgenScheme: swiftgenScheme)
+        try generate(rendered: rendered)
     }
 
-    func initilize() async throws {
-        try createFolderIfNeeded()
-        writeSwiftgenTemplate(path: config.templatePath)
-        writeSwiftgenYaml(path: config.swiftgenYamlPath)
-    }
-
-    private func createFolderIfNeeded() throws {
-        let rootPath = try getEventPanelDirectory()
-        if !fileManager.fileExists(atPath: rootPath.path) {
-            try fileManager.createDirectory(
-                at: rootPath,
-                withIntermediateDirectories: true,
-                attributes: nil
-            )
-        }
-    }
-
-    private func writeSwiftgenYaml(path: String) {
-        let encoder = YAMLEncoder()
-        let yaml = SwiftgenYaml(
-            json: SwiftgenYaml.JSONConfig(
-                inputs: schemeFileName,
-                outputs: SwiftgenYaml.OutputConfig(
-                    templatePath: config.getRelativePath(from: config.templatePath),
-                    output: config.generatedEventsPath,
-                    params: SwiftgenYaml.OutputParams(
-                        enumName: config.namespace,
-                        eventClassName: config.eventTypeName,
-                        documentation: config.documentation
-                    )
-                )
-            )
+    private func render(swiftgenScheme: SwiftgenWorkspaceScheme) throws -> String {
+        let stencillTemplate = SwiftgenStenillTemplate.default
+        let environment = stencilSwiftEnvironment(
+            templates: [stencillTemplate.name: stencillTemplate.template],
+            templateClass: StencilSwiftTemplate.self,
+            trimBehaviour: .nothing
         )
-        do {
-            let yamlString = try encoder.encode(yaml)
-            try yamlString.write(toFile: path, atomically: true, encoding: .utf8)
-        } catch {
-            ConsoleLogger.error("Error writing Swiftgen template to file: \(error)")
-        }
-    }
-
-    func writeSwiftgenTemplate(path: String) {
-        do {
-            try swiftgenStenillTemplate.write(toFile: path, atomically: true, encoding: .utf8)
-        } catch {
-            ConsoleLogger.error("Error writing Swiftgen template to file: \(error)")
-        }
-    }
-
-    private func saveScheme(_ scheme: SwiftgenWorkspaceScheme) throws {
-        let encoder = JSONEncoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let template = TemplateContext(files: [File(document: Document(data: swiftgenScheme))])
+        let parameters = try codableToDictionary(
+            SwiftgenParams(
+                enumName: config.namespace,
+                eventClassName: config.eventTypeName,
+                documentation: config.documentation
+            ),
+            keyEncodingStrategy: .useDefaultKeys
+        )!
+        let context = try codableToDictionary(template)!
+        let dict = try StencilContext.enrich(context: context, parameters: parameters, environment: [:])
 
         do {
-            let data = try encoder.encode(scheme)
-
-            let eventPanelDir = try getEventPanelDirectory()
-            try fileManager.createDirectory(
-                at: eventPanelDir,
-                withIntermediateDirectories: true,
-                attributes: nil
+            let rendered = try environment.renderTemplate(
+                name: stencillTemplate.name,
+                context: dict
             )
-
-            let schemeURL = eventPanelDir.appendingPathComponent(schemeFileName)
-            try data.write(to: schemeURL)
-
+            return rendered
         } catch {
-            throw PullCommandError.saveFailed(error.localizedDescription)
+            throw SwiftgenError.generateFailed(error.localizedDescription)
         }
     }
 
-    private func getEventPanelDirectory() throws -> URL {
-        let currentPath = fileManager.currentDirectoryPath
-        return URL(fileURLWithPath: (currentPath as NSString)
-            .appendingPathComponent(".eventpanel"))
-    }
+    private func generate(rendered: String) throws {
+        do {
+            let currentPath = fileManager.currentDirectoryPath
+            let filePath = (currentPath as NSString).appendingPathComponent(config.generatedEventsPath)
+            let fileURL = URL(fileURLWithPath: filePath)
 
-    private func generate() throws {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-        process.arguments = [
-            "swiftgen",
-            "config",
-            "run",
-            "--config",
-            config.swiftgenYamlPath
-        ]
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        if process.terminationStatus == 0 {
-            ConsoleLogger.success("SwiftGen completed successfully")
-        } else {
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                throw GenerateCommandError.swiftgenFailed(output)
+            // Create intermediate directories if they don't exist
+            let directoryURL = fileURL.deletingLastPathComponent()
+            if !fileManager.fileExists(atPath: directoryURL.path) {
+                try fileManager.createDirectory(
+                    at: directoryURL,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
             }
-            throw GenerateCommandError.swiftgenFailed("Unknown error")
+
+            try rendered.write(to: fileURL, atomically: true, encoding: .utf8)
+
+            ConsoleLogger.debug("Generated events path: \(filePath)")
+            ConsoleLogger.success("Generated events completed successfully")
+        } catch {
+            throw SwiftgenError.saveFailed(error.localizedDescription)
         }
     }
 }

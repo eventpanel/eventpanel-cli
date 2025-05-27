@@ -1,4 +1,16 @@
-var swiftgenStenillTemplate: String {
+struct SwiftgenStenillTemplate {
+    let name: String
+    let template: String
+}
+
+extension SwiftgenStenillTemplate {
+    static let `default` = SwiftgenStenillTemplate(
+        name: "swiftgen-stenill-template",
+        template: swiftgenStenillTemplate
+    )
+}
+
+private var swiftgenStenillTemplate: String {
     """
     // swiftlint:disable all
     // Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
