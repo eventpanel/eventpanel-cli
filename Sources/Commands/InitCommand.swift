@@ -15,9 +15,14 @@ private enum InitCommandError: LocalizedError {
 }
 
 final class InitCommand {
+    private let generatorPluginFactory: GeneratorPluginFactory
     private let fileManager: FileManager
     
-    init(fileManager: FileManager = .default) {
+    init(
+        generatorPluginFactory: GeneratorPluginFactory,
+        fileManager: FileManager
+    ) {
+        self.generatorPluginFactory = generatorPluginFactory
         self.fileManager = fileManager
     }
     
@@ -31,10 +36,17 @@ final class InitCommand {
 
         let projectInfo = try detectProject(in: currentPath)
         try EventPanelYaml.createDefault(at: eventfilePath, projectInfo: projectInfo)
-        try await projectInfo.plugin.generator.initilize()
+
+        try await initilizeGenerator(plugin: projectInfo.plugin)
+
         ConsoleLogger.success("Created EventPanel.yaml")
     }
-    
+
+    private func initilizeGenerator(plugin: Plugin) async throws {
+        let generator = generatorPluginFactory.generator(for: plugin)
+        try await generator.initilize()
+    }
+
     private func detectProject(in directory: String) throws -> ProjectInfo {
         // Check for Xcode project first
         if let projectName = findXcodeProject(in: directory) {

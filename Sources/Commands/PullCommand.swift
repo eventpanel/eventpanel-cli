@@ -26,7 +26,7 @@ final class PullCommand {
     private let eventPanelYaml: EventPanelYaml
     private let fileManager: FileManager
     
-    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml, fileManager: FileManager = .default) {
+    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml, fileManager: FileManager) {
         self.apiService = apiService
         self.eventPanelYaml = eventPanelYaml
         self.fileManager = fileManager
@@ -85,11 +85,6 @@ final class PullCommand {
             let schemeURL = eventPanelDir.appendingPathComponent("scheme.json")
             try data.write(to: schemeURL)
 
-            // Reload scheme manager if it exists
-            if let schemeManager = try? SchemeManager.read(fileManager: fileManager) {
-                try schemeManager.reload()
-            }
-            
         } catch {
             throw PullCommandError.saveFailed(error.localizedDescription)
         }

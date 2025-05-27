@@ -27,7 +27,7 @@ public actor EventPanelYaml {
     private var config: EventPanelConfig
     private let path: String
 
-    static func read(fileManager: FileManager = .default) throws -> EventPanelYaml {
+    static func read(fileManager: FileManager) throws -> EventPanelYaml {
         let eventfilePath = try Self.getConfigPath(fileManager: fileManager)
         let eventPanelYaml = try EventPanelYaml(path: eventfilePath)
         return eventPanelYaml

@@ -3,7 +3,7 @@ import Foundation
 final class DeintegrateCommand {
     private let fileManager: FileManager
     
-    init(fileManager: FileManager = .default) {
+    init(fileManager: FileManager) {
         self.fileManager = fileManager
     }
     

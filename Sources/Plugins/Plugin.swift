@@ -3,13 +3,6 @@ import Foundation
 enum Plugin: Codable {
     case swiftgen(SwiftgenPlugin)
 
-    var generator: CodeGeneratorPlugin {
-        switch self {
-        case .swiftgen(let plugin):
-            return Swiftgen(config: plugin)
-        }
-    }
-
     enum CodingKeys: String, CodingKey {
         case swiftgen
     }

@@ -8,7 +8,11 @@ final class DependencyContainer: @unchecked Sendable {
     private let authService: AuthService = {
         return AuthService()
     }()
-    
+
+    private(set) lazy var generatorPluginFactory: GeneratorPluginFactory = {
+        return DefaultGeneratorPluginFactory(fileManager: fileManager)
+    }()
+
     private(set) lazy var authCommand: AuthCommand = {
         return AuthCommand(authService: authService)
     }()
@@ -30,7 +34,7 @@ final class DependencyContainer: @unchecked Sendable {
     }()
 
     private(set) lazy var eventPanelYaml: EventPanelYaml = {
-        try! EventPanelYaml.read()
+        try! EventPanelYaml.read(fileManager: fileManager)
     }()
 
     // MARK: - Commands
@@ -43,11 +47,14 @@ final class DependencyContainer: @unchecked Sendable {
     }()
     
     private(set) lazy var generateCommand: GenerateCommand = {
-        return GenerateCommand(eventPanelYaml: eventPanelYaml)
+        return GenerateCommand(
+            eventPanelYaml: eventPanelYaml,
+            generatorPluginFactory: generatorPluginFactory
+        )
     }()
     
     private(set) lazy var initCommand: InitCommand = {
-        return InitCommand(fileManager: fileManager)
+        return InitCommand(generatorPluginFactory: generatorPluginFactory, fileManager: fileManager)
     }()
     
     private(set) lazy var listCommand: ListCommand = {

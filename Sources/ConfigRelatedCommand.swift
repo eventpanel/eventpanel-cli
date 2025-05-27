@@ -6,6 +6,6 @@ protocol ConfigRelatedCommand {
 
 extension ConfigRelatedCommand {
     func validateConfig() throws {
-        _ = try EventPanelYaml.read()
+        _ = try EventPanelYaml.read(fileManager: .default)
     }
 }

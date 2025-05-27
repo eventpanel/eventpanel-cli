@@ -18,15 +18,21 @@ enum SwiftgenError: LocalizedError {
 
 actor Swiftgen: CodeGeneratorPlugin {
     private let config: SwiftgenPlugin
+    private let schemeManagerLoader: SchemeManagerLoader
     private let fileManager: FileManager
 
-    init(config: SwiftgenPlugin, fileManager: FileManager = .default) {
+    init(
+        config: SwiftgenPlugin,
+        schemeManagerLoader: SchemeManagerLoader,
+        fileManager: FileManager
+    ) {
         self.config = config
+        self.schemeManagerLoader = schemeManagerLoader
         self.fileManager = fileManager
     }
 
     func run() async throws {
-        let scheme = try SchemeManager.read().loadScheme()
+        let scheme = try schemeManagerLoader.read()
         let swiftgenScheme = try SwiftgenWorkspaceScheme(from: scheme)
 
         let rendered = try render(swiftgenScheme: swiftgenScheme)
