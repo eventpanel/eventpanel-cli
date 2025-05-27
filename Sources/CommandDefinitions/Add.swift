@@ -25,11 +25,17 @@ struct Add: AsyncParsableCommand, ConfigRelatedCommand {
     @Argument(help: "Event version")
     var version: Int?
 
+    @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
+    var schemeUpdate: Bool = true
+
     func validate() throws {
         try validateConfig()
     }
 
     func run() async throws {
         try await DependencyContainer.shared.addCommand.execute(eventId: eventId, version: version)
+        if schemeUpdate {
+            try await DependencyContainer.shared.pullCommand.execute()
+        }
     }
 } 

@@ -31,11 +31,17 @@ struct Update: AsyncParsableCommand, ConfigRelatedCommand {
     @Argument(help: "Event ids to update (if not provided, updates all outdated events)")
     var eventIds: [String] = []
 
+    @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
+    var schemeUpdate: Bool = true
+
     func validate() throws {
         try validateConfig()
     }
 
     func run() async throws {
         try await DependencyContainer.shared.updateCommand.execute(eventIds: eventIds)
+        if schemeUpdate {
+            try await DependencyContainer.shared.pullCommand.execute()
+        }
     }
 } 
