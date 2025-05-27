@@ -23,7 +23,7 @@ final class SwiftgenGeneratorTests: XCTestCase {
                             id: "login_method",
                             name: "login_method",
                             description: "Login method used",
-                            dataType: .string,
+                            dataType: .custom("Method"),
                             required: true,
                             value: nil
                         ),
@@ -40,7 +40,7 @@ final class SwiftgenGeneratorTests: XCTestCase {
             ],
             customTypes: [
                 .init(
-                    name: "method",
+                    name: "Method",
                     type: "enum",
                     dataType: .string,
                     cases: ["email", "google", "apple"]
@@ -282,8 +282,8 @@ final class SwiftgenGeneratorTests: XCTestCase {
                     ]
                 )
             ],
-            customTypes: [],
-            categories: []
+            customTypes: nil,
+            categories: nil
         )
 
         // When

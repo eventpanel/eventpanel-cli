@@ -14,7 +14,7 @@ internal enum AnalyticsEvents {
     ///     - login_method: Login method used
     ///     - is_successful: Whether login was successful
     internal static func userLogin(
-      loginMethod: String,
+      loginMethod: Method,
       isSuccessful: Bool
     ) -> AnalyticsEvent {
       AnalyticsEvent(
@@ -27,6 +27,14 @@ internal enum AnalyticsEvents {
     }
   }
 
+}
+
+extension AnalyticsEvents {
+    internal enum Method: String {
+      case email = "email"
+      case google = "google"
+      case apple = "apple"
+    }
 }
 // swiftlint:enable identifier_name line_length number_separator type_body_length
 
