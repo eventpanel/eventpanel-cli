@@ -9,7 +9,7 @@ let package = Package(
     ],
     products: [
         .executable(
-            name: "eventpanel",
+            name: "EventPanelCLI",
             targets: ["eventpanel-cli"]
         )
     ],
@@ -32,5 +32,15 @@ let package = Package(
                 .process("Plugins/Swiftgen/swift5.stencil")
             ]
         ),
+        .testTarget(
+            name: "EventPanelCLITests",
+            dependencies: [
+                "eventpanel-cli",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "Get", package: "Get"),
+                .product(name: "Yams", package: "Yams"),
+                .product(name: "StencilSwiftKit", package: "StencilSwiftKit")
+            ]
+        )
     ]
 )
