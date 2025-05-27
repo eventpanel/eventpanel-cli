@@ -14,8 +14,6 @@ struct Outdated: AsyncParsableCommand, ConfigRelatedCommand {
         """
     )
 
-    init() {}
-
     func validate() throws {
         try validateConfig()
     }

@@ -6,8 +6,6 @@ struct Help: AsyncParsableCommand {
         abstract: "Show this help message"
     )
 
-    init() {}
-
     func run() async throws {
         ConsoleLogger.message(EventPanel.helpMessage())
     }

@@ -31,8 +31,6 @@ struct Update: AsyncParsableCommand, ConfigRelatedCommand {
     @Argument(help: "Event ids to update (if not provided, updates all outdated events)")
     var eventIds: [String] = []
 
-    init() {}
-
     func validate() throws {
         try validateConfig()
     }

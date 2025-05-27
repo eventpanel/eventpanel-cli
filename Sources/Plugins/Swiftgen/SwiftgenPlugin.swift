@@ -1,7 +1,6 @@
 import Foundation
 
 struct SwiftgenPlugin: Codable {
-    let inputDir: String
     let generatedEventsPath: String
     let namespace: String
     let eventTypeName: String
@@ -11,7 +10,6 @@ struct SwiftgenPlugin: Codable {
 extension SwiftgenPlugin {
     static var `default`: SwiftgenPlugin {
         .init(
-            inputDir: ".eventpanel",
             generatedEventsPath: "GeneratedAnalyticsEvents.swift",
             namespace: "AnalyticsEvents",
             eventTypeName: "AnalyticsEvent",

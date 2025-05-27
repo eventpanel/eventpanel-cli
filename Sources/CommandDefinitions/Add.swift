@@ -25,8 +25,6 @@ struct Add: AsyncParsableCommand, ConfigRelatedCommand {
     @Argument(help: "Event version")
     var version: Int?
 
-    init() {}
-
     func validate() throws {
         try validateConfig()
     }

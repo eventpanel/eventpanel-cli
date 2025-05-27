@@ -18,8 +18,6 @@ struct Deintegrate: AsyncParsableCommand, ConfigRelatedCommand {
         """
     )
 
-    init() {}
-
     func run() async throws {
         try await DependencyContainer.shared.deintegrateCommand.execute()
     }

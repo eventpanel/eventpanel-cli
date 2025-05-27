@@ -1,0 +1,54 @@
+// swiftlint:disable all
+// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+
+import Foundation
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable file_length
+
+// swiftlint:disable identifier_name line_length number_separator type_body_length
+internal enum AnalyticsEvents {
+  internal enum Payment {
+    /// User processed a payment
+    /// - Parameters:
+    ///     - payment_method: Method of payment
+    ///     - payment_status: Status of the payment
+    internal static func paymentProcess(
+      paymentMethod: String,
+      paymentStatus: String
+    ) -> AnalyticsEvent {
+      AnalyticsEvent(
+        name: "Payment Process",
+        parameters: [ 
+          "payment_method": paymentMethod,
+          "payment_status": paymentStatus
+        ]
+      )
+    }
+  }
+}
+
+extension AnalyticsEvents {
+  internal enum PaymentMethod: String {
+    case creditCard = "credit_card"
+    case paypal = "paypal"
+    case applePay = "apple_pay"
+    case googlePay = "google_pay"
+  }
+  internal enum PaymentStatus: String {
+    case pending = "pending"
+    case completed = "completed"
+    case failed = "failed"
+    case refunded = "refunded"
+  }
+}
+// swiftlint:enable identifier_name line_length number_separator type_body_length
+
+private extension Dictionary where Value == Any? {
+    /// Returns dictionary with filtered out `nil` and `NSNull` values
+    func byExcludingNilValues() -> [Key: Any] {
+        return compactMapValues { value -> Any? in
+            value is NSNull ? nil : value
+        }
+    }
+} 

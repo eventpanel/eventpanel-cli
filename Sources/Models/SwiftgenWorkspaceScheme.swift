@@ -11,7 +11,6 @@ struct SwiftgenWorkspaceScheme: Codable {
         let name: String
         let description: String?
         let categoryIds: [String]?
-        let sources: [String]?
         let properties: [PropertyDefinition]?
     }
 
@@ -24,27 +23,72 @@ struct SwiftgenWorkspaceScheme: Codable {
         let value: String?
     }
 
-    enum SwiftDataType: String, Codable {
-        case string = "String"
-        case int = "Int"
-        case float = "Float"
-        case bool = "Bool"
-        case date = "Date"
+    enum SwiftDataType: Codable {
+        case string
+        case int
+        case float
+        case bool
+        case date
 
-        case stringArray = "[String]"
-        case intArray = "[Integer]"
-        case floatArray = "[Float]"
-        case boolArray = "[Bool]"
-        case dateArray = "[Date]"
+        case stringArray
+        case intArray
+        case floatArray
+        case boolArray
+        case dateArray
 
-        case dictionary = "[String: Any]"
-        case dictionaryArray = "[[String: Any]]"
+        case dictionary
+        case dictionaryArray
+
+        case custom(String)
+
+        var stringValue: String {
+            switch self {
+            case .string: return "String"
+            case .int: return "Int"
+            case .float: return "Float"
+            case .bool: return "Bool"
+            case .date: return "Date"
+            case .stringArray: return "[String]"
+            case .intArray: return "[Integer]"
+            case .floatArray: return "[Float]"
+            case .boolArray: return "[Bool]"
+            case .dateArray: return "[Date]"
+            case .dictionary: return "[String: Any]"
+            case .dictionaryArray: return "[[String: Any]]"
+            case .custom(let value): return value
+            }
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let raw = try container.decode(String.self)
+            switch raw {
+            case "String": self = .string
+            case "Int": self = .int
+            case "Float": self = .float
+            case "Bool": self = .bool
+            case "Date": self = .date
+            case "[String]": self = .stringArray
+            case "[Integer]": self = .intArray
+            case "[Float]": self = .floatArray
+            case "[Bool]": self = .boolArray
+            case "[Date]": self = .dateArray
+            case "[String: Any]": self = .dictionary
+            case "[[String: Any]]": self = .dictionaryArray
+            default: self = .custom(raw)
+            }
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(stringValue)
+        }
     }
 
     struct CustomType: Codable {
         let name: String
         let type: String
-        let dataType: String
+        let dataType: SwiftDataType
         let cases: [String]
     }
 
@@ -78,7 +122,6 @@ extension SwiftgenWorkspaceScheme.EventDefinition {
             name: event.name,
             description: event.description,
             categoryIds: event.categoryIds,
-            sources: event.sources,
             properties: try event.properties?.map(SwiftgenWorkspaceScheme.PropertyDefinition.init(from:))
         )
     }
@@ -89,8 +132,8 @@ extension SwiftgenWorkspaceScheme.CustomType {
         self.init(
             name: customType.name,
             type: customType.type,
-            dataType: customType.dataType,
-            cases: customType.cases
+            dataType: try SwiftgenWorkspaceScheme.SwiftDataType(from: customType.dataType),
+            cases: customType.values
         )
     }
 }
@@ -136,11 +179,7 @@ extension SwiftgenWorkspaceScheme.SwiftDataType {
         case "[OBJECT]":
             self = .dictionaryArray
         default:
-            throw NSError(
-                domain: "SwiftDataType",
-                code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "Unsupported data type: \(type)"]
-            )
+            self = .custom(type)
         }
     }
 }

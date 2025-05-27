@@ -16,8 +16,6 @@ struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
         """
     )
 
-    init() {}
-
     func validate() throws {
         try validateConfig()
     }

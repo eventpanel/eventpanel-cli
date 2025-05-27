@@ -1,0 +1,55 @@
+// swiftlint:disable all
+// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+
+import Foundation
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable file_length
+
+// swiftlint:disable identifier_name line_length number_separator type_body_length
+internal enum AnalyticsEvents {
+  internal enum Onboarding {
+    /// User started the onboarding process
+    /// - Parameters:
+    ///     - source: Where the onboarding was initiated from
+    internal static func onboardingStart(
+      source: String
+    ) -> AnalyticsEvent {
+      AnalyticsEvent(
+        name: "Onboarding Start",
+        parameters: [ 
+          "source": source
+        ]
+      )
+    }
+    /// User completed the onboarding process
+    /// - Parameters:
+    ///     - completion_time: Time taken to complete onboarding in seconds
+    ///     - skipped_steps: Number of steps skipped during onboarding
+    internal static func onboardingComplete(
+      completionTime: Int,
+      skippedSteps: Int?
+    ) -> AnalyticsEvent {
+      AnalyticsEvent(
+        name: "Onboarding Complete",
+        parameters: [ 
+          "completion_time": completionTime,
+          "skipped_steps": skippedSteps
+        ].byExcludingNilValues()
+      )
+    }
+  }
+}
+
+extension AnalyticsEvents {
+}
+// swiftlint:enable identifier_name line_length number_separator type_body_length
+
+private extension Dictionary where Value == Any? {
+    /// Returns dictionary with filtered out `nil` and `NSNull` values
+    func byExcludingNilValues() -> [Key: Any] {
+        return compactMapValues { value -> Any? in
+            value is NSNull ? nil : value
+        }
+    }
+} 

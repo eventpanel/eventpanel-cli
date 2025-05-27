@@ -1,24 +1,5 @@
 import ArgumentParser
 
-struct Auth: AsyncParsableCommand {
-    static let configuration = CommandConfiguration(
-        commandName: "auth",
-        abstract: "Manage API authentication",
-        discussion: """
-        Manages authentication for the EventPanel API.
-        
-        USAGE:
-            eventpanel auth <subcommand>
-        
-        SUBCOMMANDS:
-            set-token     Set your API token
-            remove-token  Remove stored API token
-        
-        Authentication is required for commands that interact with the EventPanel server.
-        """
-    )
-}
-
 struct SetToken: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "set-token",
@@ -39,8 +20,6 @@ struct SetToken: AsyncParsableCommand {
     @Argument(help: "API token to store")
     var token: String
     
-    init() {}
-    
     func run() async throws {
         try await DependencyContainer.shared.authCommand.setToken(token)
     }
@@ -59,8 +38,6 @@ struct RemoveToken: AsyncParsableCommand {
         This will remove the stored API token and require re-authentication for future commands.
         """
     )
-    
-    init() {}
     
     func run() async throws {
         try await DependencyContainer.shared.authCommand.removeToken()

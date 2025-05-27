@@ -4,7 +4,7 @@ actor ConsoleLogger {
     private static let yellow = "\u{001B}[33m"
     private static let reset = "\u{001B}[0m"
 
-    public static var isVerbose = false
+    static var isVerbose = false
     
     static func error(_ message: String) {
         print("\(red)[!] \(message)\(reset)")

@@ -11,7 +11,6 @@ struct WorkspaceScheme: Codable {
         let name: String
         let description: String?
         let categoryIds: [String]?
-        let sources: [String]?
         let properties: [PropertyDefinition]?
     }
 
@@ -28,7 +27,7 @@ struct WorkspaceScheme: Codable {
         let name: String
         let type: String
         let dataType: String
-        let cases: [String]
+        let values: [String]
     }
 
     struct Category: Codable {

@@ -2,13 +2,12 @@ import Foundation
 import ArgumentParser
 
 @main
-public struct EventPanel: AsyncParsableCommand {
-    public static let configuration = CommandConfiguration(
+struct EventPanel: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(
         commandName: "eventpanel",
         abstract: "EventPanel, the event management system.",
         subcommands: [
             Add.self,
-            Auth.self,
             Deintegrate.self,
             Generate.self,
             Help.self,
@@ -17,18 +16,20 @@ public struct EventPanel: AsyncParsableCommand {
             Outdated.self,
             Pull.self,
             Update.self
-        ]
+        ],
+        groupedSubcommands: [CommandGroup(name: "auth", subcommands: [
+            SetToken.self,
+            RemoveToken.self
+        ])]
     )
 
     @Option(name: .long, help: "Path to EventPanel.yaml configuration file")
-    public var config: String?
+    var config: String?
     
     @Flag(name: .long, help: "Enable verbose output")
-    public var verbose = false
+    var verbose = false
 
-    public init() {}
-
-    public func validate() throws {
+    func validate() throws {
         ConsoleLogger.isVerbose = verbose
         
         if let configPath = config {
@@ -41,7 +42,7 @@ public struct EventPanel: AsyncParsableCommand {
         }
     }
 
-    public func run() throws {
+    func run() throws {
         ConsoleLogger.message(EventPanel.helpMessage())
     }
 }

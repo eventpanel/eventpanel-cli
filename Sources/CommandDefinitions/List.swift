@@ -22,8 +22,6 @@ struct List: AsyncParsableCommand, ConfigRelatedCommand {
     @Option(name: .long, help: "Number of items per page")
     var pageSize: Int = 20
 
-    init() {}
-
     func validate() throws {
         try validateConfig()
     }

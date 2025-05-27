@@ -1,0 +1,49 @@
+// swiftlint:disable all
+// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+
+import Foundation
+
+// swiftlint:disable superfluous_disable_command
+// swiftlint:disable file_length
+
+// swiftlint:disable identifier_name line_length number_separator type_body_length
+internal enum AnalyticsEvents {
+  internal enum User {
+    /// User logged in to the app
+    /// - Parameters:
+    ///     - login_method: Login method used
+    ///     - is_successful: Whether login was successful
+    internal static func userLogin(
+      loginMethod: String,
+      isSuccessful: Bool
+    ) -> AnalyticsEvent {
+      AnalyticsEvent(
+        name: "User Login",
+        parameters: [ 
+          "login_method": loginMethod,
+          "is_successful": isSuccessful
+        ]
+      )
+    }
+  }
+  internal enum App {
+  }
+}
+
+extension AnalyticsEvents {
+  internal enum Method: String {
+    case email = "email"
+    case google = "google"
+    case apple = "apple"
+  }
+}
+// swiftlint:enable identifier_name line_length number_separator type_body_length
+
+private extension Dictionary where Value == Any? {
+    /// Returns dictionary with filtered out `nil` and `NSNull` values
+    func byExcludingNilValues() -> [Key: Any] {
+        return compactMapValues { value -> Any? in
+            value is NSNull ? nil : value
+        }
+    }
+} 

@@ -21,7 +21,7 @@ enum EventPanelYamlError: LocalizedError {
     }
 }
 
-public actor EventPanelYaml {
+actor EventPanelYaml {
     private static var path: String?
 
     private var config: EventPanelConfig
@@ -33,7 +33,7 @@ public actor EventPanelYaml {
         return eventPanelYaml
     }
 
-    public static func setConfigPath(_ path: String) {
+    static func setConfigPath(_ path: String) {
         Self.path = path
     }
 

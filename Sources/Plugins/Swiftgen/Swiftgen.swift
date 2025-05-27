@@ -20,6 +20,7 @@ actor Swiftgen: CodeGeneratorPlugin {
     private let config: SwiftgenPlugin
     private let schemeManagerLoader: SchemeManagerLoader
     private let fileManager: FileManager
+    private let generator: SwiftgenGenerator
 
     init(
         config: SwiftgenPlugin,
@@ -29,47 +30,19 @@ actor Swiftgen: CodeGeneratorPlugin {
         self.config = config
         self.schemeManagerLoader = schemeManagerLoader
         self.fileManager = fileManager
+        self.generator = SwiftgenGenerator(config: config)
     }
 
     func run() async throws {
         let scheme = try schemeManagerLoader.read()
         let swiftgenScheme = try SwiftgenWorkspaceScheme(from: scheme)
-
-        let rendered = try render(swiftgenScheme: swiftgenScheme)
-        try generate(rendered: rendered)
+        let stencilTemplate = try SwiftgenStenillTemplate.default()
+        
+        let rendered = try generator.generate(scheme: swiftgenScheme, stencilTemplate: stencilTemplate)
+        try saveGeneratedCode(rendered: rendered)
     }
 
-    private func render(swiftgenScheme: SwiftgenWorkspaceScheme) throws -> String {
-        let stencillTemplate = try SwiftgenStenillTemplate.default()
-        let environment = stencilSwiftEnvironment(
-            templates: [stencillTemplate.name: stencillTemplate.template],
-            templateClass: StencilSwiftTemplate.self,
-            trimBehaviour: .nothing
-        )
-        let template = TemplateContext(files: [File(document: Document(data: swiftgenScheme))])
-        let parameters = try codableToDictionary(
-            SwiftgenParams(
-                enumName: config.namespace,
-                eventClassName: config.eventTypeName,
-                documentation: config.documentation
-            ),
-            keyEncodingStrategy: .useDefaultKeys
-        )!
-        let context = try codableToDictionary(template)!
-        let dict = try StencilContext.enrich(context: context, parameters: parameters, environment: [:])
-
-        do {
-            let rendered = try environment.renderTemplate(
-                name: stencillTemplate.name,
-                context: dict
-            )
-            return rendered
-        } catch {
-            throw SwiftgenError.generateFailed(error.localizedDescription)
-        }
-    }
-
-    private func generate(rendered: String) throws {
+    private func saveGeneratedCode(rendered: String) throws {
         do {
             let currentPath = fileManager.currentDirectoryPath
             let filePath = (currentPath as NSString).appendingPathComponent(config.generatedEventsPath)

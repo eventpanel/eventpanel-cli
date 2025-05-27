@@ -23,8 +23,6 @@ struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
     @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
     var schemeUpdate: Bool = false
 
-    init() {}
-
     func validate() throws {
         try validateConfig()
     }

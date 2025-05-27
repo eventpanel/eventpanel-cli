@@ -3,6 +3,7 @@ import Foundation
 
 typealias NetworkClient = APIClient
 
+// handle {"message":"error.accessTokenNotFound","error":"Not Found","statusCode":404}
 final class AuthAPIClientDelegate: APIClientDelegate, Sendable {
     private let authService: AuthService
 
