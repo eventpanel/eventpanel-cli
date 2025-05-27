@@ -27,3 +27,15 @@ AUTH SUBCOMMANDS:
 
   See 'eventpanel help <subcommand>' for detailed help.
 ```
+
+# Installation
+
+```bash
+# Add the tap
+brew tap eventpanel/eventpanel
+
+export HOMEBREW_GITHUB_API_TOKEN=xxx
+
+# Install EventPanel
+brew install eventpanel
+```
