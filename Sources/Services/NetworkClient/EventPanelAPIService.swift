@@ -9,22 +9,29 @@ final class EventPanelAPIService {
     }
 }
 
+struct LatestEventRequest: Encodable {
+    let source: Source
+}
+
 extension EventPanelAPIService {
     func getLatestEvent(
-        eventId: String
+        eventId: String,
+        source: Source
     ) async throws -> LatestEventData {
         let response: Response<LatestEventData> = try await networkClient.send(
             Request(
                 path: "api/external/events/latest/\(eventId)",
-                method: .get
+                method: .post,
+                body: LatestEventRequest(source: source)
             )
         )
         return response.value
     }
 }
 
-struct EventLatestRequest: Encodable {
+struct LatestEventsRequest: Encodable {
     let events: [LocalEventDefenitionData]
+    let source: Source
 }
 
 struct EventLatestResponse: Decodable {
@@ -33,13 +40,14 @@ struct EventLatestResponse: Decodable {
 
 extension EventPanelAPIService {
     func getLatestEvents(
-        events: EventLatestRequest
+        events: [LocalEventDefenitionData],
+        source: Source
     ) async throws -> EventLatestResponse {
         let response: Response<EventLatestResponse> = try await networkClient.send(
             Request(
                 path: "api/external/events/latest/list",
                 method: .post,
-                body: events
+                body: LatestEventsRequest(events: events, source: source)
             )
         )
         return response.value
@@ -48,17 +56,19 @@ extension EventPanelAPIService {
 
 struct SchemeRequest: Encodable {
     let events: [LocalEventDefenitionData]
+    let source: Source
 }
 
 extension EventPanelAPIService {
     func generateScheme(
-        events: [LocalEventDefenitionData]
+        events: [LocalEventDefenitionData],
+        source: Source
     ) async throws -> WorkspaceScheme {
         let response: Response<WorkspaceScheme> = try await networkClient.send(
             Request(
                 path: "api/external/events/generate/list",
                 method: .post,
-                body: SchemeRequest(events: events)
+                body: SchemeRequest(events: events, source: source)
             )
         )
         return response.value

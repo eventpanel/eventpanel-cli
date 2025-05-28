@@ -2,18 +2,18 @@ import Foundation
 
 struct EventPanelConfig: Codable {
     /// Global settings
-    let language: Language
+    let source: Source
     let plugin: Plugin
     var events: [Event]
 
     enum CodingKeys: String, CodingKey {
-        case language
+        case source
         case plugin
         case events
     }
     
-    init(language: Language, plugin: Plugin, events: [Event] = []) {
-        self.language = language
+    init(source: Source, plugin: Plugin, events: [Event] = []) {
+        self.source = source
         self.plugin = plugin
         self.events = events
     }

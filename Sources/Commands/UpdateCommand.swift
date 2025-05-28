@@ -32,17 +32,23 @@ final class UpdateCommand {
     
     func execute(eventIds: [String]) async throws {
         if eventIds.count == 1, let eventId = eventIds.first {
-            try await updateSingleEvent(eventId: eventId)
+            try await updateSingleEvent(
+                eventId: eventId,
+                source: eventPanelYaml.getSource()
+            )
         } else if eventIds.isEmpty {
             try await updateAllEvents()
         } else {
-            try await updateEvents(eventIds: Set(eventIds))
+            try await updateEvents(
+                eventIds: Set(eventIds),
+                source: eventPanelYaml.getSource()
+            )
         }
     }
     
     // MARK: - Private Methods
 
-    private func updateSingleEvent(eventId: String) async throws {
+    private func updateSingleEvent(eventId: String, source: Source) async throws {
         ConsoleLogger.message("Checking for updates to event '\(eventId)'...")
 
         let events = await eventPanelYaml.getEvents()
@@ -55,7 +61,10 @@ final class UpdateCommand {
         let currentVersion = event.version ?? 1
         
         do {
-            let updatedEvent = try await apiService.getLatestEvent(eventId: eventId)
+            let updatedEvent = try await apiService.getLatestEvent(
+                eventId: eventId,
+                source: source
+            )
 
             if updatedEvent.version != currentVersion {
                 // Update event version
@@ -75,10 +84,10 @@ final class UpdateCommand {
     }
     
     private func updateAllEvents() async throws {
-        try await updateEvents(eventIds: nil)
+        try await updateEvents(eventIds: nil, source: eventPanelYaml.getSource())
     }
 
-    private func updateEvents(eventIds: Set<String>?) async throws {
+    private func updateEvents(eventIds: Set<String>?, source: Source) async throws {
         ConsoleLogger.message("Checking for event updates...")
 
         // Read YAML file
@@ -105,9 +114,8 @@ final class UpdateCommand {
 
             // Check if event has a new version
             let response = try await apiService.getLatestEvents(
-                events: EventLatestRequest(
-                    events: requestEvents
-                )
+                events: requestEvents,
+                source: source
             )
 
             var updatedEvents = 0

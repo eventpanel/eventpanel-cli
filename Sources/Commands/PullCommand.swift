@@ -42,7 +42,10 @@ final class PullCommand {
         }
 
         // Fetch scheme from server
-        let scheme = try await fetchScheme(events: events)
+        let scheme = try await fetchScheme(
+            events: events,
+            source: eventPanelYaml.getSource()
+        )
 
         // Save scheme to disk
         try saveScheme(scheme)
@@ -52,12 +55,18 @@ final class PullCommand {
     
     // MARK: - Private Methods
     
-    private func fetchScheme(events: [Event]) async throws -> WorkspaceScheme {
+    private func fetchScheme(
+        events: [Event],
+        source: Source
+    ) async throws -> WorkspaceScheme {
         do {
             let eventDefinitions = events.map {
                 LocalEventDefenitionData(eventId: $0.id, version: $0.version ?? 1)
             }
-            return try await apiService.generateScheme(events: eventDefinitions)
+            return try await apiService.generateScheme(
+                events: eventDefinitions,
+                source: source
+            )
         } catch let error as APIError {
             throw PullCommandError.fetchFailed(error.localizedDescription)
         } catch {

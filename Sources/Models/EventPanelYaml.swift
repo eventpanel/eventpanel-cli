@@ -73,7 +73,7 @@ actor EventPanelYaml {
     
     static func createDefault(at path: String, projectInfo: ProjectInfo) throws {
         let config = EventPanelConfig(
-            language: projectInfo.language,
+            source: projectInfo.source,
             plugin: projectInfo.plugin,
             events: []
         )
@@ -91,8 +91,8 @@ actor EventPanelYaml {
         try finalYaml.write(toFile: path, atomically: true, encoding: .utf8)
     }
 
-    func getLanguage() -> Language {
-        return config.language
+    func getSource() -> Source {
+        return config.source
     }
 
     func getPlugin() -> Plugin {
@@ -132,6 +132,6 @@ actor EventPanelYaml {
 // Move ProjectInfo here since it's related to YAML configuration
 struct ProjectInfo {
     let name: String
-    let language: Language
+    let source: Source
     let plugin: Plugin
 }

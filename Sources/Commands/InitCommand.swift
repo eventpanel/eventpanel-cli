@@ -52,7 +52,7 @@ final class InitCommand {
         if let projectName = findXcodeProject(in: directory) {
             return ProjectInfo(
                 name: projectName,
-                language: Language.swift,
+                source: Source.iOS,
                 plugin: .swiftgen(.default)
             )
         }

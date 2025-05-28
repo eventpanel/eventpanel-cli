@@ -31,7 +31,11 @@ final class AddCommand {
     }
     
     func execute(eventId: String, version: Int?) async throws {
-        let eventVersion = try await validateEvent(eventId: eventId, version: version)
+        let eventVersion = try await validateEvent(
+            eventId: eventId,
+            version: version,
+            source: eventPanelYaml.getSource()
+        )
 
         // Part 3: Add event to YAML file
         try await addEventToYaml(eventId: eventId, eventVersion: version ?? eventVersion)
@@ -42,12 +46,15 @@ final class AddCommand {
     // MARK: - Private Methods
     
     /// Validates the event name with the server
-    private func validateEvent(eventId: String, version: Int?) async throws -> Int {
+    private func validateEvent(eventId: String, version: Int?, source: Source) async throws -> Int {
         if let version, version < 0 {
             throw AddCommandError.eventVersionIsNotValid(version: version)
         }
         do {
-            let response = try await apiService.getLatestEvent(eventId: eventId)
+            let response = try await apiService.getLatestEvent(
+                eventId: eventId,
+                source: source
+            )
 
             if let version, version > response.version {
                 throw AddCommandError.eventVersionIsNotValid(version: version)

@@ -38,13 +38,16 @@ final class OutdatedCommand {
 
         let events = await eventPanelYaml.getEvents()
         
-        let outdatedEvents = try await checkEventsForUpdates(events)
+        let outdatedEvents = try await checkEventsForUpdates(
+            events,
+            source: eventPanelYaml.getSource()
+        )
         displayResults(outdatedEvents)
     }
     
     // MARK: - Private Methods
     
-    private func checkEventsForUpdates(_ events: [Event]) async throws -> [OutdatedEvent] {
+    private func checkEventsForUpdates(_ events: [Event], source: Source) async throws -> [OutdatedEvent] {
         do {
             let requestEvents = events.map { event in
                 LocalEventDefenitionData(
@@ -57,7 +60,8 @@ final class OutdatedCommand {
             }
 
             let response = try await apiService.getLatestEvents(
-                events: EventLatestRequest(events: requestEvents)
+                events: requestEvents,
+                source: source
             )
 
             return response.events.compactMap { event in

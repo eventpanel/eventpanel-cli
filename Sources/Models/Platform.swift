@@ -1,3 +1,3 @@
-enum Language: String, Codable {
-    case swift
+enum Source: String, Codable {
+    case iOS
 }
