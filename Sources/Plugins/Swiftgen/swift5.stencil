@@ -1,13 +1,10 @@
 // swiftlint:disable all
-// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 {% if files %}
 {% set accessModifier %}{% if param.publicAccess %}public{% else %}internal{% endif %}{% endset %}
 {% set eventClassName %}{{param.eventClassName|default:"AnalyticsEvent"}}{% endset %}
 import Foundation
-
-// swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length
 {% macro fileBlock file %}
   {% call documentBlock file file.document %}
 {% endmacro %}
@@ -133,7 +130,6 @@ import Foundation
   {% endif %}
 {% endmacro %}
 
-// swiftlint:disable identifier_name line_length number_separator type_body_length
 {{accessModifier}} enum {{param.enumName|default:"GeneratedAnalyticsEvents"}} {
   {% if files.count > 1 or param.forceFileNameEnum %}
   {% for file in files %}
@@ -153,7 +149,6 @@ extension {{param.enumName|default:"GeneratedAnalyticsEvents"}} {
 }
 {% endif %}
 {% endfor %}
-// swiftlint:enable identifier_name line_length number_separator type_body_length
 {% else %}
 // No files found
 {% endif %}
@@ -166,3 +161,4 @@ private extension Dictionary where Value == Any? {
         }
     }
 } 
+// swiftlint:enable all
