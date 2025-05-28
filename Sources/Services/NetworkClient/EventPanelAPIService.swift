@@ -7,6 +7,17 @@ final class EventPanelAPIService {
     init(networkClient: NetworkClient) {
         self.networkClient = networkClient
     }
+    
+    enum EventPanelError: LocalizedError {
+        case invalidSource(String)
+        
+        var errorDescription: String? {
+            switch self {
+            case .invalidSource(let message):
+                return message
+            }
+        }
+    }
 }
 
 struct LatestEventRequest: Encodable {
@@ -21,8 +32,8 @@ extension EventPanelAPIService {
         let response: Response<LatestEventData> = try await networkClient.send(
             Request(
                 path: "api/external/events/latest/\(eventId)",
-                method: .post,
-                body: LatestEventRequest(source: source)
+                method: .get,
+                query: [("source", source.rawValue)]
             )
         )
         return response.value
@@ -64,13 +75,20 @@ extension EventPanelAPIService {
         events: [LocalEventDefenitionData],
         source: Source
     ) async throws -> WorkspaceScheme {
-        let response: Response<WorkspaceScheme> = try await networkClient.send(
-            Request(
-                path: "api/external/events/generate/list",
-                method: .post,
-                body: SchemeRequest(events: events, source: source)
+        do {
+            let response: Response<WorkspaceScheme> = try await networkClient.send(
+                Request(
+                    path: "api/external/events/generate/list",
+                    method: .post,
+                    body: SchemeRequest(events: events, source: source)
+                )
             )
-        )
-        return response.value
+            return response.value
+        } catch let error as BackendAPIError {
+            if error.error == "Unsupported Source" {
+                throw EventPanelError.invalidSource(error.message)
+            }
+            throw error
+        }
     }
 }

@@ -25,5 +25,12 @@ final class AuthAPIClientDelegate: APIClientDelegate, Sendable {
 
     func client(_ client: APIClient, validateResponse response: HTTPURLResponse, data: Data, task: URLSessionTask) throws {
         ConsoleLogger.debug("Response Body: \(String(data: data, encoding: .utf8)!)")
+
+        guard (200..<300).contains(response.statusCode) else {
+            if let backendApiError = try? JSONDecoder().decode(BackendAPIError.self, from: data) {
+                throw backendApiError
+            }
+            throw APIError.unacceptableStatusCode(response.statusCode)
+        }
     }
 }
