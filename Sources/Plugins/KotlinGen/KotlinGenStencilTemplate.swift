@@ -8,7 +8,11 @@ struct KotlinGenStencilTemplate {
 extension KotlinGenStencilTemplate {
     static func `default`() throws -> KotlinGenStencilTemplate {
         guard let path = Bundle.module.path(forResource: "kotlin", ofType: "stencil") else {
-            throw NSError(domain: "KotlinGenStencilTemplate", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not find kotlin.stencil template"])
+            throw NSError(
+                domain: "KotlinGenStencilTemplate",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Could not find kotlin.stencil template"]
+            )
         }
         return KotlinGenStencilTemplate(
             name: "kotlin",

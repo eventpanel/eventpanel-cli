@@ -20,7 +20,6 @@ import Foundation
     {% call categoryBlock document category.id %}
   }
   {% endfor %}
-
   {% for event in document.data.events %}
   {% if event.category_ids.count == 0 %}
     {% call eventBlock event %}

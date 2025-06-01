@@ -1,4 +1,4 @@
-import StencilSwiftKit
+import StencilEventPanelKit
 
 struct KotlinGenGenerator {
     private let config: KotlinGenPlugin

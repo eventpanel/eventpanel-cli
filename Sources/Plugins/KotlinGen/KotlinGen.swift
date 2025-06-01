@@ -1,6 +1,6 @@
 import Foundation
 import Yams
-import StencilSwiftKit
+import StencilEventPanelKit
 
 enum KotlinGenError: LocalizedError {
     case generateFailed(String)
