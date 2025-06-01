@@ -2,37 +2,37 @@ import Foundation
 import Yams
 import StencilSwiftKit
 
-enum SwiftgenGeneratorError: LocalizedError {
+enum KotlinGenGeneratorError: LocalizedError {
     case generateFailed(String)
     
     var errorDescription: String? {
         switch self {
         case .generateFailed(let message):
-            return "Can't generate file: \(message)"
+            return "Can't generate Kotlin file: \(message)"
         }
     }
 }
 
-struct SwiftgenGenerator {
-    private let config: SwiftgenPlugin
+struct KotlinGenGenerator {
+    private let config: KotlinGenPlugin
     
-    init(config: SwiftgenPlugin) {
+    init(config: KotlinGenPlugin) {
         self.config = config
     }
     
-    func generate(scheme: SwiftgenWorkspaceScheme, stencilTemplate: SwiftgenStenillTemplate) throws -> String {
+    func generate(scheme: KotlinGenWorkspaceScheme, stencilTemplate: KotlinGenStencilTemplate) throws -> String {
         let environment = stencilSwiftEnvironment(
             templates: [stencilTemplate.name: stencilTemplate.template]
         )
-        let template = SwiftgenTemplateContext(
-            files: [SwiftgenTemplateContext.File(
-                document: SwiftgenTemplateContext.Document(data: scheme)
+        let template = KotlinGenTemplateContext(
+            files: [KotlinGenTemplateContext.File(
+                document: KotlinGenTemplateContext.Document(data: scheme)
             )]
         )
         let parameters = try codableToDictionary(
-            SwiftgenParams(
-                enumName: config.namespace,
-                eventClassName: config.eventTypeName,
+            KotlinGenParams(
+                packageName: config.packageName,
+                eventClassName: config.eventClassName,
                 documentation: config.documentation
             ),
             keyEncodingStrategy: .useDefaultKeys
@@ -47,7 +47,7 @@ struct SwiftgenGenerator {
             )
             return rendered
         } catch {
-            throw SwiftgenGeneratorError.generateFailed(error.localizedDescription)
+            throw KotlinGenGeneratorError.generateFailed(error.localizedDescription)
         }
     }
 } 

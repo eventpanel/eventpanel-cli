@@ -1,0 +1,23 @@
+package {{ packageName }}
+
+{% if documentation %}
+/**
+ * Generated analytics events
+ */
+{% endif %}
+sealed class {{ eventClassName }} {
+    {% for file in files %}
+    {% for event in file.document.data.events %}
+    {% if documentation %}
+    /**
+     * {{ event.description }}
+     */
+    {% endif %}
+    data class {{ event.name }}(
+        {% for param in event.parameters %}
+        val {{ param.name }}: {{ param.type }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ) : {{ eventClassName }}()
+    {% endfor %}
+    {% endfor %}
+} 
