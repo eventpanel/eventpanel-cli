@@ -1,14 +1,14 @@
 import Foundation
 
-struct SwiftgenPlugin: Codable {
+struct SwiftGenPlugin: Codable {
     let generatedEventsPath: String
     let namespace: String
     let eventTypeName: String
     let documentation: Bool
 }
 
-extension SwiftgenPlugin {
-    static var `default`: SwiftgenPlugin {
+extension SwiftGenPlugin {
+    static var `default`: SwiftGenPlugin {
         .init(
             generatedEventsPath: "GeneratedAnalyticsEvents.swift",
             namespace: "AnalyticsEvents",

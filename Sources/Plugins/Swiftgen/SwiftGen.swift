@@ -2,7 +2,7 @@ import Foundation
 import Yams
 import StencilSwiftKit
 
-enum SwiftgenError: LocalizedError {
+enum SwiftGenError: LocalizedError {
     case generateFailed(String)
     case saveFailed(String)
     
@@ -16,27 +16,27 @@ enum SwiftgenError: LocalizedError {
     }
 }
 
-actor Swiftgen: CodeGeneratorPlugin {
-    private let config: SwiftgenPlugin
+actor SwiftGen: CodeGeneratorPlugin {
+    private let config: SwiftGenPlugin
     private let schemeManagerLoader: SchemeManagerLoader
     private let fileManager: FileManager
-    private let generator: SwiftgenGenerator
+    private let generator: SwiftGenGenerator
 
     init(
-        config: SwiftgenPlugin,
+        config: SwiftGenPlugin,
         schemeManagerLoader: SchemeManagerLoader,
         fileManager: FileManager
     ) {
         self.config = config
         self.schemeManagerLoader = schemeManagerLoader
         self.fileManager = fileManager
-        self.generator = SwiftgenGenerator(config: config)
+        self.generator = SwiftGenGenerator(config: config)
     }
 
     func run() async throws {
         let scheme = try schemeManagerLoader.read()
-        let swiftgenScheme = try SwiftgenWorkspaceScheme(from: scheme)
-        let stencilTemplate = try SwiftgenStenillTemplate.default()
+        let swiftgenScheme = try SwiftGenWorkspaceScheme(from: scheme)
+        let stencilTemplate = try SwiftGenStenillTemplate.default()
         
         let rendered = try generator.generate(scheme: swiftgenScheme, stencilTemplate: stencilTemplate)
         try saveGeneratedCode(rendered: rendered)
@@ -63,7 +63,7 @@ actor Swiftgen: CodeGeneratorPlugin {
             ConsoleLogger.debug("Generated events path: \(filePath)")
             ConsoleLogger.success("Generated events completed successfully")
         } catch {
-            throw SwiftgenError.saveFailed(error.localizedDescription)
+            throw SwiftGenError.saveFailed(error.localizedDescription)
         }
     }
 }

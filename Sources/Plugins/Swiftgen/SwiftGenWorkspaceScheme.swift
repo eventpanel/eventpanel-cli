@@ -1,6 +1,6 @@
 import Foundation
 
-struct SwiftgenWorkspaceScheme: Codable {
+struct SwiftGenWorkspaceScheme: Codable {
     let workspace: String
     let events: [EventDefinition]
     let customTypes: [CustomType]?
@@ -99,60 +99,60 @@ struct SwiftgenWorkspaceScheme: Codable {
     }
 }
 
-extension SwiftgenWorkspaceScheme {
+extension SwiftGenWorkspaceScheme {
     init(from scheme: WorkspaceScheme) throws {
         self.init(
             workspace: scheme.workspace,
-            events: try scheme.events.map(SwiftgenWorkspaceScheme.EventDefinition.init(from:)),
+            events: try scheme.events.map(SwiftGenWorkspaceScheme.EventDefinition.init(from:)),
             customTypes: try scheme.customTypes?.map(CustomType.init(from:)),
             categories: scheme.categories?.map(Category.init(from:))
         )
     }
 }
 
-extension SwiftgenWorkspaceScheme.Category {
+extension SwiftGenWorkspaceScheme.Category {
     init(from category: WorkspaceScheme.Category) {
         self.init(id: category.id, name: category.name, description: category.description)
     }
 }
 
-extension SwiftgenWorkspaceScheme.EventDefinition {
+extension SwiftGenWorkspaceScheme.EventDefinition {
     init(from event: WorkspaceScheme.EventDefinition) throws {
         self.init(
             id: event.id,
             name: event.name,
             description: event.description,
             categoryIds: event.categoryIds,
-            properties: try event.properties?.map(SwiftgenWorkspaceScheme.PropertyDefinition.init(from:))
+            properties: try event.properties?.map(SwiftGenWorkspaceScheme.PropertyDefinition.init(from:))
         )
     }
 }
 
-extension SwiftgenWorkspaceScheme.CustomType {
+extension SwiftGenWorkspaceScheme.CustomType {
     init(from customType: WorkspaceScheme.CustomType) throws {
         self.init(
             name: customType.name,
             type: customType.type,
-            dataType: try SwiftgenWorkspaceScheme.SwiftDataType(from: customType.dataType),
+            dataType: try SwiftGenWorkspaceScheme.SwiftDataType(from: customType.dataType),
             cases: customType.values
         )
     }
 }
 
-extension SwiftgenWorkspaceScheme.PropertyDefinition {
+extension SwiftGenWorkspaceScheme.PropertyDefinition {
     init(from propertyDefinition: WorkspaceScheme.PropertyDefinition) throws {
         self.init(
             id: propertyDefinition.id,
             name: propertyDefinition.name,
             description: propertyDefinition.description,
-            dataType: try SwiftgenWorkspaceScheme.SwiftDataType(from: propertyDefinition.dataType),
+            dataType: try SwiftGenWorkspaceScheme.SwiftDataType(from: propertyDefinition.dataType),
             required: propertyDefinition.required,
             value: propertyDefinition.value
         )
     }
 }
 
-extension SwiftgenWorkspaceScheme.SwiftDataType {
+extension SwiftGenWorkspaceScheme.SwiftDataType {
     init(from type: String) throws {
         switch type.uppercased() {
         case "STRING":

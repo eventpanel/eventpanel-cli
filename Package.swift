@@ -30,7 +30,7 @@ let package = Package(
                 .product(name: "StencilSwiftKit", package: "StencilSwiftKit")
             ],
             resources: [
-                .process("Plugins/Swiftgen/swift5.stencil")
+                .process("Plugins/SwiftGen/swift5.stencil")
             ]
         ),
         .testTarget(

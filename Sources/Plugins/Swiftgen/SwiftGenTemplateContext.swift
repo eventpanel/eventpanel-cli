@@ -1,13 +1,13 @@
 import Foundation
 import PathKit
 
-struct SwiftgenTemplateContext: Codable {
+struct SwiftGenTemplateContext: Codable {
     struct File: Codable {
         let document: Document
     }
 
     struct Document: Codable {
-        let data: SwiftgenWorkspaceScheme
+        let data: SwiftGenWorkspaceScheme
     }
 
     let files: [File]

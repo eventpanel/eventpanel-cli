@@ -2,7 +2,7 @@ import Foundation
 import Yams
 import StencilSwiftKit
 
-enum SwiftgenGeneratorError: LocalizedError {
+enum SwiftGenGeneratorError: LocalizedError {
     case generateFailed(String)
     
     var errorDescription: String? {
@@ -13,24 +13,24 @@ enum SwiftgenGeneratorError: LocalizedError {
     }
 }
 
-struct SwiftgenGenerator {
-    private let config: SwiftgenPlugin
+struct SwiftGenGenerator {
+    private let config: SwiftGenPlugin
     
-    init(config: SwiftgenPlugin) {
+    init(config: SwiftGenPlugin) {
         self.config = config
     }
     
-    func generate(scheme: SwiftgenWorkspaceScheme, stencilTemplate: SwiftgenStenillTemplate) throws -> String {
+    func generate(scheme: SwiftGenWorkspaceScheme, stencilTemplate: SwiftGenStenillTemplate) throws -> String {
         let environment = stencilSwiftEnvironment(
             templates: [stencilTemplate.name: stencilTemplate.template]
         )
-        let template = SwiftgenTemplateContext(
-            files: [SwiftgenTemplateContext.File(
-                document: SwiftgenTemplateContext.Document(data: scheme)
+        let template = SwiftGenTemplateContext(
+            files: [SwiftGenTemplateContext.File(
+                document: SwiftGenTemplateContext.Document(data: scheme)
             )]
         )
         let parameters = try codableToDictionary(
-            SwiftgenParams(
+            SwiftGenParams(
                 enumName: config.namespace,
                 eventClassName: config.eventTypeName,
                 documentation: config.documentation
@@ -47,7 +47,7 @@ struct SwiftgenGenerator {
             )
             return rendered
         } catch {
-            throw SwiftgenGeneratorError.generateFailed(error.localizedDescription)
+            throw SwiftGenGeneratorError.generateFailed(error.localizedDescription)
         }
     }
 } 

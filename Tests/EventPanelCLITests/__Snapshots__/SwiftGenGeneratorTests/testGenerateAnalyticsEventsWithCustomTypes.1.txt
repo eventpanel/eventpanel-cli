@@ -1,12 +1,8 @@
 // swiftlint:disable all
-// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 import Foundation
 
-// swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length
-
-// swiftlint:disable identifier_name line_length number_separator type_body_length
 internal enum AnalyticsEvents {
   internal enum Payment {
 
@@ -44,7 +40,6 @@ extension AnalyticsEvents {
       case refunded = "refunded"
     }
 }
-// swiftlint:enable identifier_name line_length number_separator type_body_length
 
 private extension Dictionary where Value == Any? {
     /// Returns dictionary with filtered out `nil` and `NSNull` values
@@ -54,3 +49,4 @@ private extension Dictionary where Value == Any? {
         }
     }
 } 
+// swiftlint:enable all

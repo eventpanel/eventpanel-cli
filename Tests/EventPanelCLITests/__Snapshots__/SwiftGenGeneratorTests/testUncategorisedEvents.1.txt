@@ -1,26 +1,27 @@
 // swiftlint:disable all
-// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 import Foundation
 
-// swiftlint:disable superfluous_disable_command
-// swiftlint:disable file_length
-
-// swiftlint:disable identifier_name line_length number_separator type_body_length
 internal enum AnalyticsEvents {
 
+  /// User processed a payment
+  /// - Parameters:
+  ///     - payment_method: Method of payment
+  ///     - payment_status: Status of the payment
   internal static func paymentProcess(  
-    paymentMethod: String
+    paymentMethod: String,
+    paymentStatus: String
   ) -> AnalyticsEvent {
     AnalyticsEvent(
       name: "Payment Process",
       parameters: [
-        "payment_method": paymentMethod
+        "payment_method": paymentMethod,
+        "payment_status": paymentStatus
       ]
     )
   }
 }
-// swiftlint:enable identifier_name line_length number_separator type_body_length
 
 private extension Dictionary where Value == Any? {
     /// Returns dictionary with filtered out `nil` and `NSNull` values
@@ -30,3 +31,4 @@ private extension Dictionary where Value == Any? {
         }
     }
 } 
+// swiftlint:enable all

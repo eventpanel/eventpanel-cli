@@ -1,7 +1,7 @@
 import Foundation
 
 enum Plugin: Codable {
-    case swiftgen(SwiftgenPlugin)
+    case swiftgen(SwiftGenPlugin)
 
     enum CodingKeys: String, CodingKey {
         case swiftgen
@@ -11,7 +11,7 @@ enum Plugin: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         if container.contains(.swiftgen) {
-            let plugin = try container.decode(SwiftgenPlugin.self, forKey: .swiftgen)
+            let plugin = try container.decode(SwiftGenPlugin.self, forKey: .swiftgen)
             self = .swiftgen(plugin)
         } else {
             throw DecodingError.dataCorruptedError(
