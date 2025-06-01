@@ -1,17 +1,4 @@
-import Foundation
-import Yams
 import StencilSwiftKit
-
-enum KotlinGenGeneratorError: LocalizedError {
-    case generateFailed(String)
-    
-    var errorDescription: String? {
-        switch self {
-        case .generateFailed(let message):
-            return "Can't generate Kotlin file: \(message)"
-        }
-    }
-}
 
 struct KotlinGenGenerator {
     private let config: KotlinGenPlugin
@@ -47,7 +34,7 @@ struct KotlinGenGenerator {
             )
             return rendered
         } catch {
-            throw KotlinGenGeneratorError.generateFailed(error.localizedDescription)
+            throw KotlinGenError.generateFailed(error.localizedDescription)
         }
     }
 } 

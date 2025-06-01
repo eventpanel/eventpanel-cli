@@ -2,9 +2,11 @@ import Foundation
 
 enum Plugin: Codable {
     case swiftgen(SwiftGenPlugin)
+    case kotlingen(KotlinGenPlugin)
 
     enum CodingKeys: String, CodingKey {
         case swiftgen
+        case kotlingen
     }
 
     init(from decoder: Decoder) throws {
@@ -13,6 +15,9 @@ enum Plugin: Codable {
         if container.contains(.swiftgen) {
             let plugin = try container.decode(SwiftGenPlugin.self, forKey: .swiftgen)
             self = .swiftgen(plugin)
+        } else if container.contains(.kotlingen) {
+            let plugin = try container.decode(KotlinGenPlugin.self, forKey: .kotlingen)
+            self = .kotlingen(plugin)
         } else {
             throw DecodingError.dataCorruptedError(
                 in: try decoder.singleValueContainer(),
@@ -30,6 +35,10 @@ enum Plugin: Codable {
             let data = try encoder.encode(plugin)
             let pluginDict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
             try container.encode(["swiftgen": pluginDict?.mapValues { AnyCodable($0) } ?? [:]])
+        case .kotlingen(let plugin):
+            let data = try encoder.encode(plugin)
+            let pluginDict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            try container.encode(["kotlingen": pluginDict?.mapValues { AnyCodable($0) } ?? [:]])
         }
     }
 }

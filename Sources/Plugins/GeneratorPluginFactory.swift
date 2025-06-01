@@ -21,6 +21,14 @@ final class DefaultGeneratorPluginFactory: GeneratorPluginFactory, @unchecked Se
                 ),
                 fileManager: fileManager
             )
+        case .kotlingen(let plugin):
+            return KotlinGen(
+                config: plugin,
+                schemeManagerLoader: FileSchemeManagerLoader(
+                    fileManager: fileManager
+                ),
+                fileManager: fileManager
+            )
         }
     }
 }

@@ -1,12 +1,12 @@
 import Foundation
 
 enum GenerateCommandError: LocalizedError {
-    case swiftgenFailed(String)
-    
+    case generationFailed(String)
+
     var errorDescription: String? {
         switch self {
-        case .swiftgenFailed(let message):
-            return "SwiftGen execution failed: \(message)"
+        case .generationFailed(let message):
+            return "Generation execution failed: \(message)"
         }
     }
 }
@@ -29,7 +29,7 @@ final class GenerateCommand {
         do {
             try await generator.run()
         } catch {
-            throw GenerateCommandError.swiftgenFailed(error.localizedDescription)
+            throw GenerateCommandError.generationFailed(error.localizedDescription)
         }
     }
 }
