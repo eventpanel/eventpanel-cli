@@ -1,16 +1,16 @@
 import Foundation
 
-struct SwiftGenStenillTemplate {
+struct SwiftGenStencilTemplate {
     let name: String
     let template: String
 }
 
-extension SwiftGenStenillTemplate {
-    static func `default`() throws -> SwiftGenStenillTemplate {
+extension SwiftGenStencilTemplate {
+    static func `default`() throws -> SwiftGenStencilTemplate {
         guard let path = Bundle.module.path(forResource: "swift5", ofType: "stencil") else {
-            throw NSError(domain: "SwiftGenStenillTemplate", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not find swift5.stencil template"])
+            throw NSError(domain: "SwiftGenStencilTemplate", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not find swift5.stencil template"])
         }
-        return SwiftGenStenillTemplate(
+        return SwiftGenStencilTemplate(
             name: "swiftgen-stenill-template",
             template: try String(contentsOfFile: path)
         )

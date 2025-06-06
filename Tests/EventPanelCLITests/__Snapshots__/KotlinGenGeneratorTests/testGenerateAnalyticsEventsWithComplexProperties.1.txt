@@ -1,0 +1,39 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+package com.eventpanel.analytics
+
+internal object GeneratedAnalyticsEvents {
+  internal object ECommerce {
+
+    /**
+     * User viewed a product
+     * @param product_id Unique identifier of the product
+     * @param product_price Price of the product
+     * @param currency Currency code
+     * @param is_on_sale Whether the product is on sale
+     * @param discount_percentage Discount percentage if on sale
+     */
+    internal fun productView(  
+      productId: String,
+      productPrice: Double,
+      currency: String,
+      isOnSale: Boolean?,
+      discountPercentage: Double?
+    ): AnalyticsEvent {
+      return AnalyticsEvent(
+        name = "Product View",
+        parameters = mapOf(
+          "product_id" to productId,
+          "product_price" to productPrice,
+          "currency" to currency,
+          "is_on_sale" to isOnSale,
+          "discount_percentage" to discountPercentage
+        ).withoutNulls()
+      )
+    }
+  }
+
+}
+
+private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
+    this.filterValues { it != null }.mapValues { it.value!! }

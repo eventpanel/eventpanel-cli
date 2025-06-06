@@ -45,16 +45,16 @@ struct KotlinGenWorkspaceScheme: Codable {
             switch self {
             case .string: return "String"
             case .int: return "Int"
-            case .float: return "Float"
-            case .bool: return "Bool"
+            case .float: return "Double"
+            case .bool: return "Boolean"
             case .date: return "Date"
-            case .stringArray: return "[String]"
-            case .intArray: return "[Integer]"
-            case .floatArray: return "[Float]"
-            case .boolArray: return "[Bool]"
-            case .dateArray: return "[Date]"
-            case .dictionary: return "[String: Any]"
-            case .dictionaryArray: return "[[String: Any]]"
+            case .stringArray: return "List<String>"
+            case .intArray: return "List<Int>"
+            case .floatArray: return "List<Double>"
+            case .boolArray: return "List<Boolean>"
+            case .dateArray: return "List<Date>"
+            case .dictionary: return "Map<String, Any>"
+            case .dictionaryArray: return "List<Map<String, Any>>"
             case .custom(let value): return value
             }
         }

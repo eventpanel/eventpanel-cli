@@ -2,15 +2,15 @@ import XCTest
 import SnapshotTesting
 @testable import eventpanel
 
-final class SwiftGenGeneratorTests: XCTestCase {
-    let stencilTemplate = try! SwiftGenStencilTemplate.default()
+final class KotlinGenGeneratorTests: XCTestCase {
+    let stencilTemplate = try! KotlinGenStencilTemplate.default()
 
     func testGenerateAnalyticsEvents() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
         
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(
@@ -60,10 +60,10 @@ final class SwiftGenGeneratorTests: XCTestCase {
     
     func testGenerateAnalyticsEventsWithMultipleEvents() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
         
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(
@@ -122,10 +122,10 @@ final class SwiftGenGeneratorTests: XCTestCase {
     
     func testGenerateAnalyticsEventsWithComplexProperties() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
         
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(
@@ -192,10 +192,10 @@ final class SwiftGenGeneratorTests: XCTestCase {
     
     func testGenerateAnalyticsEventsWithCustomTypes() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
         
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(
@@ -251,10 +251,10 @@ final class SwiftGenGeneratorTests: XCTestCase {
 
     func testUncategorisedEvents() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
 
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(
@@ -295,10 +295,10 @@ final class SwiftGenGeneratorTests: XCTestCase {
 
     func testEventWithEmptyDescription() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
 
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(
@@ -339,10 +339,10 @@ final class SwiftGenGeneratorTests: XCTestCase {
 
     func testEventWithEmptyProperties() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
 
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(
@@ -366,10 +366,10 @@ final class SwiftGenGeneratorTests: XCTestCase {
 
     func testEventWithPropertyWithEmptyDescription() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
 
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(
@@ -402,10 +402,10 @@ final class SwiftGenGeneratorTests: XCTestCase {
 
     func testCategoryDescription() throws {
         // Given
-        let config = SwiftGenPlugin.default
-        let generator = SwiftGenGenerator(config: config)
+        let config = KotlinGenPlugin.default
+        let generator = KotlinGenGenerator(config: config)
 
-        let scheme = SwiftGenWorkspaceScheme(
+        let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
                 .init(

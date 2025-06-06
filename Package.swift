@@ -43,6 +43,9 @@ let package = Package(
                 .product(name: "Yams", package: "Yams"),
                 .product(name: "StencilEventPanelKit", package: "StencilEventPanelKit"),
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+            ],
+            exclude: [
+                "__Snapshots__",
             ]
         )
     ]

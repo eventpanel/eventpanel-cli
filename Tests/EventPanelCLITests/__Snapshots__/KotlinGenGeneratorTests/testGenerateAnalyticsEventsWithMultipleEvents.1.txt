@@ -1,0 +1,45 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+package com.eventpanel.analytics
+
+internal object GeneratedAnalyticsEvents {
+  internal object Onboarding {
+
+    /**
+     * User started the onboarding process
+     * @param source Where the onboarding was initiated from
+     */
+    internal fun onboardingStart(  
+      source: String
+    ): AnalyticsEvent {
+      return AnalyticsEvent(
+        name = "Onboarding Start",
+        parameters = mapOf(
+          "source" to source
+        )
+      )
+    }
+
+    /**
+     * User completed the onboarding process
+     * @param completion_time Time taken to complete onboarding in seconds
+     * @param skipped_steps Number of steps skipped during onboarding
+     */
+    internal fun onboardingComplete(  
+      completionTime: Int,
+      skippedSteps: Int?
+    ): AnalyticsEvent {
+      return AnalyticsEvent(
+        name = "Onboarding Complete",
+        parameters = mapOf(
+          "completion_time" to completionTime,
+          "skipped_steps" to skippedSteps
+        ).withoutNulls()
+      )
+    }
+  }
+
+}
+
+private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
+    this.filterValues { it != null }.mapValues { it.value!! }

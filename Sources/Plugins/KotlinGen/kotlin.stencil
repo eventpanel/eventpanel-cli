@@ -2,7 +2,6 @@
 
 {% if files %}
 package {{param.packageName}}
-
 {% set accessModifier %}{% if param.publicAccess %}public{% else %}internal{% endif %}{% endset %}
 {% set eventClassName %}{{param.eventClassName|default:"AnalyticsEvent"}}{% endset %}
 {% macro fileBlock file %}
@@ -64,7 +63,6 @@ package {{param.packageName}}
     {{property.data_type|kotlinIdentifier:"pretty"}}
   {%- endif -%}
 {% endmacro %}
-
 {% macro typeBlock property -%}
   {%- if property.required -%}
   {% call propertyType property %}

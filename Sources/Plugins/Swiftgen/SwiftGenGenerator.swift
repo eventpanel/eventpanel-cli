@@ -20,7 +20,7 @@ struct SwiftGenGenerator {
         self.config = config
     }
     
-    func generate(scheme: SwiftGenWorkspaceScheme, stencilTemplate: SwiftGenStenillTemplate) throws -> String {
+    func generate(scheme: SwiftGenWorkspaceScheme, stencilTemplate: SwiftGenStencilTemplate) throws -> String {
         let environment = stencilSwiftEnvironment(
             templates: [stencilTemplate.name: stencilTemplate.template]
         )

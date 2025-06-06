@@ -36,7 +36,7 @@ actor SwiftGen: CodeGeneratorPlugin {
     func run() async throws {
         let scheme = try schemeManagerLoader.read()
         let swiftgenScheme = try SwiftGenWorkspaceScheme(from: scheme)
-        let stencilTemplate = try SwiftGenStenillTemplate.default()
+        let stencilTemplate = try SwiftGenStencilTemplate.default()
         
         let rendered = try generator.generate(scheme: swiftgenScheme, stencilTemplate: stencilTemplate)
         try saveGeneratedCode(rendered: rendered)
