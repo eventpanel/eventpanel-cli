@@ -23,7 +23,6 @@ internal enum AnalyticsEvents {
       )
     }
   }
-
 }
 
 extension AnalyticsEvents {

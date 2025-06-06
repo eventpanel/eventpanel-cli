@@ -27,8 +27,11 @@ internal object GeneratedAnalyticsEvents {
 }
 
 // Custom types for 
-    internal enum class Method(val value: String) {
-      Email("email"),    Google("google"),    Apple("apple")  }
+internal enum class Method(val value: String) {
+  Email("email"),
+  Google("google"),
+  Apple("apple")
+}
 
 private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
     this.filterValues { it != null }.mapValues { it.value!! }

@@ -4,7 +4,6 @@
 import Foundation
 
 internal enum AnalyticsEvents {
-
   internal static func paymentProcess(  
     paymentMethod: String
   ) -> AnalyticsEvent {

@@ -4,7 +4,6 @@
 import Foundation
 
 internal enum AnalyticsEvents {
-
   /// - Parameters:
   ///     - payment_method: Method of payment
   ///     - payment_status: Status of the payment

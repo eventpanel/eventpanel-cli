@@ -27,10 +27,18 @@ internal object GeneratedAnalyticsEvents {
 }
 
 // Custom types for 
-    internal enum class PaymentMethod(val value: String) {
-      CreditCard("credit_card"),    Paypal("paypal"),    ApplePay("apple_pay"),    GooglePay("google_pay")  }
-    internal enum class PaymentStatus(val value: String) {
-      Pending("pending"),    Completed("completed"),    Failed("failed"),    Refunded("refunded")  }
+internal enum class PaymentMethod(val value: String) {
+  CreditCard("credit_card"),
+  Paypal("paypal"),
+  ApplePay("apple_pay"),
+  GooglePay("google_pay")
+}
+internal enum class PaymentStatus(val value: String) {
+  Pending("pending"),
+  Completed("completed"),
+  Failed("failed"),
+  Refunded("refunded")
+}
 
 private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
     this.filterValues { it != null }.mapValues { it.value!! }

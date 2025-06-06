@@ -32,7 +32,6 @@ internal enum AnalyticsEvents {
       )
     }
   }
-
 }
 
 private extension Dictionary where Value == Any? {

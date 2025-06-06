@@ -27,15 +27,15 @@ package {{param.packageName}}
   {% endfor %}
 {% endmacro %}
 {% macro customTypesBlock document %}
-  {% for customType in document.data.custom_types %}
-  {% if customType.type == "enum" %}
-  {{accessModifier}} enum class {{customType.name|kotlinIdentifier:"pretty"|escapeReservedKeywords}}(val value: {{customType.data_type}}) {
-    {% for case in customType.cases %}
-    {{case|kotlinIdentifier:"pretty"}}("{{case}}"){% if not forloop.last %},{% endif %}
-    {% endfor %}
-  }
-  {% endif %}
+{% for customType in document.data.custom_types %}
+{% if customType.type == "enum" %}
+{{accessModifier}} enum class {{customType.name|kotlinIdentifier:"pretty"|escapeReservedKeywords}}(val value: {{customType.data_type}}) {
+  {% for case in customType.cases %}
+  {{case|kotlinIdentifier:"pretty"}}("{{case}}"){% if not forloop.last %},{% endif +%}
   {% endfor %}
+}
+{% endif %}
+{% endfor %}
 {% endmacro %}
 {% macro categoryDocumentationBlock category %}
   {% if category.description.count > 0 %}
@@ -142,7 +142,7 @@ package {{param.packageName}}
 {% if file.document.data.custom_types.count > 0 %}
 
 // Custom types for {{file.name}}
-{% filter indent:2," ",true %}{% call customTypesBlock file.document %}{% endfilter %}
+{% call customTypesBlock file.document %}
 {% endif %}
 {% endfor %}
 {% else %}
