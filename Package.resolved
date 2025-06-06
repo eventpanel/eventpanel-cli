@@ -1,5 +1,5 @@
 {
-  "originHash" : "705b47576aedc564394560582b8ff4e986273587499bde629ef20d3de37505de",
+  "originHash" : "3c50a3977c65786563bdb6c22477549d8aa0c8eaf2fa59c2e651702ff6a9f7c2",
   "pins" : [
     {
       "identity" : "get",
@@ -62,15 +62,6 @@
       "state" : {
         "revision" : "4f222ac85d673f35df29962fc4c36ccfdaf9da5b",
         "version" : "0.15.1"
-      }
-    },
-    {
-      "identity" : "stencilswiftkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftGen/StencilSwiftKit",
-      "state" : {
-        "revision" : "20e2de5322c83df005939d9d9300fab130b49f97",
-        "version" : "2.10.1"
       }
     },
     {

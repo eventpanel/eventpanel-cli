@@ -1,10 +1,9 @@
-// swiftlint:disable all
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 {% if files %}
+package {{param.packageName}}
 {% set accessModifier %}{% if param.publicAccess %}public{% else %}internal{% endif %}{% endset %}
 {% set eventClassName %}{{param.eventClassName|default:"AnalyticsEvent"}}{% endset %}
-import Foundation
 {% macro fileBlock file %}
   {% call documentBlock file file.document %}
 {% endmacro %}
@@ -16,10 +15,11 @@ import Foundation
   {% if param.documentation %}
   {% call categoryDocumentationBlock category %}
   {% endif %}
-  {{accessModifier}} enum {{category.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
+  {{accessModifier}} object {{category.name|kotlinIdentifier:"pretty"|escapeReservedKeywords}} {
     {% call categoryBlock document category.id %}
   }
   {% endfor %}
+
   {% for event in document.data.events %}
   {% if event.category_ids.count == 0 %}
     {% call eventBlock event %}
@@ -27,42 +27,40 @@ import Foundation
   {% endfor %}
 {% endmacro %}
 {% macro customTypesBlock document %}
-  {% for customType in document.data.custom_types %}
-  {% if customType.type == "enum" %}
-  {{accessModifier}} enum {{customType.name|swiftIdentifier:"pretty"|escapeReservedKeywords}}: {{customType.data_type}} {
-    {% for case in customType.cases %}
-    case {{case|swiftIdentifier:"pretty"|lowerFirstWord}} = "{{case}}"
-    {% endfor %}
-  }
-  {% endif %}
+{% for customType in document.data.custom_types %}
+{% if customType.type == "enum" %}
+{{accessModifier}} enum class {{customType.name|kotlinIdentifier:"pretty"|escapeReservedKeywords}}(val value: {{customType.data_type}}) {
+  {% for case in customType.cases %}
+  {{case|kotlinIdentifier:"pretty"}}("{{case}}"){% if not forloop.last %},{% endif +%}
   {% endfor %}
+}
+{% endif %}
+{% endfor %}
 {% endmacro %}
 {% macro categoryDocumentationBlock category %}
   {% if category.description.count > 0 %}
-  /// {{category.description}}
+  /**
+   * {{category.description}}
+   */
   {% endif %}
 {%- endmacro %}
 {% macro eventDocumentationBlock event %}
   {% if event.description.count != 0 %}
-  /// {{event.description}}
-  {% endif %}
+  /**
+   * {{event.description}}
   {% for property in event.properties %}
   {% if property.description.count > 0 %}
-  /// - Parameters:
-  {% break %}
+   * @param {{property.name}} {{property.description}}
   {% endif %}
   {% endfor %}
-  {% for property in event.properties %}
-  {% if property.description.count > 0 %}
-  ///     - {{property.name}}: {{property.description}}
+   */
   {% endif %}
-  {% endfor %}
 {%- endmacro %}
 {% macro propertyType property %}
   {%- if property.type == "enum" -%}
-    {{property.name|swiftIdentifier:"pretty"}}
+    {{property.name|kotlinIdentifier:"pretty"}}
   {%- else -%}
-    {{property.data_type|swiftIdentifier:"pretty"}}
+    {{property.data_type|kotlinIdentifier:"pretty"}}
   {%- endif -%}
 {% endmacro %}
 {% macro typeBlock property -%}
@@ -83,27 +81,27 @@ import Foundation
   {% endfor %}
 {% endmacro %}
 {% macro eventBlock event %}
-  {% set functionName %}{{event.name|swiftIdentifier:"pretty"|lowerFirstWord}}{% endset %}
+  {% set functionName %}{{event.name|kotlinIdentifier:"pretty"|lowerFirstWord}}{% endset %}
   {% set arguments %}{% call eventArgumentsBlock event.properties %}{% endset %}
   {% set functionBody %}{% call eventInstanceBlock event %}{% endset %}
   {% if param.documentation %}
   {%- call eventDocumentationBlock event %}
   {% endif %}
   {% if event.properties.count > 0 %}
-  {{accessModifier}} static func {{functionName}}(
+  {{accessModifier}} fun {{functionName}}(
   {%- filter indent:2," ",true %}{{arguments}}{% endfilter %}
-  ) -> {{eventClassName}} {
+  ): {{eventClassName}} {
   {% else %}
-  {{accessModifier}} static func {{functionName}}() -> {{eventClassName}} {
+  {{accessModifier}} fun {{functionName}}(): {{eventClassName}} {
   {% endif %}
   {% filter indent:2," ",true %}{{functionBody}}{% endfilter %}
   }
 {% endmacro %}
 {% macro eventInstanceBlock event %}
-  {{eventClassName}}(
+  return {{eventClassName}}(
   {% filter indent:2," ",true %}
-  name: "{{event.name}}",
-  parameters: {%+ call eventPropertiesBlock event.properties +%}
+  name = "{{event.name}}",
+  parameters = {%+ call eventPropertiesBlock event.properties +%}
   {% endfilter %}
   )
 {% endmacro %}
@@ -111,28 +109,28 @@ import Foundation
   {% if properties.count > 0 +%}
   {% for property in properties %}
   {% set type %}{% call typeBlock property %}{% endset %}
-  {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}: {{type}}{{ "," if not forloop.last }}
+  {{property.name|kotlinIdentifier:"pretty"|lowerFirstWord}}: {{type}}{{ "," if not forloop.last }}
   {% endfor %}
   {% endif %}
 {% endmacro %}
 {% macro eventPropertiesBlock properties %}
   {%- if not properties -%}
-  [:]
+  emptyMap()
   {%- else -%}
-  [
+  mapOf(
   {% filter indent:2," ",true %}
   {% for property in properties %}
-  "{{property.name}}": {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}{{ "," if not forloop.last }}
+  "{{property.name}}" to {{property.name|kotlinIdentifier:"pretty"|lowerFirstWord}}{{ "," if not forloop.last }}
   {% endfor %}
   {% endfilter %}
-  ]{% for property in properties %}{% if not property.required and not property.value %}.byExcludingNilValues(){% break %}{% endif %}{% endfor %}
+  ){% for property in properties %}{% if not property.required and not property.value %}.withoutNulls(){% break %}{% endif %}{% endfor %}
   {% endif %}
 {% endmacro %}
 
-{{accessModifier}} enum {{param.enumName|default:"GeneratedAnalyticsEvents"}} {
+{{accessModifier}} object {{param.enumName|default:"GeneratedAnalyticsEvents"}} {
   {% if files.count > 1 or param.forceFileNameEnum %}
   {% for file in files %}
-  {{accessModifier}} enum {{file.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
+  {{accessModifier}} object {{file.name|kotlinIdentifier:"pretty"|escapeReservedKeywords}} {
     {% filter indent:2," ",true %}{% call fileBlock file %}{% endfilter %}
   }
   {% endfor %}
@@ -143,21 +141,13 @@ import Foundation
 {% for file in files %}
 {% if file.document.data.custom_types.count > 0 %}
 
-extension {{param.enumName|default:"GeneratedAnalyticsEvents"}} {
-  {% filter indent:2," ",true %}{% call customTypesBlock file.document %}{% endfilter %}
-}
+// Custom types for {{file.name}}
+{% call customTypesBlock file.document %}
 {% endif %}
 {% endfor %}
 {% else %}
 // No files found
 {% endif %}
 
-private extension Dictionary where Value == Any? {
-    /// Returns dictionary with filtered out `nil` and `NSNull` values
-    func byExcludingNilValues() -> [Key: Any] {
-        return compactMapValues { value -> Any? in
-            value is NSNull ? nil : value
-        }
-    }
-} 
-// swiftlint:enable all
+private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
+    this.filterValues { it != null }.mapValues { it.value!! }

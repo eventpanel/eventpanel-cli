@@ -1,0 +1,45 @@
+// swiftlint:disable all
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+import Foundation
+
+internal enum AnalyticsEvents {
+  internal enum ECommerce {
+
+    /// User viewed a product
+    /// - Parameters:
+    ///     - product_id: Unique identifier of the product
+    ///     - product_price: Price of the product
+    ///     - currency: Currency code
+    ///     - is_on_sale: Whether the product is on sale
+    ///     - discount_percentage: Discount percentage if on sale
+    internal static func productView(  
+      productId: String,
+      productPrice: Float,
+      currency: String,
+      isOnSale: Bool?,
+      discountPercentage: Float?
+    ) -> AnalyticsEvent {
+      AnalyticsEvent(
+        name: "Product View",
+        parameters: [
+          "product_id": productId,
+          "product_price": productPrice,
+          "currency": currency,
+          "is_on_sale": isOnSale,
+          "discount_percentage": discountPercentage
+        ].byExcludingNilValues()
+      )
+    }
+  }
+}
+
+private extension Dictionary where Value == Any? {
+    /// Returns dictionary with filtered out `nil` and `NSNull` values
+    func byExcludingNilValues() -> [Key: Any] {
+        return compactMapValues { value -> Any? in
+            value is NSNull ? nil : value
+        }
+    }
+} 
+// swiftlint:enable all

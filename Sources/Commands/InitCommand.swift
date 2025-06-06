@@ -57,6 +57,15 @@ final class InitCommand {
             )
         }
         
+        // Check for Android project
+        if let projectName = findAndroidProject(in: directory) {
+            return ProjectInfo(
+                name: projectName,
+                source: Source.android,
+                plugin: .kotlingen(.default)
+            )
+        }
+        
         // For now, if no project is found, throw an error
         throw InitCommandError.noSupportedProject
     }
@@ -72,5 +81,23 @@ final class InitCommand {
         }
         
         return (projectPath as NSString).deletingPathExtension
+    }
+    
+    private func findAndroidProject(in directory: String) -> String? {
+        guard let contents = try? fileManager.contentsOfDirectory(atPath: directory) else {
+            return nil
+        }
+        
+        // Check for typical Android project files
+        let hasBuildGradle = contents.contains { $0 == "build.gradle" || $0 == "build.gradle.kts" }
+        let hasSettingsGradle = contents.contains { $0 == "settings.gradle" || $0 == "settings.gradle.kts" }
+        let hasGradleWrapper = contents.contains { $0 == "gradlew" }
+        
+        if hasBuildGradle && (hasSettingsGradle || hasGradleWrapper) {
+            // Use the directory name as the project name
+            return (directory as NSString).lastPathComponent
+        }
+        
+        return nil
     }
 }

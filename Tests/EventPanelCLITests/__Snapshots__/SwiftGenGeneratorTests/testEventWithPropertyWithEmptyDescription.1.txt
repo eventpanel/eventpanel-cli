@@ -1,0 +1,27 @@
+// swiftlint:disable all
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+import Foundation
+
+internal enum AnalyticsEvents {
+  internal static func paymentProcess(  
+    paymentMethod: String
+  ) -> AnalyticsEvent {
+    AnalyticsEvent(
+      name: "Payment Process",
+      parameters: [
+        "payment_method": paymentMethod
+      ]
+    )
+  }
+}
+
+private extension Dictionary where Value == Any? {
+    /// Returns dictionary with filtered out `nil` and `NSNull` values
+    func byExcludingNilValues() -> [Key: Any] {
+        return compactMapValues { value -> Any? in
+            value is NSNull ? nil : value
+        }
+    }
+} 
+// swiftlint:enable all

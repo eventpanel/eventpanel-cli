@@ -1,0 +1,44 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+package com.eventpanel.analytics
+
+internal object GeneratedAnalyticsEvents {
+  internal object Payment {
+
+    /**
+     * User processed a payment
+     * @param payment_method Method of payment
+     * @param payment_status Status of the payment
+     */
+    internal fun paymentProcess(  
+      paymentMethod: String,
+      paymentStatus: String
+    ): AnalyticsEvent {
+      return AnalyticsEvent(
+        name = "Payment Process",
+        parameters = mapOf(
+          "payment_method" to paymentMethod,
+          "payment_status" to paymentStatus
+        )
+      )
+    }
+  }
+
+}
+
+// Custom types for 
+internal enum class PaymentMethod(val value: String) {
+  CreditCard("credit_card"),
+  Paypal("paypal"),
+  ApplePay("apple_pay"),
+  GooglePay("google_pay")
+}
+internal enum class PaymentStatus(val value: String) {
+  Pending("pending"),
+  Completed("completed"),
+  Failed("failed"),
+  Refunded("refunded")
+}
+
+private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
+    this.filterValues { it != null }.mapValues { it.value!! }

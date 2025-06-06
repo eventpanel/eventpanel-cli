@@ -1,0 +1,44 @@
+// swiftlint:disable all
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+import Foundation
+
+internal enum AnalyticsEvents {
+  internal enum User {
+
+    /// User logged in to the app
+    /// - Parameters:
+    ///     - login_method: Login method used
+    ///     - is_successful: Whether login was successful
+    internal static func userLogin(  
+      loginMethod: Method,
+      isSuccessful: Bool
+    ) -> AnalyticsEvent {
+      AnalyticsEvent(
+        name: "User Login",
+        parameters: [
+          "login_method": loginMethod,
+          "is_successful": isSuccessful
+        ]
+      )
+    }
+  }
+}
+
+extension AnalyticsEvents {
+    internal enum Method: String {
+      case email = "email"
+      case google = "google"
+      case apple = "apple"
+    }
+}
+
+private extension Dictionary where Value == Any? {
+    /// Returns dictionary with filtered out `nil` and `NSNull` values
+    func byExcludingNilValues() -> [Key: Any] {
+        return compactMapValues { value -> Any? in
+            value is NSNull ? nil : value
+        }
+    }
+} 
+// swiftlint:enable all

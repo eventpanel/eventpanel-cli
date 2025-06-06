@@ -1,0 +1,37 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+package com.eventpanel.analytics
+
+internal object GeneratedAnalyticsEvents {
+  internal object User {
+
+    /**
+     * User logged in to the app
+     * @param login_method Login method used
+     * @param is_successful Whether login was successful
+     */
+    internal fun userLogin(  
+      loginMethod: Method,
+      isSuccessful: Boolean
+    ): AnalyticsEvent {
+      return AnalyticsEvent(
+        name = "User Login",
+        parameters = mapOf(
+          "login_method" to loginMethod,
+          "is_successful" to isSuccessful
+        )
+      )
+    }
+  }
+
+}
+
+// Custom types for 
+internal enum class Method(val value: String) {
+  Email("email"),
+  Google("google"),
+  Apple("apple")
+}
+
+private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
+    this.filterValues { it != null }.mapValues { it.value!! }

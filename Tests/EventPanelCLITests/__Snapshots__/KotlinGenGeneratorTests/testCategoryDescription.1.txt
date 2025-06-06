@@ -1,0 +1,30 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+package com.eventpanel.analytics
+
+internal object GeneratedAnalyticsEvents {
+  /**
+   * Screen represents a lot of products
+   */
+  internal object ECommerce {
+
+    /**
+     * User viewed a product
+     * @param product_id Unique identifier of the product
+     */
+    internal fun productView(  
+      productId: String
+    ): AnalyticsEvent {
+      return AnalyticsEvent(
+        name = "Product View",
+        parameters = mapOf(
+          "product_id" to productId
+        )
+      )
+    }
+  }
+
+}
+
+private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
+    this.filterValues { it != null }.mapValues { it.value!! }

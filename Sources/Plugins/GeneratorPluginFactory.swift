@@ -14,7 +14,15 @@ final class DefaultGeneratorPluginFactory: GeneratorPluginFactory, @unchecked Se
     func generator(for plugin: Plugin) -> CodeGeneratorPlugin {
         switch plugin {
         case .swiftgen(let plugin):
-            return Swiftgen(
+            return SwiftGen(
+                config: plugin,
+                schemeManagerLoader: FileSchemeManagerLoader(
+                    fileManager: fileManager
+                ),
+                fileManager: fileManager
+            )
+        case .kotlingen(let plugin):
+            return KotlinGen(
                 config: plugin,
                 schemeManagerLoader: FileSchemeManagerLoader(
                     fileManager: fileManager
