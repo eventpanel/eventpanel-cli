@@ -30,7 +30,7 @@ let package = Package(
                 .product(name: "StencilEventPanelKit", package: "StencilEventPanelKit")
             ],
             resources: [
-                .process("Plugins/SwiftGen/swift.stencil"),
+                .process("Plugins/SwiftGen/swift5.stencil"),
                 .process("Plugins/KotlinGen/kotlin.stencil")
             ]
         ),
