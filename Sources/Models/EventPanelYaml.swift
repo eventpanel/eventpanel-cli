@@ -126,7 +126,7 @@ actor EventPanelYaml {
         config.workspaceId
     }
 
-    func setWorkspaceId(_ id: String) throws {
+    func setWorkspaceId(_ id: String?) throws {
         config.workspaceId = id
         try save()
     }

@@ -17,7 +17,7 @@ final class AuthCommand {
     }
     
     func setToken(_ token: String) async throws {
-        let id = try await getWorkspaceId(token: token)
+        let id = try await fetchWorkspaceId(token: token)
 
         try await authTokenService.setToken(token, workspaceId: id)
         ConsoleLogger.success("API token has been saved successfully")
@@ -29,18 +29,24 @@ final class AuthCommand {
         ConsoleLogger.success("API token has been removed successfully")
     }
 
-    private func getWorkspaceId(token: String) async throws -> String? {
-        guard let id = await eventPanelYaml.getWorkspaceId() else {
-            return try await fetchWorkspaceId(token: token)
-        }
-        return id
-    }
-
     private func fetchWorkspaceId(token: String) async throws -> String? {
-        try await authTokenService.setToken(token, workspaceId: nil)
-        let workspace = try await apiService.getWorkspace()
-        try await authTokenService.removeToken(workspaceId: nil)
-        try await eventPanelYaml.setWorkspaceId(workspace.workspaceId)
-        return workspace.workspaceId
+        let currentWorkspaceId = await eventPanelYaml.getWorkspaceId()
+
+        if currentWorkspaceId != nil {
+            try await eventPanelYaml.setWorkspaceId(nil)
+        }
+
+        do {
+            try await authTokenService.setToken(token, workspaceId: nil)
+            let workspace = try await apiService.getWorkspace()
+            try await authTokenService.removeToken(workspaceId: nil)
+            try await eventPanelYaml.setWorkspaceId(workspace.workspaceId)
+            return workspace.workspaceId
+        } catch {
+            if currentWorkspaceId != nil {
+                try await eventPanelYaml.setWorkspaceId(currentWorkspaceId)
+            }
+            throw error
+        }
     }
 }
