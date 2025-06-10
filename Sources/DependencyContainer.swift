@@ -5,20 +5,24 @@ final class DependencyContainer: @unchecked Sendable {
     static let shared = DependencyContainer()
     
     // MARK: - Dependencies
-    private let authService: AuthService = {
-        return AuthService()
+    private let authTokenService: AuthTokenService = {
+        KeychainAuthTokenService()
     }()
 
     private(set) lazy var generatorPluginFactory: GeneratorPluginFactory = {
-        return DefaultGeneratorPluginFactory(fileManager: fileManager)
+        DefaultGeneratorPluginFactory(fileManager: fileManager)
     }()
 
     private(set) lazy var authCommand: AuthCommand = {
-        return AuthCommand(authService: authService)
+        AuthCommand(
+            apiService: apiService,
+            authTokenService: authTokenService,
+            eventPanelYaml: eventPanelYaml
+        )
     }()
     
     private lazy var networkClient: NetworkClient = {
-        let authAPIClientDelegate = AuthAPIClientDelegate(authService: authService)
+        let authAPIClientDelegate = AuthAPIClientDelegate(authTokenProvider: authTokenProvider)
         let networkClient = NetworkClient(baseURL: URL(string: "http://localhost:3002/")) {
             $0.delegate = authAPIClientDelegate
         }
@@ -28,7 +32,14 @@ final class DependencyContainer: @unchecked Sendable {
     private lazy var apiService: EventPanelAPIService = {
         return EventPanelAPIService(networkClient: networkClient)
     }()
-    
+
+    private lazy var authTokenProvider: AuthTokenProvider = {
+        return WorkspaceBasedAuthTokenProvider(
+            authTokenService: authTokenService,
+            eventPanelYamlProvider: FileEventPanelYamlProvider()
+        )
+    }()
+
     private(set) lazy var fileManager: FileManager = {
         return .default
     }()

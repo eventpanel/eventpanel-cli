@@ -5,10 +5,10 @@ typealias NetworkClient = APIClient
 
 // handle {"message":"error.accessTokenNotFound","error":"Not Found","statusCode":404}
 final class AuthAPIClientDelegate: APIClientDelegate, Sendable {
-    private let authService: AuthService
+    private let authTokenProvider: AuthTokenProvider
 
-    init(authService: AuthService) {
-        self.authService = authService
+    init(authTokenProvider: AuthTokenProvider) {
+        self.authTokenProvider = authTokenProvider
     }
 
     func client(_ client: APIClient, willSendRequest request: inout URLRequest) async throws {
@@ -19,7 +19,7 @@ final class AuthAPIClientDelegate: APIClientDelegate, Sendable {
             ConsoleLogger.debug("Request Body: \(bodyString)")
         }
         
-        let token = try authService.getToken()
+        let token = try await authTokenProvider.getToken()
         request.setValue(token, forHTTPHeaderField: "x-api-key")
     }
 

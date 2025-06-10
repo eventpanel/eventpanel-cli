@@ -1,25 +1,26 @@
-import Foundation
-import Security
+//
+//  KeychainAuthTokenService.swift
+//  eventpanel-cli
+//
+//  Created by Sukhanov Evgenii on 10.06.2025.
+//
 
-enum AuthError: LocalizedError {
-    case keychainError(String)
-    case tokenNotFound
+import Foundation
+
+final class KeychainAuthTokenService: AuthTokenService {
+    private let service = "net.eventpanel.cli"
     
-    var errorDescription: String? {
-        switch self {
-        case .keychainError(let message):
-            return "Keychain error: \(message)"
-        case .tokenNotFound:
-            return "No API token found. Please set your API token using 'eventpanel auth set-token'"
+    private func accountIdentifier(for workspaceId: String?) -> String {
+        if let workspaceId = workspaceId {
+            return "api-token-\(workspaceId)"
+        } else {
+            return "api-token" // fallback for backward compatibility
         }
     }
-}
-
-final class AuthService: Sendable {
-    private let service = "net.eventpanel.cli"
-    private let account = "api-token"
     
-    func setToken(_ token: String) async throws {
+    func setToken(_ token: String, workspaceId: String? = nil) async throws {
+        let account = accountIdentifier(for: workspaceId)
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -27,7 +28,7 @@ final class AuthService: Sendable {
             kSecValueData as String: token.data(using: .utf8)!
         ]
         
-        // First try to delete any existing token
+        // First try to delete any existing token for this workspace
         SecItemDelete(query as CFDictionary)
         
         let status = SecItemAdd(query as CFDictionary, nil)
@@ -36,7 +37,9 @@ final class AuthService: Sendable {
         }
     }
     
-    func getToken() throws -> String {
+    func getToken(workspaceId: String? = nil) throws -> String {
+        let account = accountIdentifier(for: workspaceId)
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -56,7 +59,9 @@ final class AuthService: Sendable {
         return token
     }
     
-    func removeToken() async throws {
+    func removeToken(workspaceId: String? = nil) async throws {
+        let account = accountIdentifier(for: workspaceId)
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -68,4 +73,4 @@ final class AuthService: Sendable {
             throw AuthError.keychainError("Failed to remove token: \(status)")
         }
     }
-} 
+}

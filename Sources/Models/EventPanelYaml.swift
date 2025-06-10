@@ -110,7 +110,7 @@ actor EventPanelYaml {
     }
 
     func getEvents() -> [Event] {
-        return config.events
+        config.events
     }
     
     func updateEvent(eventId: String, version: Int) throws {
@@ -121,7 +121,16 @@ actor EventPanelYaml {
         config.events[eventIndex].version = version
         try save()
     }
-    
+
+    func getWorkspaceId() -> String? {
+        config.workspaceId
+    }
+
+    func setWorkspaceId(_ id: String) throws {
+        config.workspaceId = id
+        try save()
+    }
+
     private func save() throws {
         let encoder = YAMLEncoder()
         let yamlString = try encoder.encode(config)

@@ -1,12 +1,13 @@
 import Foundation
 
 struct EventPanelConfig: Codable {
-    /// Global settings
+    var workspaceId: String?
     let source: Source
     let plugin: Plugin
     var events: [Event]
 
     enum CodingKeys: String, CodingKey {
+        case workspaceId
         case source
         case plugin
         case events

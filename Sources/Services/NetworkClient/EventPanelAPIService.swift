@@ -92,3 +92,19 @@ extension EventPanelAPIService {
         }
     }
 }
+
+struct WorkspaceResponse: Decodable {
+    let workspaceId: String
+}
+
+extension EventPanelAPIService {
+    func getWorkspace() async throws -> WorkspaceResponse {
+        let response: Response<WorkspaceResponse> = try await networkClient.send(
+            Request(
+                path: "api/external/workspace",
+                method: .get
+            )
+        )
+        return response.value
+    }
+}
