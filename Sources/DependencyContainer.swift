@@ -23,7 +23,7 @@ final class DependencyContainer: @unchecked Sendable {
     
     private lazy var networkClient: NetworkClient = {
         let authAPIClientDelegate = AuthAPIClientDelegate(authTokenProvider: authTokenProvider)
-        let networkClient = NetworkClient(baseURL: URL(string: "http://localhost:3002/")) {
+        let networkClient = NetworkClient(baseURL: Environment.current.baseURL) {
             $0.delegate = authAPIClientDelegate
         }
         return networkClient
