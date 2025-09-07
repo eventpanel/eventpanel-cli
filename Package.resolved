@@ -1,5 +1,5 @@
 {
-  "originHash" : "3c50a3977c65786563bdb6c22477549d8aa0c8eaf2fa59c2e651702ff6a9f7c2",
+  "originHash" : "000f1f35120abbdad876500cc0df0bce4c6144a16953080f6c36955807a3aa74",
   "pins" : [
     {
       "identity" : "get",
@@ -62,6 +62,15 @@
       "state" : {
         "revision" : "4f222ac85d673f35df29962fc4c36ccfdaf9da5b",
         "version" : "0.15.1"
+      }
+    },
+    {
+      "identity" : "stencileventpanelkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eventpanel/StencilEventPanelKit",
+      "state" : {
+        "branch" : "stable",
+        "revision" : "5077211e3e5d18e98c79993a0f66c68abeba1699"
       }
     },
     {

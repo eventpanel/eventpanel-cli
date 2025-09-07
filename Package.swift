@@ -17,7 +17,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.5.0"),
         .package(url: "https://github.com/kean/Get", from: "2.2.1"),
         .package(url: "https://github.com/jpsim/Yams", from: "6.0.0"),
-        .package(path: "../StencilEventPanelKit"),
+        .package(url: "https://github.com/eventpanel/StencilEventPanelKit", branch: "stable"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.18.4")
     ],
     targets: [
