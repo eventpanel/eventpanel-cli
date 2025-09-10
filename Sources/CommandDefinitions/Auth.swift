@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct SetToken: AsyncParsableCommand {
+struct SetToken: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "set-token",
         abstract: "Set API token",
@@ -19,13 +19,17 @@ struct SetToken: AsyncParsableCommand {
     
     @Argument(help: "API token to store")
     var token: String
-    
+
+    func validate() throws {
+        try validateConfig()
+    }
+
     func run() async throws {
         try await DependencyContainer.shared.authCommand.setToken(token)
     }
 }
 
-struct RemoveToken: AsyncParsableCommand {
+struct RemoveToken: AsyncParsableCommand, ConfigRelatedCommand {
     static let configuration = CommandConfiguration(
         commandName: "remove-token",
         abstract: "Remove stored API token",
@@ -38,7 +42,11 @@ struct RemoveToken: AsyncParsableCommand {
         This will remove the stored API token and require re-authentication for future commands.
         """
     )
-    
+
+    func validate() throws {
+        try validateConfig()
+    }
+
     func run() async throws {
         try await DependencyContainer.shared.authCommand.removeToken()
     }
