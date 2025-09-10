@@ -31,7 +31,7 @@ extension EventPanelAPIService {
     ) async throws -> LatestEventData {
         let response: Response<LatestEventData> = try await networkClient.send(
             Request(
-                path: "api/external/events/latest/\(eventId)",
+                path: "backend-api/external/events/latest/\(eventId)",
                 method: .get,
                 query: [("source", source.rawValue)]
             )
@@ -56,7 +56,7 @@ extension EventPanelAPIService {
     ) async throws -> EventLatestResponse {
         let response: Response<EventLatestResponse> = try await networkClient.send(
             Request(
-                path: "api/external/events/latest/list",
+                path: "backend-api/external/events/latest/list",
                 method: .post,
                 body: LatestEventsRequest(events: events, source: source)
             )
@@ -78,7 +78,7 @@ extension EventPanelAPIService {
         do {
             let response: Response<WorkspaceScheme> = try await networkClient.send(
                 Request(
-                    path: "api/external/events/generate/list",
+                    path: "backend-api/external/events/generate/list",
                     method: .post,
                     body: SchemeRequest(events: events, source: source)
                 )
@@ -101,7 +101,7 @@ extension EventPanelAPIService {
     func getWorkspace() async throws -> WorkspaceResponse {
         let response: Response<WorkspaceResponse> = try await networkClient.send(
             Request(
-                path: "api/external/workspace",
+                path: "backend-api/external/workspace",
                 method: .get
             )
         )
