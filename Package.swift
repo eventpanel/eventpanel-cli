@@ -28,10 +28,6 @@ let package = Package(
                 .product(name: "Get", package: "Get"),
                 .product(name: "Yams", package: "Yams"),
                 .product(name: "StencilEventPanelKit", package: "StencilEventPanelKit")
-            ],
-            resources: [
-                .process("Plugins/SwiftGen/swift5.stencil"),
-                .process("Plugins/KotlinGen/kotlin.stencil")
             ]
         ),
         .testTarget(
