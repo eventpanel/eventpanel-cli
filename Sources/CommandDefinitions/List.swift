@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct List: AsyncParsableCommand, ConfigRelatedCommand {
+struct List: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "list",
         abstract: "List events",
@@ -21,10 +21,6 @@ struct List: AsyncParsableCommand, ConfigRelatedCommand {
 
     @Option(name: .long, help: "Number of items per page")
     var pageSize: Int = 20
-
-    func validate() throws {
-        try validateConfig()
-    }
 
     func run() async throws {
         try await DependencyContainer.shared.listCommand.execute(pageSize: pageSize)

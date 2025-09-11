@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
+struct Generate: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "generate",
         abstract: "Generate events according to versions from a EventPanel.yaml",
@@ -23,9 +23,6 @@ struct Generate: AsyncParsableCommand, ConfigRelatedCommand {
     @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
     var schemeUpdate: Bool = false
 
-    func validate() throws {
-        try validateConfig()
-    }
 
     func run() async throws {
         if schemeUpdate {

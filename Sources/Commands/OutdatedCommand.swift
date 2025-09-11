@@ -26,16 +26,17 @@ private struct OutdatedEvent {
 
 final class OutdatedCommand {
     private let apiService: EventPanelAPIService
-    private let eventPanelYaml: EventPanelYaml
+    private let configProvider: ConfigProvider
 
-    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml) {
+    init(apiService: EventPanelAPIService, configProvider: ConfigProvider) {
         self.apiService = apiService
-        self.eventPanelYaml = eventPanelYaml
+        self.configProvider = configProvider
     }
     
     func execute() async throws {
         ConsoleLogger.message("Checking for outdated events...")
 
+        let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let events = await eventPanelYaml.getEvents()
         
         let outdatedEvents = try await checkEventsForUpdates(

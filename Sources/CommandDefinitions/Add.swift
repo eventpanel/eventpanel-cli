@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct Add: AsyncParsableCommand, ConfigRelatedCommand {
+struct Add: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "add",
         abstract: "Add event to EventPanel.yaml",
@@ -28,9 +28,6 @@ struct Add: AsyncParsableCommand, ConfigRelatedCommand {
     @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
     var schemeUpdate: Bool = true
 
-    func validate() throws {
-        try validateConfig()
-    }
 
     func run() async throws {
         try await DependencyContainer.shared.addCommand.execute(eventId: eventId, version: version)

@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct Outdated: AsyncParsableCommand, ConfigRelatedCommand {
+struct Outdated: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "outdated",
         abstract: "Show outdated events",
@@ -13,10 +13,6 @@ struct Outdated: AsyncParsableCommand, ConfigRelatedCommand {
         Display a list of events that have updates available
         """
     )
-
-    func validate() throws {
-        try validateConfig()
-    }
 
     func run() async throws {
         try await DependencyContainer.shared.outdatedCommand.execute()

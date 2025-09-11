@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct Deintegrate: AsyncParsableCommand, ConfigRelatedCommand {
+struct Deintegrate: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "deintegrate",
         abstract: "Deintegrate EventPanel from your project",

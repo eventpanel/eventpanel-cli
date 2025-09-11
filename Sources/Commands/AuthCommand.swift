@@ -4,16 +4,16 @@ import Security
 final class AuthCommand {
     private let apiService: EventPanelAPIService
     private let authTokenService: AuthTokenService
-    private let eventPanelYaml: EventPanelYaml
+    private let configProvider: ConfigProvider
 
     init(
         apiService: EventPanelAPIService,
         authTokenService: AuthTokenService,
-        eventPanelYaml: EventPanelYaml
+        configProvider: ConfigProvider
     ) {
         self.apiService = apiService
         self.authTokenService = authTokenService
-        self.eventPanelYaml = eventPanelYaml
+        self.configProvider = configProvider
     }
     
     func setToken(_ token: String) async throws {
@@ -24,12 +24,14 @@ final class AuthCommand {
     }
     
     func removeToken() async throws {
+        let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let workspaceId = await eventPanelYaml.getWorkspaceId()
         try await authTokenService.removeToken(workspaceId: workspaceId)
         ConsoleLogger.success("API token has been removed successfully")
     }
 
     private func fetchWorkspaceId(token: String) async throws -> String? {
+        let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let currentWorkspaceId = await eventPanelYaml.getWorkspaceId()
 
         if currentWorkspaceId != nil {

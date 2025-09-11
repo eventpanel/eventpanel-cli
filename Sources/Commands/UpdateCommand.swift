@@ -23,32 +23,35 @@ enum UpdateCommandError: LocalizedError {
 
 final class UpdateCommand {
     private let apiService: EventPanelAPIService
-    private let eventPanelYaml: EventPanelYaml
+    private let configProvider: ConfigProvider
 
-    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml) {
+    init(apiService: EventPanelAPIService, configProvider: ConfigProvider) {
         self.apiService = apiService
-        self.eventPanelYaml = eventPanelYaml
+        self.configProvider = configProvider
     }
     
     func execute(eventIds: [String]) async throws {
+        let eventPanelYaml = try await configProvider.getEventPanelYaml()
         if eventIds.count == 1, let eventId = eventIds.first {
             try await updateSingleEvent(
                 eventId: eventId,
-                source: eventPanelYaml.getSource()
+                source: eventPanelYaml.getSource(),
+                eventPanelYaml: eventPanelYaml
             )
         } else if eventIds.isEmpty {
-            try await updateAllEvents()
+            try await updateAllEvents(eventPanelYaml: eventPanelYaml)
         } else {
             try await updateEvents(
                 eventIds: Set(eventIds),
-                source: eventPanelYaml.getSource()
+                source: eventPanelYaml.getSource(),
+                eventPanelYaml: eventPanelYaml
             )
         }
     }
     
     // MARK: - Private Methods
 
-    private func updateSingleEvent(eventId: String, source: Source) async throws {
+    private func updateSingleEvent(eventId: String, source: Source, eventPanelYaml: EventPanelYaml) async throws {
         ConsoleLogger.message("Checking for updates to event '\(eventId)'...")
 
         let events = await eventPanelYaml.getEvents()
@@ -83,11 +86,11 @@ final class UpdateCommand {
         }
     }
     
-    private func updateAllEvents() async throws {
-        try await updateEvents(eventIds: nil, source: eventPanelYaml.getSource())
+    private func updateAllEvents(eventPanelYaml: EventPanelYaml) async throws {
+        try await updateEvents(eventIds: nil, source: eventPanelYaml.getSource(), eventPanelYaml: eventPanelYaml)
     }
 
-    private func updateEvents(eventIds: Set<String>?, source: Source) async throws {
+    private func updateEvents(eventIds: Set<String>?, source: Source, eventPanelYaml: EventPanelYaml) async throws {
         ConsoleLogger.message("Checking for event updates...")
 
         // Read YAML file

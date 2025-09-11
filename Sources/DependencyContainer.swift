@@ -13,11 +13,15 @@ final class DependencyContainer: @unchecked Sendable {
         DefaultGeneratorPluginFactory(fileManager: fileManager)
     }()
 
+    private(set) lazy var configProvider: ConfigProvider = {
+        FileConfigProvider(fileManager: fileManager)
+    }()
+
     private(set) lazy var authCommand: AuthCommand = {
         AuthCommand(
             apiService: apiService,
             authTokenService: authTokenService,
-            eventPanelYaml: eventPanelYaml
+            configProvider: configProvider
         )
     }()
     
@@ -44,13 +48,9 @@ final class DependencyContainer: @unchecked Sendable {
         return .default
     }()
 
-    private(set) lazy var eventPanelYaml: EventPanelYaml = {
-        try! EventPanelYaml.read(fileManager: fileManager)
-    }()
-
     // MARK: - Commands
     private(set) lazy var addCommand: AddCommand = {
-        return AddCommand(apiService: apiService, eventPanelYaml: eventPanelYaml)
+        return AddCommand(apiService: apiService, configProvider: configProvider)
     }()
     
     private(set) lazy var deintegrateCommand: DeintegrateCommand = {
@@ -59,7 +59,7 @@ final class DependencyContainer: @unchecked Sendable {
     
     private(set) lazy var generateCommand: GenerateCommand = {
         return GenerateCommand(
-            eventPanelYaml: eventPanelYaml,
+            configProvider: configProvider,
             generatorPluginFactory: generatorPluginFactory
         )
     }()
@@ -69,19 +69,19 @@ final class DependencyContainer: @unchecked Sendable {
     }()
     
     private(set) lazy var listCommand: ListCommand = {
-        return ListCommand(networkClient: networkClient, eventPanelYaml: eventPanelYaml)
+        return ListCommand(networkClient: networkClient, configProvider: configProvider)
     }()
     
     private(set) lazy var outdatedCommand: OutdatedCommand = {
-        return OutdatedCommand(apiService: apiService, eventPanelYaml: eventPanelYaml)
+        return OutdatedCommand(apiService: apiService, configProvider: configProvider)
     }()
     
     private(set) lazy var pullCommand: PullCommand = {
-        return PullCommand(apiService: apiService, eventPanelYaml: eventPanelYaml, fileManager: fileManager)
+        return PullCommand(apiService: apiService, configProvider: configProvider, fileManager: fileManager)
     }()
     
     private(set) lazy var updateCommand: UpdateCommand = {
-        return UpdateCommand(apiService: apiService, eventPanelYaml: eventPanelYaml)
+        return UpdateCommand(apiService: apiService, configProvider: configProvider)
     }()
     
     // MARK: - Private Initializer

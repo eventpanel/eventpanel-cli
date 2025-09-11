@@ -23,12 +23,12 @@ enum PullCommandError: LocalizedError {
 
 final class PullCommand {
     private let apiService: EventPanelAPIService
-    private let eventPanelYaml: EventPanelYaml
+    private let configProvider: ConfigProvider
     private let fileManager: FileManager
     
-    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml, fileManager: FileManager) {
+    init(apiService: EventPanelAPIService, configProvider: ConfigProvider, fileManager: FileManager) {
         self.apiService = apiService
-        self.eventPanelYaml = eventPanelYaml
+        self.configProvider = configProvider
         self.fileManager = fileManager
     }
     
@@ -36,6 +36,7 @@ final class PullCommand {
         ConsoleLogger.message("Fetching latest scheme...")
 
         // Validate events
+        let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let events = await eventPanelYaml.getEvents()
         guard !events.isEmpty else {
             throw PullCommandError.eventsAreMissing

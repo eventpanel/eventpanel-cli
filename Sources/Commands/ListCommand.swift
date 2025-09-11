@@ -14,14 +14,15 @@ enum ListCommandError: LocalizedError {
 
 final class ListCommand {
     private let networkClient: NetworkClient
-    private let eventPanelYaml: EventPanelYaml
+    private let configProvider: ConfigProvider
     
-    init(networkClient: NetworkClient, eventPanelYaml: EventPanelYaml) {
+    init(networkClient: NetworkClient, configProvider: ConfigProvider) {
         self.networkClient = networkClient
-        self.eventPanelYaml = eventPanelYaml
+        self.configProvider = configProvider
     }
     
     func execute(pageSize: Int) async throws {
+        let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let events = await eventPanelYaml.getEvents()
         
         // Display events with pagination

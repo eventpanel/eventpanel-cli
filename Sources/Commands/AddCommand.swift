@@ -23,14 +23,15 @@ enum AddCommandError: LocalizedError {
 
 final class AddCommand {
     private let apiService: EventPanelAPIService
-    private let eventPanelYaml: EventPanelYaml
+    private let configProvider: ConfigProvider
 
-    init(apiService: EventPanelAPIService, eventPanelYaml: EventPanelYaml) {
+    init(apiService: EventPanelAPIService, configProvider: ConfigProvider) {
         self.apiService = apiService
-        self.eventPanelYaml = eventPanelYaml
+        self.configProvider = configProvider
     }
     
     func execute(eventId: String, version: Int?) async throws {
+        let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let eventVersion = try await validateEvent(
             eventId: eventId,
             version: version,
@@ -38,7 +39,7 @@ final class AddCommand {
         )
 
         // Part 3: Add event to YAML file
-        try await addEventToYaml(eventId: eventId, eventVersion: version ?? eventVersion)
+        try await addEventToYaml(eventId: eventId, eventVersion: version ?? eventVersion, eventPanelYaml: eventPanelYaml)
 
         ConsoleLogger.success("Added event '\(eventId)'")
     }
@@ -73,7 +74,7 @@ final class AddCommand {
     }
     
     /// Adds the validated event to the YAML configuration
-    private func addEventToYaml(eventId: String, eventVersion: Int) async throws {
+    private func addEventToYaml(eventId: String, eventVersion: Int, eventPanelYaml: EventPanelYaml) async throws {
         try await eventPanelYaml.addEvent(eventId: eventId, eventVersion: eventVersion)
     }
 }

@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
+struct Pull: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "pull",
         abstract: "Fetch and store the latest scheme from the server",
@@ -15,10 +15,6 @@ struct Pull: AsyncParsableCommand, ConfigRelatedCommand {
         - Download the latest event scheme
         """
     )
-
-    func validate() throws {
-        try validateConfig()
-    }
 
     func run() async throws {
         try await DependencyContainer.shared.pullCommand.execute()
