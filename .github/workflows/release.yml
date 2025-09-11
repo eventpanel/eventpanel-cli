@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Swift
+      uses: swift-actions/setup-swift@v2
+      with:
+        swift-version: "6.1"
+        
+    - name: Cache Swift Package Manager
+      uses: actions/cache@v3
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+          
+    - name: Resolve Dependencies
+      run: swift package resolve
+      
+    - name: Build Static Binary
+      run: |
+        swift build -c release --static-swift-stdlib
+        mkdir -p dist
+        cp .build/release/eventpanel dist/eventpanel-macos
+        
+    - name: Create Release Archive
+      run: |
+        cd dist
+        tar -czf eventpanel-macos.tar.gz eventpanel-macos
+        sha256sum eventpanel-macos.tar.gz > eventpanel-macos.tar.gz.sha256
+        
+    - name: Display SHA256 for Homebrew Formula
+      run: |
+        cd dist
+        SHA256=$(sha256sum eventpanel-macos.tar.gz | cut -d' ' -f1)
+        echo "=========================================="
+        echo "🔑 SHA256 for Homebrew Formula:"
+        echo "=========================================="
+        echo "$SHA256"
+        echo "=========================================="
+        echo "Copy this SHA256 to update your Homebrew formula!"
+        echo "=========================================="
+        
+    - name: Get Version
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref }}
+        name: EventPanel CLI ${{ steps.version.outputs.VERSION }}
+        body: |
+          ## EventPanel CLI ${{ steps.version.outputs.VERSION }}
+          
+          ### Installation
+          
+          **Homebrew (Recommended):**
+          ```bash
+          brew tap eventpanel/eventpanel
+          brew install eventpanel
+          ```
+          
+          **Manual Installation:**
+          1. Download `eventpanel-macos.tar.gz` from this release
+          2. Extract: `tar -xzf eventpanel-macos.tar.gz`
+          3. Move to PATH: `sudo mv eventpanel-macos /usr/local/bin/eventpanel`
+          4. Make executable: `chmod +x /usr/local/bin/eventpanel`
+          
+          ### What's New
+          - Pre-built binaries for faster installation
+          - No more Command Line Tools required
+        files: |
+          dist/eventpanel-macos.tar.gz
+          dist/eventpanel-macos.tar.gz.sha256
+        draft: false
+        prerelease: false
