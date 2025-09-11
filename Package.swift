@@ -28,6 +28,10 @@ let package = Package(
                 .product(name: "Get", package: "Get"),
                 .product(name: "Yams", package: "Yams"),
                 .product(name: "StencilEventPanelKit", package: "StencilEventPanelKit")
+            ],
+            exclude: [
+                "Plugins/SwiftGen/swift5.stencil",
+                "Plugins/KotlinGen/kotlin.stencil"
             ]
         ),
         .testTarget(

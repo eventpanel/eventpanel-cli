@@ -1,6 +1,6 @@
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
-package com.eventpanel.analytics
+package com.analytics.events
 
 internal object GeneratedAnalyticsEvents {
 

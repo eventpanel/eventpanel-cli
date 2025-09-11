@@ -11,7 +11,7 @@ extension KotlinGenPlugin {
     static var `default`: KotlinGenPlugin {
         .init(
             generatedEventsPath: "GeneratedAnalyticsEvents.kt",
-            packageName: "com.eventpanel.analytics",
+            packageName: "com.analytics.events",
             eventClassName: "AnalyticsEvent",
             documentation: true
         )
