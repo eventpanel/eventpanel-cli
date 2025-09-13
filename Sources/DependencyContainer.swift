@@ -77,6 +77,12 @@ final class DependencyContainer: @unchecked Sendable {
         )
     }()
     
+    private(set) lazy var outputPathValidator: OutputPathValidator = {
+        return DefaultOutputPathValidator(
+            fileManager: fileManager
+        )
+    }()
+    
     private(set) lazy var initCommand: InitCommand = {
         return InitCommand(
             projectDetector: CompositeProjectDetector(projectDetectors: [
@@ -85,7 +91,7 @@ final class DependencyContainer: @unchecked Sendable {
             ]),
             configProvider: configProvider,
             configFileLocation: configFileLocation,
-            outputPathResolver: GeneratorOutputFilePathResolver(fileManager: fileManager)
+            outputPathValidator: outputPathValidator
         )
     }()
     

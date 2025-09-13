@@ -1,7 +1,7 @@
 import Foundation
 
 struct KotlinFileNameValidator {
-    static func validate(_ fileName: String) throws -> String {
+    static func validate(_ fileName: String) throws {
         // Check if filename is empty
         guard !fileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw KotlinFileNameValidationError.emptyFileName
@@ -36,8 +36,6 @@ struct KotlinFileNameValidator {
         if isReservedKotlinKeyword(baseName) {
             throw KotlinFileNameValidationError.reservedKeyword
         }
-        
-        return trimmedFileName
     }
     
     private static func isValidKotlinIdentifierStart(_ character: Character?) -> Bool {

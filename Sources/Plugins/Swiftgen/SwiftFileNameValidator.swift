@@ -1,7 +1,7 @@
 import Foundation
 
 struct SwiftFileNameValidator {
-    static func validate(_ fileName: String) throws -> String {
+    static func validate(_ fileName: String) throws {
         // Check if filename is empty
         guard !fileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw SwiftFileNameValidationError.emptyFileName
@@ -36,8 +36,6 @@ struct SwiftFileNameValidator {
         if isReservedSwiftKeyword(baseName) {
             throw SwiftFileNameValidationError.reservedKeyword
         }
-        
-        return trimmedFileName
     }
     
     private static func isValidSwiftIdentifierStart(_ character: Character?) -> Bool {
