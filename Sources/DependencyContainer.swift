@@ -3,18 +3,28 @@ import Foundation
 final class DependencyContainer: @unchecked Sendable {
     // MARK: - Shared Instance
     static let shared = DependencyContainer()
-    
+
+    var configFileLocation: ConfigFileLocation {
+        ConfigFileLocationProvider.configFileLocation
+    }
+
     // MARK: - Dependencies
     private let authTokenService: AuthTokenService = {
         KeychainAuthTokenService()
     }()
 
     private(set) lazy var generatorPluginFactory: GeneratorPluginFactory = {
-        DefaultGeneratorPluginFactory(fileManager: fileManager)
+        DefaultGeneratorPluginFactory(
+            configFileLocation: configFileLocation,
+            fileManager: fileManager
+        )
     }()
 
     private(set) lazy var configProvider: ConfigProvider = {
-        FileConfigProvider(fileManager: fileManager)
+        FileConfigProvider(
+            configFileLocation: configFileLocation,
+            fileManager: fileManager
+        )
     }()
 
     private(set) lazy var authCommand: AuthCommand = {
@@ -40,7 +50,7 @@ final class DependencyContainer: @unchecked Sendable {
     private lazy var authTokenProvider: AuthTokenProvider = {
         return WorkspaceBasedAuthTokenProvider(
             authTokenService: authTokenService,
-            eventPanelYamlProvider: FileEventPanelYamlProvider()
+            configProvider: configProvider
         )
     }()
 
@@ -54,7 +64,10 @@ final class DependencyContainer: @unchecked Sendable {
     }()
     
     private(set) lazy var deintegrateCommand: DeintegrateCommand = {
-        return DeintegrateCommand(fileManager: fileManager)
+        return DeintegrateCommand(
+            configFileLocation: configFileLocation,
+            fileManager: fileManager
+        )
     }()
     
     private(set) lazy var generateCommand: GenerateCommand = {
@@ -65,7 +78,15 @@ final class DependencyContainer: @unchecked Sendable {
     }()
     
     private(set) lazy var initCommand: InitCommand = {
-        return InitCommand(generatorPluginFactory: generatorPluginFactory, fileManager: fileManager)
+        return InitCommand(
+            generatorPluginFactory: generatorPluginFactory,
+            projectDetector: CompositeProjectDetector(projectDetectors: [
+                XcodeProjectDetector(fileManager: fileManager),
+                GradleProjectDetector(fileManager: fileManager)
+            ]),
+            configProvider: configProvider,
+            configFileLocation: configFileLocation
+        )
     }()
     
     private(set) lazy var listCommand: ListCommand = {
@@ -77,7 +98,12 @@ final class DependencyContainer: @unchecked Sendable {
     }()
     
     private(set) lazy var pullCommand: PullCommand = {
-        return PullCommand(apiService: apiService, configProvider: configProvider, fileManager: fileManager)
+        return PullCommand(
+            apiService: apiService,
+            configProvider: configProvider,
+            configFileLocation: configFileLocation,
+            fileManager: fileManager
+        )
     }()
     
     private(set) lazy var updateCommand: UpdateCommand = {

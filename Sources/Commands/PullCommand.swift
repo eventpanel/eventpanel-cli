@@ -24,11 +24,18 @@ enum PullCommandError: LocalizedError {
 final class PullCommand {
     private let apiService: EventPanelAPIService
     private let configProvider: ConfigProvider
+    private let configFileLocation: ConfigFileLocation
     private let fileManager: FileManager
     
-    init(apiService: EventPanelAPIService, configProvider: ConfigProvider, fileManager: FileManager) {
+    init(
+        apiService: EventPanelAPIService,
+        configProvider: ConfigProvider,
+        configFileLocation: ConfigFileLocation,
+        fileManager: FileManager
+    ) {
         self.apiService = apiService
         self.configProvider = configProvider
+        self.configFileLocation = configFileLocation
         self.fileManager = fileManager
     }
     
@@ -84,7 +91,7 @@ final class PullCommand {
             let data = try encoder.encode(scheme)
             
             // Create .eventpanel directory if it doesn't exist
-            let eventPanelDir = try getEventPanelDirectory()
+            let eventPanelDir = configFileLocation.cacheDirectory
             try fileManager.createDirectory(
                 at: eventPanelDir,
                 withIntermediateDirectories: true,
@@ -98,11 +105,5 @@ final class PullCommand {
         } catch {
             throw PullCommandError.saveFailed(error.localizedDescription)
         }
-    }
-    
-    private func getEventPanelDirectory() throws -> URL {
-        let currentPath = fileManager.currentDirectoryPath
-        return URL(fileURLWithPath: (currentPath as NSString)
-            .appendingPathComponent(".eventpanel"))
     }
 }

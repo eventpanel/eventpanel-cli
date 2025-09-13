@@ -11,18 +11,18 @@ protocol AuthTokenProvider: Sendable {
 
 final class WorkspaceBasedAuthTokenProvider: AuthTokenProvider {
     private let authTokenService: AuthTokenService
-    private let eventPanelYamlProvider: EventPanelYamlProvider
+    private let configProvider: ConfigProvider
 
     init(
         authTokenService: AuthTokenService,
-        eventPanelYamlProvider: EventPanelYamlProvider
+        configProvider: ConfigProvider
     ) {
         self.authTokenService = authTokenService
-        self.eventPanelYamlProvider = eventPanelYamlProvider
+        self.configProvider = configProvider
     }
 
     func getToken() async throws -> String {
-        let eventPanelYaml = try await eventPanelYamlProvider.read()
+        let eventPanelYaml = try await configProvider.getEventPanelYaml()
         return try await authTokenService.getToken(workspaceId: eventPanelYaml.getWorkspaceId())
     }
 }
