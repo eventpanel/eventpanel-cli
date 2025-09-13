@@ -8,9 +8,11 @@ struct SwiftGenPlugin: Codable {
 }
 
 extension SwiftGenPlugin {
-    static var `default`: SwiftGenPlugin {
-        .init(
-            generatedEventsPath: "GeneratedAnalyticsEvents.swift",
+    static func make(
+        generatedEventsPath: String = "GeneratedAnalyticsEvents.swift",
+    ) -> SwiftGenPlugin {
+        SwiftGenPlugin(
+            generatedEventsPath: generatedEventsPath,
             namespace: "AnalyticsEvents",
             eventTypeName: "AnalyticsEvent",
             documentation: true

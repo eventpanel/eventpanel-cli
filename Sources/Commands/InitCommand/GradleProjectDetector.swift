@@ -7,12 +7,11 @@ struct GradleProjectDetector: ProjectDetector {
         self.fileManager = fileManager
     }
 
-    func detectProject(in directory: URL) -> ProjectInfo? {
+    func detectProject(in directory: URL) -> ProjectDirectory? {
         guard let projectName = findProjectName(in: directory) else { return nil }
-        return ProjectInfo(
+        return ProjectDirectory(
             name: projectName,
-            source: Source.android,
-            plugin: .kotlingen(.default)
+            source: .android
         )
     }
 
