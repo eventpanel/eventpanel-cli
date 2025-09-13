@@ -1,34 +1,61 @@
 import Foundation
 
 final class InitCommand {
-    private let generatorPluginFactory: GeneratorPluginFactory
     private let projectDetector: ProjectDetector
     private let configProvider: ConfigProvider
     private let configFileLocation: ConfigFileLocation
+    private let outputPathValidator: OutputPathValidator
 
     init(
-        generatorPluginFactory: GeneratorPluginFactory,
         projectDetector: ProjectDetector,
         configProvider: ConfigProvider,
-        configFileLocation: ConfigFileLocation
+        configFileLocation: ConfigFileLocation,
+        outputPathValidator: OutputPathValidator
     ) {
-        self.generatorPluginFactory = generatorPluginFactory
         self.projectDetector = projectDetector
         self.configProvider = configProvider
         self.configFileLocation = configFileLocation
+        self.outputPathValidator = outputPathValidator
     }
     
-    func execute() async throws {
+    func execute(outputPath: String) async throws {
         let eventPanelYaml = try? await configProvider.getEventPanelYaml()
         if eventPanelYaml != nil { throw InitCommandError.fileAlreadyExists }
 
-        let projectInfo = try detectProject(in: configFileLocation.workingDirectory)
-        try await configProvider.create(at: configFileLocation.configFilePath, projectInfo: projectInfo)
+        let projectDirectory = try detectProject(in: configFileLocation.workingDirectory)
+        let plugin = try initializePlugin(for: projectDirectory.source, outputPath: outputPath)
+
+        let projectInfo = ProjectInfo.init(
+            name: projectDirectory.name,
+            source: projectDirectory.source,
+            plugin: plugin
+        )
+
+        try await configProvider.create(
+            at: configFileLocation.configFilePath,
+            projectInfo: projectInfo
+        )
 
         ConsoleLogger.success("Created EventPanel.yaml")
     }
 
-    private func detectProject(in directory: URL) throws -> ProjectInfo {
+    private func initializePlugin(for source: Source, outputPath: String) throws -> Plugin {
+        let outputFilePath = try outputPathValidator.validate(
+            outputPath,
+            for: source,
+            workingDirectory: configFileLocation.workingDirectory
+        )
+
+        switch source {
+        case .iOS:
+            return .swiftgen(.make(outputFilePath: outputFilePath))
+        case .android:
+            return .kotlingen(.make(outputFilePath: outputFilePath))
+        }
+    }
+    
+
+    private func detectProject(in directory: URL) throws -> ProjectDirectory {
         guard let project = projectDetector.detectProject(in: directory) else {
             throw InitCommandError.noSupportedProject
         }
@@ -36,7 +63,7 @@ final class InitCommand {
     }
 }
 
-private enum InitCommandError: LocalizedError {
+enum InitCommandError: LocalizedError {
     case fileAlreadyExists
     case noSupportedProject
 

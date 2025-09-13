@@ -77,15 +77,21 @@ final class DependencyContainer: @unchecked Sendable {
         )
     }()
     
+    private(set) lazy var outputPathValidator: OutputPathValidator = {
+        return DefaultOutputPathValidator(
+            fileManager: fileManager
+        )
+    }()
+    
     private(set) lazy var initCommand: InitCommand = {
         return InitCommand(
-            generatorPluginFactory: generatorPluginFactory,
             projectDetector: CompositeProjectDetector(projectDetectors: [
                 XcodeProjectDetector(fileManager: fileManager),
                 GradleProjectDetector(fileManager: fileManager)
             ]),
             configProvider: configProvider,
-            configFileLocation: configFileLocation
+            configFileLocation: configFileLocation,
+            outputPathValidator: outputPathValidator
         )
     }()
     

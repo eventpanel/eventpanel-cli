@@ -47,7 +47,7 @@ actor SwiftGen: CodeGeneratorPlugin {
 
     private func saveGeneratedCode(rendered: String) throws {
         do {
-            let fileURL = configFileLocation.configDirectory.appendingPathComponent(config.generatedEventsPath)
+            let fileURL = configFileLocation.configDirectory.appendingPathComponent(config.outputFilePath)
 
             // Create intermediate directories if they don't exist
             let directoryURL = fileURL.deletingLastPathComponent()

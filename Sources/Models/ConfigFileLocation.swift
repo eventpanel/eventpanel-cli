@@ -10,8 +10,15 @@ struct ConfigFileLocation {
         configDirectory.appendingPathComponent(".eventpanel")
     }
 
-    init(configPath: String? = nil, workingDirectory: String = FileManager.default.currentDirectoryPath) {
-        let filePath = configPath ?? (workingDirectory as NSString).appendingPathComponent("EventPanel.yaml")
+    static var configName: String {
+        "EventPanel.yaml"
+    }
+
+    init(
+        configPath: String? = nil,
+        workingDirectory: String
+    ) {
+        let filePath = configPath ?? (workingDirectory as NSString).appendingPathComponent(Self.configName)
 
         self.workingDirectory = URL(fileURLWithPath: workingDirectory)
         self.configDirectory = configPath.map { URL(fileURLWithPath: $0) }?.deletingLastPathComponent() ?? URL(fileURLWithPath: workingDirectory)
@@ -29,13 +36,26 @@ actor ConfigFileLocationProvider {
         return location
     }
     
-    static func initialize(configPath: String?, fileManager: FileManager = .default) throws {
-        if let configPath = configPath {
+    static func initialize(
+        configPath: String?,
+        workDir: String?,
+        fileManager: FileManager = .default
+    ) throws {
+        if let configPath {
             if !fileManager.fileExists(atPath: configPath) {
                 throw ValidationError("Configuration file not found at path: \(configPath)")
             }
         }
-        
-        _configFileLocation = ConfigFileLocation(configPath: configPath)
+
+        if let workDir {
+            if !fileManager.fileExists(atPath: workDir) {
+                throw ValidationError("Working directory not exist: \(workDir)")
+            }
+        }
+
+        _configFileLocation = ConfigFileLocation(
+            configPath: configPath,
+            workingDirectory: workDir ?? fileManager.currentDirectoryPath
+        )
     }
 }

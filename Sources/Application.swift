@@ -25,14 +25,20 @@ struct EventPanel: AsyncParsableCommand {
 
     @Option(name: .long, help: "Path to EventPanel.yaml configuration file")
     var config: String?
-    
+
+    @Option(name: .long, help: "Path to working directory")
+    var workdir: String?
+
     @Flag(name: .long, help: "Enable verbose output")
     var verbose = false
 
     func validate() throws {
         ConsoleLogger.isVerbose = verbose
         
-        try ConfigFileLocationProvider.initialize(configPath: config)
+        try ConfigFileLocationProvider.initialize(
+            configPath: config,
+            workDir: workdir
+        )
     }
 
     func run() throws {

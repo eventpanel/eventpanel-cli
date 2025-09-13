@@ -6,20 +6,36 @@ actor ConsoleLogger {
 
     static var isVerbose = false
     
-    static func error(_ message: String) {
-        print("\(red)[!] \(message)\(reset)")
+    static func error(
+        _ message: String,
+        separator: String = " ",
+        terminator: String = "\n"
+    ) {
+        print("\(red)[!] \(message)\(reset)", separator: separator, terminator: terminator)
     }
     
-    static func success(_ message: String) {
-        print("\(green)\(message)\(reset)")
+    static func success(
+        _ message: String,
+        separator: String = " ",
+        terminator: String = "\n"
+    ) {
+        print("\(green)\(message)\(reset)", separator: separator, terminator: terminator)
     }
     
-    static func warning(_ message: String) {
-        print("\(yellow)[!] \(message)\(reset)")
+    static func warning(
+        _ message: String,
+        separator: String = " ",
+        terminator: String = "\n"
+    ) {
+        print("\(yellow)[!] \(message)\(reset)", separator: separator, terminator: terminator)
     }
     
-    static func message(_ message: String) {
-        print(message)
+    static func message(
+        _ message: String,
+        separator: String = " ",
+        terminator: String = "\n"
+    ) {
+        print(message, separator: separator, terminator: terminator)
     }
 
     static func debug(_ message: String) {
