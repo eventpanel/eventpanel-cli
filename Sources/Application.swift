@@ -32,14 +32,7 @@ struct EventPanel: AsyncParsableCommand {
     func validate() throws {
         ConsoleLogger.isVerbose = verbose
         
-        if let configPath = config {
-            let fileManager = FileManager.default
-            if !fileManager.fileExists(atPath: configPath) {
-                throw ValidationError("Configuration file not found at path: \(configPath)")
-            } else {
-                EventPanelYaml.setConfigPath(configPath)
-            }
-        }
+        try ConfigFileLocationProvider.initialize(configPath: config)
     }
 
     func run() throws {

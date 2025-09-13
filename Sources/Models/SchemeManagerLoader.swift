@@ -19,17 +19,16 @@ protocol SchemeManagerLoader {
 }
 
 final class FileSchemeManagerLoader: SchemeManagerLoader, @unchecked Sendable {
+    private let configFileLocation: ConfigFileLocation
     private let fileManager: FileManager
 
-    init(fileManager: FileManager) {
+    init(configFileLocation: ConfigFileLocation, fileManager: FileManager) {
+        self.configFileLocation = configFileLocation
         self.fileManager = fileManager
     }
 
     func read() throws -> WorkspaceScheme {
-        let currentPath = fileManager.currentDirectoryPath
-        let currentURL = URL(fileURLWithPath: currentPath)
-        let schemePath = currentURL
-            .appendingPathComponent(".eventpanel")
+        let schemePath = configFileLocation.cacheDirectory
             .appendingPathComponent("scheme.json")
             .path
 

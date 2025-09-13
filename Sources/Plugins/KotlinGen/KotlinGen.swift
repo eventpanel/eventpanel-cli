@@ -19,16 +19,19 @@ enum KotlinGenError: LocalizedError {
 actor KotlinGen: CodeGeneratorPlugin {
     private let config: KotlinGenPlugin
     private let schemeManagerLoader: SchemeManagerLoader
+    private let configFileLocation: ConfigFileLocation
     private let fileManager: FileManager
     private let generator: KotlinGenGenerator
 
     init(
         config: KotlinGenPlugin,
         schemeManagerLoader: SchemeManagerLoader,
+        configFileLocation: ConfigFileLocation,
         fileManager: FileManager
     ) {
         self.config = config
         self.schemeManagerLoader = schemeManagerLoader
+        self.configFileLocation = configFileLocation
         self.fileManager = fileManager
         self.generator = KotlinGenGenerator(config: config)
     }
@@ -44,9 +47,7 @@ actor KotlinGen: CodeGeneratorPlugin {
 
     private func saveGeneratedCode(rendered: String) throws {
         do {
-            let currentPath = fileManager.currentDirectoryPath
-            let filePath = (currentPath as NSString).appendingPathComponent(config.generatedEventsPath)
-            let fileURL = URL(fileURLWithPath: filePath)
+            let fileURL = configFileLocation.configDirectory.appendingPathComponent(config.generatedEventsPath)
 
             // Create intermediate directories if they don't exist
             let directoryURL = fileURL.deletingLastPathComponent()
@@ -60,7 +61,7 @@ actor KotlinGen: CodeGeneratorPlugin {
 
             try rendered.write(to: fileURL, atomically: true, encoding: .utf8)
 
-            ConsoleLogger.debug("Generated Kotlin events path: \(filePath)")
+            ConsoleLogger.debug("Generated Kotlin events path: \(fileURL.relativePath)")
             ConsoleLogger.success("Generated Kotlin events completed successfully")
         } catch {
             throw KotlinGenError.saveFailed(error.localizedDescription)

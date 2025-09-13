@@ -5,9 +5,14 @@ protocol GeneratorPluginFactory {
 }
 
 final class DefaultGeneratorPluginFactory: GeneratorPluginFactory, @unchecked Sendable {
+    private let configFileLocation: ConfigFileLocation
     private let fileManager: FileManager
 
-    init(fileManager: FileManager) {
+    init(
+        configFileLocation: ConfigFileLocation,
+        fileManager: FileManager
+    ) {
+        self.configFileLocation = configFileLocation
         self.fileManager = fileManager
     }
 
@@ -17,16 +22,20 @@ final class DefaultGeneratorPluginFactory: GeneratorPluginFactory, @unchecked Se
             return SwiftGen(
                 config: plugin,
                 schemeManagerLoader: FileSchemeManagerLoader(
+                    configFileLocation: configFileLocation,
                     fileManager: fileManager
                 ),
+                configFileLocation: configFileLocation,
                 fileManager: fileManager
             )
         case .kotlingen(let plugin):
             return KotlinGen(
                 config: plugin,
                 schemeManagerLoader: FileSchemeManagerLoader(
+                    configFileLocation: configFileLocation,
                     fileManager: fileManager
                 ),
+                configFileLocation: configFileLocation,
                 fileManager: fileManager
             )
         }
