@@ -57,7 +57,7 @@ cp .build/release/eventpanel /usr/local/bin/
 
 4. **Set up authentication (optional):**
    ```bash
-   eventpanel auth set-token YOUR_API_TOKEN
+   eventpanel set-token YOUR_API_TOKEN
    ```
 
 ## Usage
@@ -91,10 +91,10 @@ eventpanel deintegrate
 
 ```bash
 # Set API token for EventPanel platform
-eventpanel auth set-token YOUR_TOKEN
+eventpanel set-token YOUR_TOKEN
 
 # Remove stored API token
-eventpanel auth remove-token
+eventpanel remove-token
 ```
 
 ### Options
@@ -313,7 +313,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- 📖 [Documentation](https://docs.eventpanel.net)
+- 📖 [Documentation](https://eventpanel.net/docs)
 - 🐛 [Report Issues](https://github.com/eventpanel/eventpanel-cli/issues)
 - 💬 [Discussions](https://github.com/eventpanel/eventpanel-cli/discussions)
 - 🌐 [Website](https://eventpanel.net)
