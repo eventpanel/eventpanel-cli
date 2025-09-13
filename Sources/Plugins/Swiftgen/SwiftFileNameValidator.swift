@@ -27,14 +27,9 @@ struct SwiftFileNameValidator {
             throw SwiftFileNameValidationError.invalidStartCharacter
         }
         
-        // Check if all characters in base name are valid Swift identifier characters
-        guard baseName.allSatisfy({ isValidSwiftIdentifierCharacter($0) }) else {
+        // Check if all characters in base name are valid file name characters
+        guard baseName.allSatisfy({ isValidFileNameCharacter($0) }) else {
             throw SwiftFileNameValidationError.invalidCharacters
-        }
-        
-        // Check if filename is a reserved Swift keyword
-        if isReservedSwiftKeyword(baseName) {
-            throw SwiftFileNameValidationError.reservedKeyword
         }
     }
     
@@ -45,27 +40,11 @@ struct SwiftFileNameValidator {
         return char.isLetter || char == "_"
     }
     
-    private static func isValidSwiftIdentifierCharacter(_ character: Character) -> Bool {
-        // Valid characters: letters, digits, underscore
-        return character.isLetter || character.isNumber || character == "_"
-    }
-    
-    private static func isReservedSwiftKeyword(_ name: String) -> Bool {
-        let reservedKeywords = [
-            "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
-            "func", "import", "init", "inout", "internal", "let", "open", "operator",
-            "private", "protocol", "public", "static", "struct", "subscript", "typealias",
-            "var", "break", "case", "continue", "default", "defer", "do", "else",
-            "fallthrough", "for", "guard", "if", "in", "repeat", "return", "switch",
-            "where", "while", "as", "catch", "dynamicType", "false", "is", "nil",
-            "rethrows", "super", "self", "Self", "throw", "throws", "true", "try",
-            "associativity", "convenience", "dynamic", "didSet", "final", "get", "infix",
-            "indirect", "lazy", "left", "mutating", "none", "nonmutating", "optional",
-            "override", "postfix", "precedence", "prefix", "Protocol", "required",
-            "right", "set", "Type", "unowned", "weak", "willSet"
-        ]
+    private static func isValidFileNameCharacter(_ character: Character) -> Bool {
+        // Only forbid truly problematic macOS characters: : / \ ? * " < > |
+        let forbiddenCharacters: Set<Character> = [":", "/", "\\", "?", "*", "\"", "<", ">", "|"]
         
-        return reservedKeywords.contains(name)
+        return !forbiddenCharacters.contains(character)
     }
 }
 
@@ -75,7 +54,6 @@ enum SwiftFileNameValidationError: LocalizedError {
     case emptyBaseName
     case invalidStartCharacter
     case invalidCharacters
-    case reservedKeyword
     
     var errorDescription: String? {
         switch self {
@@ -88,9 +66,7 @@ enum SwiftFileNameValidationError: LocalizedError {
         case .invalidStartCharacter:
             return "Filename must start with a letter or underscore"
         case .invalidCharacters:
-            return "Filename can only contain letters, numbers, and underscores"
-        case .reservedKeyword:
-            return "Filename cannot be a reserved Swift keyword"
+            return "Filename contains forbidden characters (:, /, \\, ?, *, \", <, >, |)"
         }
     }
 }

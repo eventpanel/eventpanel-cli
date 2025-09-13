@@ -27,14 +27,9 @@ struct KotlinFileNameValidator {
             throw KotlinFileNameValidationError.invalidStartCharacter
         }
         
-        // Check if all characters in base name are valid Kotlin identifier characters
-        guard baseName.allSatisfy({ isValidKotlinIdentifierCharacter($0) }) else {
+        // Check if all characters in base name are valid file name characters
+        guard baseName.allSatisfy({ isValidFileNameCharacter($0) }) else {
             throw KotlinFileNameValidationError.invalidCharacters
-        }
-        
-        // Check if filename is a reserved Kotlin keyword
-        if isReservedKotlinKeyword(baseName) {
-            throw KotlinFileNameValidationError.reservedKeyword
         }
     }
     
@@ -45,26 +40,11 @@ struct KotlinFileNameValidator {
         return char.isLetter || char == "_" || char == "$"
     }
     
-    private static func isValidKotlinIdentifierCharacter(_ character: Character) -> Bool {
-        // Valid characters: letters, digits, underscore, dollar sign
-        return character.isLetter || character.isNumber || character == "_" || character == "$"
-    }
-    
-    private static func isReservedKotlinKeyword(_ name: String) -> Bool {
-        let reservedKeywords = [
-            "as", "break", "class", "continue", "do", "else", "false", "for", "fun",
-            "if", "in", "interface", "is", "null", "object", "package", "return",
-            "super", "this", "throw", "true", "try", "typealias", "typeof", "val",
-            "var", "when", "while", "by", "catch", "constructor", "delegate",
-            "dynamic", "field", "file", "finally", "get", "import", "init", "param",
-            "property", "receiver", "set", "setparam", "where", "actual", "annotation",
-            "companion", "const", "crossinline", "data", "enum", "external", "final",
-            "infix", "inline", "inner", "internal", "lateinit", "noinline", "open",
-            "operator", "out", "override", "private", "protected", "public", "reified",
-            "sealed", "suspend", "tailrec", "vararg", "abstract", "expect", "sealed"
-        ]
+    private static func isValidFileNameCharacter(_ character: Character) -> Bool {
+        // Only forbid truly problematic macOS characters: : / \ ? * " < > |
+        let forbiddenCharacters: Set<Character> = [":", "/", "\\", "?", "*", "\"", "<", ">", "|"]
         
-        return reservedKeywords.contains(name)
+        return !forbiddenCharacters.contains(character)
     }
 }
 
@@ -74,7 +54,6 @@ enum KotlinFileNameValidationError: LocalizedError {
     case emptyBaseName
     case invalidStartCharacter
     case invalidCharacters
-    case reservedKeyword
     
     var errorDescription: String? {
         switch self {
@@ -87,9 +66,7 @@ enum KotlinFileNameValidationError: LocalizedError {
         case .invalidStartCharacter:
             return "Filename must start with a letter, underscore, or dollar sign"
         case .invalidCharacters:
-            return "Filename can only contain letters, numbers, underscores, and dollar signs"
-        case .reservedKeyword:
-            return "Filename cannot be a reserved Kotlin keyword"
+            return "Filename contains forbidden characters (:, /, \\, ?, *, \", <, >, |)"
         }
     }
 }
