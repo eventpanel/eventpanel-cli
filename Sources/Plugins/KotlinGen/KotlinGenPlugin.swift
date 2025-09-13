@@ -1,16 +1,21 @@
 import Foundation
 
 struct KotlinGenPlugin: Codable {
-    let generatedEventsPath: String
+    let outputFilePath: String
     let packageName: String
     let eventClassName: String
     let documentation: Bool
 }
 
 extension KotlinGenPlugin {
-    static var `default`: KotlinGenPlugin {
-        .init(
-            generatedEventsPath: "GeneratedAnalyticsEvents.kt",
+    static let `default`: KotlinGenPlugin = .make()
+    static let defaultOutputFilePath = "GeneratedAnalyticsEvents.kt"
+    
+    static func make(
+        outputFilePath: String = defaultOutputFilePath
+    ) -> KotlinGenPlugin {
+        KotlinGenPlugin(
+            outputFilePath: outputFilePath,
             packageName: "com.analytics.events",
             eventClassName: "AnalyticsEvent",
             documentation: true

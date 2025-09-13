@@ -43,28 +43,74 @@ final class InitCommand {
     }
 
     private func initializePlugin(for source: Source) throws -> Plugin {
-        let generatedEventsPath = try requestGeneratedEventsPath()
+        let outputFilePath = try requestGeneratedEventsPath(for: source)
 
         switch source {
         case .iOS:
-            return .swiftgen(.make(generatedEventsPath: generatedEventsPath.relativePath))
+            return .swiftgen(.make(outputFilePath: outputFilePath))
         case .android:
-            return .kotlingen(.default)
+            return .kotlingen(.make(outputFilePath: outputFilePath))
         }
     }
+    
+    private func requestGeneratedEventsPath(for source: Source) throws -> String {
+        let folderURL = try requestGeneratedEventsFolder()
+        let fileName = try requestFileName(for: source)
+        
+        // Combine folder path with filename
+        let fullPath = folderURL.appendingPathComponent(fileName).path
+        let relativePath = String(fullPath.dropFirst(configFileLocation.workingDirectory.path.count + 1))
+        
+        return relativePath
+    }
 
-    private func requestGeneratedEventsPath() throws -> URL {
+    private func requestGeneratedEventsFolder() throws -> URL {
         ConsoleLogger.message(
-            "Enter a relative file path (default: GeneratedAnalyticsEvents.swift): ",
+            "Enter the folder path for generated events (relative to current directory, default: ./): ",
             terminator: ""
         )
         let input = _readLine()?.trimmingCharacters(in: .whitespacesAndNewlines)
 
         return try outputPathResolver.resolvePath(
             input: input,
-            defaultFileName: "GeneratedAnalyticsEvents.swift",
+            defaultFileName: "./",
             workingDirectory: configFileLocation.workingDirectory
         )
+    }
+
+    private func requestFileName(for source: Source) throws -> String {
+        let (prompt, defaultFileName) = getFileNamePrompt(for: source)
+        
+        ConsoleLogger.message(prompt, terminator: "")
+        let input = _readLine()?.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let fileName = input?.isEmpty == false ? input! : defaultFileName
+        
+        return try validateFileName(fileName, for: source)
+    }
+    
+    private func getFileNamePrompt(for source: Source) -> (prompt: String, defaultFileName: String) {
+        switch source {
+        case .iOS:
+            return (
+                prompt: "Enter the filename for generated events (default: \(SwiftGenPlugin.defaultOutputFilePath)): ",
+                defaultFileName: SwiftGenPlugin.defaultOutputFilePath
+            )
+        case .android:
+            return (
+                prompt: "Enter the filename for generated events (default: \(KotlinGenPlugin.defaultOutputFilePath)): ",
+                defaultFileName: KotlinGenPlugin.defaultOutputFilePath
+            )
+        }
+    }
+    
+    private func validateFileName(_ fileName: String, for source: Source) throws -> String {
+        switch source {
+        case .iOS:
+            return try SwiftFileNameValidator.validate(fileName)
+        case .android:
+            return try KotlinFileNameValidator.validate(fileName)
+        }
     }
 
     private func detectProject(in directory: URL) throws -> ProjectDirectory {

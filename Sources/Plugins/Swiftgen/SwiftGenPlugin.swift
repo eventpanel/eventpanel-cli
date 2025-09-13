@@ -1,18 +1,21 @@
 import Foundation
 
 struct SwiftGenPlugin: Codable {
-    let generatedEventsPath: String
+    let outputFilePath: String
     let namespace: String
     let eventTypeName: String
     let documentation: Bool
 }
 
 extension SwiftGenPlugin {
+    static let `default`: SwiftGenPlugin = .make()
+    static let defaultOutputFilePath = "GeneratedAnalyticsEvents.swift"
+
     static func make(
-        generatedEventsPath: String = "GeneratedAnalyticsEvents.swift",
+        outputFilePath: String = defaultOutputFilePath,
     ) -> SwiftGenPlugin {
         SwiftGenPlugin(
-            generatedEventsPath: generatedEventsPath,
+            outputFilePath: outputFilePath,
             namespace: "AnalyticsEvents",
             eventTypeName: "AnalyticsEvent",
             documentation: true
