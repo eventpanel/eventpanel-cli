@@ -161,8 +161,8 @@ private extension Dictionary where Value == Any? {
     }
   }
 }
-
 {% if param.shouldGenerateType %}
+
 {{accessModifier}} struct {{eventClassName}} {
   {{accessModifier}} let name: String
   {{accessModifier}} let parameters: [String: Any]

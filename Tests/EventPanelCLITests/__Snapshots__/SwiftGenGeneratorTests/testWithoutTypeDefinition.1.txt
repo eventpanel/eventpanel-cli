@@ -31,5 +31,4 @@ private extension Dictionary where Value == Any? {
     }
   }
 }
-
 // swiftlint:enable all

@@ -442,7 +442,7 @@ final class SwiftGenGeneratorTests: XCTestCase {
         assertSnapshot(of: output, as: .txt)
     }
 
-    func testWithoutTypeDefenition() throws {
+    func testWithoutTypeDefinition() throws {
         // Given
         let config = SwiftGenPlugin(
             outputFilePath: "GeneratedAnalyticsEvents.swift",

@@ -149,6 +149,13 @@ package {{param.packageName}}
 {% call customTypesBlock file.document %}
 {% endif %}
 {% endfor %}
+{% if param.shouldGenerateType %}
+
+{{accessModifier}} data class {{eventClassName}}(
+  {{accessModifier}} val name: String,
+  {{accessModifier}} val parameters: Map<String, Any> = emptyMap()
+)
+{% endif %}
 {% else %}
 // No files found
 {% endif %}

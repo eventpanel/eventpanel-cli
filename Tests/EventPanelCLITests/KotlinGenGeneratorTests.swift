@@ -441,4 +441,52 @@ final class KotlinGenGeneratorTests: XCTestCase {
         // Then
         assertSnapshot(of: output, as: .txt)
     }
+
+    func testWithoutTypeDefinition() throws {
+        // Given
+        let config = KotlinGenPlugin(
+            outputFilePath: "GeneratedAnalyticsEvents.kt",
+            packageName: "com.analytics.events",
+            eventClassName: "AnalyticsEvent",
+            documentation: true,
+            shouldGenerateType: false
+        )
+        let generator = KotlinGenGenerator(config: config)
+
+        let scheme = KotlinGenWorkspaceScheme(
+            workspace: "test-workspace",
+            events: [
+                .init(
+                    id: "productView",
+                    name: "Product View",
+                    description: "User viewed a product",
+                    categoryIds: ["ecommerce"],
+                    properties: [
+                        .init(
+                            id: "product_id",
+                            name: "product_id",
+                            description: "Unique identifier of the product",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        )
+                    ]
+                )
+            ],
+            customTypes: [],
+            categories: [
+                .init(
+                    id: "ecommerce",
+                    name: "E-commerce",
+                    description: "Screen represents a lot of products"
+                )
+            ]
+        )
+
+        // When
+        let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
+
+        // Then
+        assertSnapshot(of: output, as: .txt)
+    }
 }

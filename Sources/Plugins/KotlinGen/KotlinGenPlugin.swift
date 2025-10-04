@@ -5,6 +5,7 @@ struct KotlinGenPlugin: Codable {
     let packageName: String
     let eventClassName: String
     let documentation: Bool
+    let shouldGenerateType: Bool
 }
 
 extension KotlinGenPlugin {
@@ -18,7 +19,8 @@ extension KotlinGenPlugin {
             outputFilePath: outputFilePath,
             packageName: "com.analytics.events",
             eventClassName: "AnalyticsEvent",
-            documentation: true
+            documentation: true,
+            shouldGenerateType: true
         )
     }
 } 

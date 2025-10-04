@@ -20,7 +20,8 @@ struct KotlinGenGenerator {
             KotlinGenParams(
                 packageName: config.packageName,
                 eventClassName: config.eventClassName,
-                documentation: config.documentation
+                documentation: config.documentation,
+                shouldGenerateType: config.shouldGenerateType
             ),
             keyEncodingStrategy: .useDefaultKeys
         )!
