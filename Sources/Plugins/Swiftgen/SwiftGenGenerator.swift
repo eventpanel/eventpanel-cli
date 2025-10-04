@@ -33,7 +33,8 @@ struct SwiftGenGenerator {
             SwiftGenParams(
                 enumName: config.namespace,
                 eventClassName: config.eventTypeName,
-                documentation: config.documentation
+                documentation: config.documentation,
+                shouldGenerateType: config.shouldGenerateType
             ),
             keyEncodingStrategy: .useDefaultKeys
         )!
