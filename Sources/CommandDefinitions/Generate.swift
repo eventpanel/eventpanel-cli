@@ -20,7 +20,10 @@ struct Generate: AsyncParsableCommand {
         """
     )
 
-    @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
+    @Flag(
+        name: [.customLong("scheme-update")],
+        help: "Apply scheme update during generation."
+    )
     var schemeUpdate: Bool = false
 
     func run() async throws {

@@ -1,0 +1,28 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+
+namespace AnalyticsEvents {
+
+  /**
+   * User logged in
+   * @param user_id User identifier
+   * @param timestamp Login timestamp
+   */
+  function userLogin(  
+    userId: String,
+    timestamp: Date | undefined
+  ): AnalyticsEvent {
+    return {
+      name: "user_login",
+      parameters: {
+        "user_id": userId,
+        "timestamp": timestamp
+      }
+    }
+  }
+}
+
+interface AnalyticsEvent {
+  name: string;
+  parameters: Record<string, any>;
+}

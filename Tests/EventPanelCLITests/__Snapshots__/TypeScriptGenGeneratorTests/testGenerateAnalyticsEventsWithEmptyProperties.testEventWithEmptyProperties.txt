@@ -1,0 +1,20 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+
+namespace AnalyticsEvents {
+
+  /**
+   * A simple event with no properties
+   */
+  function simpleEvent(): AnalyticsEvent {
+    return {
+      name: "simple_event",
+      parameters: {}
+    }
+  }
+}
+
+interface AnalyticsEvent {
+  name: string;
+  parameters: Record<string, any>;
+}

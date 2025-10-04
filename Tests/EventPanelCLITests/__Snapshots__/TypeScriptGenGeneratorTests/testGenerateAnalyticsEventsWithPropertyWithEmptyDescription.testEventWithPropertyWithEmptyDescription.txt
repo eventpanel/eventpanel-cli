@@ -1,0 +1,27 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+
+namespace AnalyticsEvents {
+
+  /**
+   * User performed an action
+   * @param user_id User identifier
+   */
+  function userAction(  
+    action: String,
+    userId: String
+  ): AnalyticsEvent {
+    return {
+      name: "user_action",
+      parameters: {
+        "action": action,
+        "user_id": userId
+      }
+    }
+  }
+}
+
+interface AnalyticsEvent {
+  name: string;
+  parameters: Record<string, any>;
+}
