@@ -15,14 +15,14 @@ final class AuthCommand {
         self.authTokenService = authTokenService
         self.configProvider = configProvider
     }
-    
+
     func setToken(_ token: String) async throws {
         let id = try await fetchWorkspaceId(token: token)
 
         try await authTokenService.setToken(token, workspaceId: id)
         ConsoleLogger.success("API token has been saved successfully")
     }
-    
+
     func removeToken() async throws {
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let workspaceId = await eventPanelYaml.getWorkspaceId()

@@ -12,4 +12,4 @@ struct Init: AsyncParsableCommand {
     func run() async throws {
         try await DependencyContainer.shared.initCommand.execute(outputPath: output)
     }
-} 
+}

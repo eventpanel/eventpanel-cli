@@ -5,4 +5,4 @@ struct KotlinGenParams: Codable {
     let eventClassName: String
     let documentation: Bool
     let shouldGenerateType: Bool
-} 
+}

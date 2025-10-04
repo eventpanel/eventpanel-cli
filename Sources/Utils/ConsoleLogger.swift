@@ -13,7 +13,7 @@ final class ConsoleLogger {
     ) {
         print("\(red)[!] \(message)\(reset)", separator: separator, terminator: terminator)
     }
-    
+
     static func success(
         _ message: String,
         separator: String = " ",
@@ -21,7 +21,7 @@ final class ConsoleLogger {
     ) {
         print("\(green)\(message)\(reset)", separator: separator, terminator: terminator)
     }
-    
+
     static func warning(
         _ message: String,
         separator: String = " ",
@@ -29,7 +29,7 @@ final class ConsoleLogger {
     ) {
         print("\(yellow)[!] \(message)\(reset)", separator: separator, terminator: terminator)
     }
-    
+
     static func message(
         _ message: String,
         separator: String = " ",

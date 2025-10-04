@@ -17,7 +17,7 @@ final class InitCommand {
         self.configFileLocation = configFileLocation
         self.outputPathValidator = outputPathValidator
     }
-    
+
     func execute(outputPath: String) async throws {
         let eventPanelYaml = try? await configProvider.getEventPanelYaml()
         if eventPanelYaml != nil { throw InitCommandError.fileAlreadyExists }
@@ -53,7 +53,6 @@ final class InitCommand {
             return .kotlingen(.make(outputFilePath: outputFilePath))
         }
     }
-    
 
     private func detectProject(in directory: URL) throws -> ProjectDirectory {
         guard let project = projectDetector.detectProject(in: directory) else {

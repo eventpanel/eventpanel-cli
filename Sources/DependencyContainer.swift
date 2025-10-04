@@ -34,7 +34,7 @@ final class DependencyContainer: @unchecked Sendable {
             configProvider: configProvider
         )
     }()
-    
+
     private lazy var networkClient: NetworkClient = {
         let authAPIClientDelegate = AuthAPIClientDelegate(authTokenProvider: authTokenProvider)
         let networkClient = NetworkClient(baseURL: Environment.current.baseURL) {
@@ -42,7 +42,7 @@ final class DependencyContainer: @unchecked Sendable {
         }
         return networkClient
     }()
-    
+
     private lazy var apiService: EventPanelAPIService = {
         return EventPanelAPIService(networkClient: networkClient)
     }()
@@ -62,27 +62,27 @@ final class DependencyContainer: @unchecked Sendable {
     private(set) lazy var addCommand: AddCommand = {
         return AddCommand(apiService: apiService, configProvider: configProvider)
     }()
-    
+
     private(set) lazy var deintegrateCommand: DeintegrateCommand = {
         return DeintegrateCommand(
             configFileLocation: configFileLocation,
             fileManager: fileManager
         )
     }()
-    
+
     private(set) lazy var generateCommand: GenerateCommand = {
         return GenerateCommand(
             configProvider: configProvider,
             generatorPluginFactory: generatorPluginFactory
         )
     }()
-    
+
     private(set) lazy var outputPathValidator: OutputPathValidator = {
         return DefaultOutputPathValidator(
             fileManager: fileManager
         )
     }()
-    
+
     private(set) lazy var initCommand: InitCommand = {
         return InitCommand(
             projectDetector: CompositeProjectDetector(projectDetectors: [
@@ -94,15 +94,15 @@ final class DependencyContainer: @unchecked Sendable {
             outputPathValidator: outputPathValidator
         )
     }()
-    
+
     private(set) lazy var listCommand: ListCommand = {
         return ListCommand(networkClient: networkClient, configProvider: configProvider)
     }()
-    
+
     private(set) lazy var outdatedCommand: OutdatedCommand = {
         return OutdatedCommand(apiService: apiService, configProvider: configProvider)
     }()
-    
+
     private(set) lazy var pullCommand: PullCommand = {
         return PullCommand(
             apiService: apiService,
@@ -111,11 +111,11 @@ final class DependencyContainer: @unchecked Sendable {
             fileManager: fileManager
         )
     }()
-    
+
     private(set) lazy var updateCommand: UpdateCommand = {
         return UpdateCommand(apiService: apiService, configProvider: configProvider)
     }()
-    
+
     // MARK: - Private Initializer
     private init() {}
-} 
+}

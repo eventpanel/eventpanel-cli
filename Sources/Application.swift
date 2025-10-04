@@ -34,7 +34,7 @@ struct EventPanel: AsyncParsableCommand {
 
     func validate() throws {
         ConsoleLogger.isVerbose = verbose
-        
+
         try ConfigFileLocationProvider.initialize(
             configPath: config,
             workDir: workdir

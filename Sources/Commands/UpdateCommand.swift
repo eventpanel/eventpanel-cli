@@ -29,7 +29,7 @@ final class UpdateCommand {
         self.apiService = apiService
         self.configProvider = configProvider
     }
-    
+
     func execute(eventIds: [String]) async throws {
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
         if eventIds.count == 1, let eventId = eventIds.first {
@@ -48,21 +48,21 @@ final class UpdateCommand {
             )
         }
     }
-    
+
     // MARK: - Private Methods
 
     private func updateSingleEvent(eventId: String, source: Source, eventPanelYaml: EventPanelYaml) async throws {
         ConsoleLogger.message("Checking for updates to event '\(eventId)'...")
 
         let events = await eventPanelYaml.getEvents()
-        
+
         // Verify event exists in configuration
         guard let event = events.first(where: { $0.id == eventId }) else {
             throw UpdateCommandError.eventNotFound(eventId)
         }
-        
+
         let currentVersion = event.version ?? 1
-        
+
         do {
             let updatedEvent = try await apiService.getLatestEvent(
                 eventId: eventId,
@@ -85,7 +85,7 @@ final class UpdateCommand {
             throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
         }
     }
-    
+
     private func updateAllEvents(eventPanelYaml: EventPanelYaml) async throws {
         try await updateEvents(eventIds: nil, source: eventPanelYaml.getSource(), eventPanelYaml: eventPanelYaml)
     }
@@ -133,7 +133,7 @@ final class UpdateCommand {
             if updatedEvents > 0 {
                 ConsoleLogger.success("All events are successfully up to date.")
             } else {
-                ConsoleLogger.success("Event synchronization complete. No changes detected");
+                ConsoleLogger.success("Event synchronization complete. No changes detected")
             }
         } catch let error as APIError {
             throw UpdateCommandError.eventCheckFailed(error.localizedDescription)
@@ -142,7 +142,7 @@ final class UpdateCommand {
         }
     }
 
-    private func validateEventsAreExist(events:  [Event], updateEventIds: Set<String>) throws {
+    private func validateEventsAreExist(events: [Event], updateEventIds: Set<String>) throws {
         let yamlFileEventIds = Set(events.map(\.id))
         let notExistedEvents = updateEventIds.subtracting(yamlFileEventIds)
         if !notExistedEvents.isEmpty {

@@ -7,10 +7,10 @@ final class EventPanelAPIService {
     init(networkClient: NetworkClient) {
         self.networkClient = networkClient
     }
-    
+
     enum EventPanelError: LocalizedError {
         case invalidSource(String)
-        
+
         var errorDescription: String? {
             switch self {
             case .invalidSource(let message):

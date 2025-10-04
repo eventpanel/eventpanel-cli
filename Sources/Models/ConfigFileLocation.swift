@@ -26,14 +26,14 @@ struct ConfigFileLocation {
 
 actor ConfigFileLocationProvider {
     static nonisolated(unsafe) private var _configFileLocation: ConfigFileLocation?
-    
+
     static var configFileLocation: ConfigFileLocation {
         guard let location = _configFileLocation else {
             fatalError("ConfigFileLocationProvider not initialized. Call initialize() first.")
         }
         return location
     }
-    
+
     static func initialize(
         configPath: String?,
         workDir: String?,

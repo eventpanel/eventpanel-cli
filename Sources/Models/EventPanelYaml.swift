@@ -6,7 +6,7 @@ enum EventPanelYamlError: LocalizedError {
     case eventAlreadyExists(eventId: String)
     case eventNotFound(eventId: String)
     case missingRequiredField(String)
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidYamlStructure(let message):
@@ -29,7 +29,7 @@ actor EventPanelYaml {
         self.path = path
         let yamlString = try String(contentsOfFile: path, encoding: .utf8)
         let decoder = YAMLDecoder()
-        
+
         do {
             self.config = try decoder.decode(EventPanelConfig.self, from: yamlString)
         } catch let error as DecodingError {
@@ -45,24 +45,24 @@ actor EventPanelYaml {
             }
         }
     }
-    
+
     static func createDefault(at path: String, projectInfo: ProjectInfo) throws {
         let config = EventPanelConfig(
             source: projectInfo.source,
             plugin: projectInfo.plugin,
             events: []
         )
-        
+
         let encoder = YAMLEncoder()
         let yamlString = try encoder.encode(config)
-        
+
         // Add header comment
         let finalYaml = """
         # EventPanel configuration file
-        
+
         \(yamlString)
         """
-        
+
         try finalYaml.write(toFile: path, atomically: true, encoding: .utf8)
     }
 
@@ -87,12 +87,12 @@ actor EventPanelYaml {
     func getEvents() -> [Event] {
         config.events
     }
-    
+
     func updateEvent(eventId: String, version: Int) throws {
         guard let eventIndex = config.events.firstIndex(where: { $0.id == eventId }) else {
             throw EventPanelYamlError.eventNotFound(eventId: eventId)
         }
-        
+
         config.events[eventIndex].version = version
         try save()
     }

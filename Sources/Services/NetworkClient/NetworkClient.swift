@@ -18,7 +18,7 @@ final class AuthAPIClientDelegate: APIClientDelegate, Sendable {
            let bodyString = String(data: body, encoding: .utf8) {
             ConsoleLogger.debug("Request Body: \(bodyString)")
         }
-        
+
         let token = try await authTokenProvider.getToken()
         request.setValue(token, forHTTPHeaderField: "x-api-key")
     }

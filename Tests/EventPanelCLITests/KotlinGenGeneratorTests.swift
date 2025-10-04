@@ -8,7 +8,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
     func testGenerateAnalyticsEvents() throws {
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
-        
+
         let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -49,17 +49,17 @@ final class KotlinGenGeneratorTests: XCTestCase {
                 .init(id: "user", name: "User", description: nil)
             ]
         )
-        
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithMultipleEvents() throws {
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
-        
+
         let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -111,15 +111,15 @@ final class KotlinGenGeneratorTests: XCTestCase {
         )
 
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithComplexProperties() throws {
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
-        
+
         let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -177,17 +177,17 @@ final class KotlinGenGeneratorTests: XCTestCase {
                 .init(id: "ecommerce", name: "E-commerce", description: nil)
             ]
         )
-        
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithCustomTypes() throws {
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
-        
+
         let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -234,9 +234,9 @@ final class KotlinGenGeneratorTests: XCTestCase {
                 .init(id: "payment", name: "Payment", description: nil)
             ]
         )
-        
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }

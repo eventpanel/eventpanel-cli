@@ -11,7 +11,7 @@ struct KotlinGenPlugin: Codable {
 extension KotlinGenPlugin {
     static let `default`: KotlinGenPlugin = .make()
     static let defaultOutputFilePath = "GeneratedAnalyticsEvents.kt"
-    
+
     static func make(
         outputFilePath: String = defaultOutputFilePath
     ) -> KotlinGenPlugin {
@@ -23,4 +23,4 @@ extension KotlinGenPlugin {
             shouldGenerateType: true
         )
     }
-} 
+}

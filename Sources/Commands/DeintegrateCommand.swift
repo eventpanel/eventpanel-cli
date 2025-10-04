@@ -3,7 +3,7 @@ import Foundation
 final class DeintegrateCommand {
     private let configFileLocation: ConfigFileLocation
     private let fileManager: FileManager
-    
+
     init(
         configFileLocation: ConfigFileLocation,
         fileManager: FileManager
@@ -11,7 +11,7 @@ final class DeintegrateCommand {
         self.configFileLocation = configFileLocation
         self.fileManager = fileManager
     }
-    
+
     func execute() async throws {
         try removeConfigFile()
         try removeCacheFolder()

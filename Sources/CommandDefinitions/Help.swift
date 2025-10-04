@@ -9,4 +9,4 @@ struct Help: AsyncParsableCommand {
     func run() async throws {
         ConsoleLogger.message(EventPanel.helpMessage())
     }
-} 
+}

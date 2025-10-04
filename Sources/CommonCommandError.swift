@@ -9,4 +9,4 @@ enum CommandError: LocalizedError {
             return "No `EventPanel.yaml' found in the project directory"
         }
     }
-} 
+}

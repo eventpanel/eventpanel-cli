@@ -2,11 +2,11 @@ import StencilEventPanelKit
 
 struct KotlinGenGenerator {
     private let config: KotlinGenPlugin
-    
+
     init(config: KotlinGenPlugin) {
         self.config = config
     }
-    
+
     func generate(scheme: KotlinGenWorkspaceScheme, stencilTemplate: KotlinGenStencilTemplate) throws -> String {
         let environment = stencilSwiftEnvironment(
             templates: [stencilTemplate.name: stencilTemplate.template]
@@ -38,4 +38,4 @@ struct KotlinGenGenerator {
             throw KotlinGenError.generateFailed(error.localizedDescription)
         }
     }
-} 
+}
