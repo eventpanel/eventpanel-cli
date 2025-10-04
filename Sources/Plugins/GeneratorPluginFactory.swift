@@ -38,6 +38,16 @@ final class DefaultGeneratorPluginFactory: GeneratorPluginFactory, @unchecked Se
                 configFileLocation: configFileLocation,
                 fileManager: fileManager
             )
+        case .typescriptgen(let plugin):
+            return TypeScriptGen(
+                config: plugin,
+                schemeManagerLoader: FileSchemeManagerLoader(
+                    configFileLocation: configFileLocation,
+                    fileManager: fileManager
+                ),
+                configFileLocation: configFileLocation,
+                fileManager: fileManager
+            )
         }
     }
 }
