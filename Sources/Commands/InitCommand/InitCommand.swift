@@ -79,9 +79,9 @@ enum InitCommandError: LocalizedError {
         case .fileAlreadyExists:
             return "Existing EventPanel.yaml found in directory"
         case .noSupportedProject:
-            return "No supported project found in the current directory"
+            return "Specify the source using the --source parameter. Options: android, iOS, or web"
         case .invalidSource(let source):
-            return "Invalid source '\(source)'. Valid options are: android, ios, web"
+            return "Invalid source '\(source)'. Valid options are: android, iOS, web"
         }
     }
 }
