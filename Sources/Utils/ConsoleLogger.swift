@@ -1,11 +1,11 @@
-actor ConsoleLogger {
+final class ConsoleLogger {
     private static let red = "\u{001B}[31m"
     private static let green = "\u{001B}[32m"
     private static let yellow = "\u{001B}[33m"
     private static let reset = "\u{001B}[0m"
 
-    static var isVerbose = false
-    
+    nonisolated(unsafe) static var isVerbose = false
+
     static func error(
         _ message: String,
         separator: String = " ",

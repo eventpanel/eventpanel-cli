@@ -16,18 +16,21 @@ struct Add: AsyncParsableCommand {
         
         EXAMPLES:
             eventpanel add DWnQMGoYrvUyaTGpbmvr9
+            eventpanel add DWnQMGoYrvUyaTGpbmvr9 --version 2
         """
     )
     
     @Argument(help: "Event id")
     var eventId: String
 
-    @Argument(help: "Event version")
+    @Option(
+        name: [.customShort("v"), .long],
+        help: "Specific version of the event to add."
+    )
     var version: Int?
 
     @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
     var schemeUpdate: Bool = true
-
 
     func run() async throws {
         try await DependencyContainer.shared.addCommand.execute(eventId: eventId, version: version)
