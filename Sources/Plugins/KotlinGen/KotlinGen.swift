@@ -5,7 +5,7 @@ import StencilEventPanelKit
 enum KotlinGenError: LocalizedError {
     case generateFailed(String)
     case saveFailed(String)
-    
+
     var errorDescription: String? {
         switch self {
         case .generateFailed(let message):
@@ -40,7 +40,7 @@ actor KotlinGen: CodeGeneratorPlugin {
         let scheme = try schemeManagerLoader.read()
         let kotlinGenScheme = try KotlinGenWorkspaceScheme(from: scheme)
         let stencilTemplate = try KotlinGenStencilTemplate.default()
-        
+
         let rendered = try generator.generate(scheme: kotlinGenScheme, stencilTemplate: stencilTemplate)
         try saveGeneratedCode(rendered: rendered)
     }

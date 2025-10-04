@@ -10,7 +10,7 @@ import Foundation
 enum AuthError: LocalizedError {
     case keychainError(String)
     case tokenNotFound
-    
+
     var errorDescription: String? {
         switch self {
         case .keychainError(let message):

@@ -12,4 +12,4 @@ extension KotlinGenStencilTemplate {
             template: KotlinGenEmbeddedTemplate.template
         )
     }
-} 
+}

@@ -7,10 +7,10 @@ struct Deintegrate: AsyncParsableCommand {
         discussion: """
         Removes EventPanel integration from your project by cleaning up all configuration files
         and generated code.
-        
+
         USAGE:
             eventpanel deintegrate
-        
+
         This command will:
         - Remove EventPanel.yaml configuration
         - Clean up generated event files
@@ -21,4 +21,4 @@ struct Deintegrate: AsyncParsableCommand {
     func run() async throws {
         try await DependencyContainer.shared.deintegrateCommand.execute()
     }
-} 
+}

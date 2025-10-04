@@ -6,13 +6,13 @@ struct Generate: AsyncParsableCommand {
         abstract: "Generate events according to versions from a EventPanel.yaml",
         discussion: """
         Generates event code based on the versions specified in your EventPanel.yaml file.
-        
+
         USAGE:
             eventpanel generate [--scheme-update]
-        
+
         OPTIONS:
             --scheme-update    Updates the scheme before generating events
-        
+
         This command will:
         - Read your EventPanel.yaml configuration
         - Generate event code for all configured events
@@ -23,11 +23,10 @@ struct Generate: AsyncParsableCommand {
     @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
     var schemeUpdate: Bool = false
 
-
     func run() async throws {
         if schemeUpdate {
             try await DependencyContainer.shared.pullCommand.execute()
         }
         try await DependencyContainer.shared.generateCommand.execute()
     }
-} 
+}

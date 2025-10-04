@@ -3,7 +3,7 @@ import Get
 
 enum ListCommandError: LocalizedError {
     case invalidPageSize(String)
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidPageSize(let size):
@@ -15,51 +15,51 @@ enum ListCommandError: LocalizedError {
 final class ListCommand {
     private let networkClient: NetworkClient
     private let configProvider: ConfigProvider
-    
+
     init(networkClient: NetworkClient, configProvider: ConfigProvider) {
         self.networkClient = networkClient
         self.configProvider = configProvider
     }
-    
+
     func execute(pageSize: Int) async throws {
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let events = await eventPanelYaml.getEvents()
-        
+
         // Display events with pagination
         displayEvents(events, pageSize: pageSize)
     }
-    
+
     private func displayEvents(_ events: [Event], pageSize: Int) {
         if events.isEmpty {
             ConsoleLogger.message("No events found")
             return
         }
-        
+
         let totalPages = (events.count + pageSize - 1) / pageSize
         var currentPage = 1
-        
+
         while true {
             let startIndex = (currentPage - 1) * pageSize
             let endIndex = min(startIndex + pageSize, events.count)
             let pageEvents = events[startIndex..<endIndex]
-            
+
             // Print header
             ConsoleLogger.message("\nEvents (Page \(currentPage)/\(totalPages)):")
             ConsoleLogger.message("Event ID".padding(toLength: 40, withPad: " ", startingAt: 0) + "Version")
             ConsoleLogger.message(String(repeating: "-", count: 50))
-            
+
             // Print events
             for event in pageEvents {
                 let eventStr = event.id.padding(toLength: 40, withPad: " ", startingAt: 0)
                 let versionStr = String(event.version ?? 1)
                 ConsoleLogger.message("\(eventStr)\(versionStr)")
             }
-            
+
             // Handle pagination
             if currentPage == totalPages {
                 break
             }
-            
+
             ConsoleLogger.message("\nPress 'n' for next page, 'p' for previous page, or 'q' to quit")
             if let input = readLine()?.lowercased() {
                 switch input {
@@ -75,4 +75,4 @@ final class ListCommand {
             }
         }
     }
-} 
+}

@@ -5,6 +5,7 @@ struct SwiftGenPlugin: Codable {
     let namespace: String
     let eventTypeName: String
     let documentation: Bool
+    let shouldGenerateType: Bool
 }
 
 extension SwiftGenPlugin {
@@ -18,7 +19,8 @@ extension SwiftGenPlugin {
             outputFilePath: outputFilePath,
             namespace: "AnalyticsEvents",
             eventTypeName: "AnalyticsEvent",
-            documentation: true
+            documentation: true,
+            shouldGenerateType: true
         )
     }
 }

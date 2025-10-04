@@ -6,7 +6,7 @@ enum PullCommandError: LocalizedError {
     case invalidResponse
     case saveFailed(String)
     case eventsAreMissing
-    
+
     var errorDescription: String? {
         switch self {
         case .fetchFailed(let message):
@@ -26,7 +26,7 @@ final class PullCommand {
     private let configProvider: ConfigProvider
     private let configFileLocation: ConfigFileLocation
     private let fileManager: FileManager
-    
+
     init(
         apiService: EventPanelAPIService,
         configProvider: ConfigProvider,
@@ -38,7 +38,7 @@ final class PullCommand {
         self.configFileLocation = configFileLocation
         self.fileManager = fileManager
     }
-    
+
     func execute() async throws {
         ConsoleLogger.message("Fetching latest scheme...")
 
@@ -57,12 +57,12 @@ final class PullCommand {
 
         // Save scheme to disk
         try saveScheme(scheme)
-        
+
         ConsoleLogger.success("Successfully pulled and stored scheme")
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func fetchScheme(
         events: [Event],
         source: Source
@@ -81,15 +81,15 @@ final class PullCommand {
             throw PullCommandError.fetchFailed(error.localizedDescription)
         }
     }
-    
+
     private func saveScheme(_ scheme: WorkspaceScheme) throws {
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        
+
         do {
             let data = try encoder.encode(scheme)
-            
+
             // Create .eventpanel directory if it doesn't exist
             let eventPanelDir = configFileLocation.cacheDirectory
             try fileManager.createDirectory(
@@ -97,7 +97,7 @@ final class PullCommand {
                 withIntermediateDirectories: true,
                 attributes: nil
             )
-            
+
             // Save scheme.json
             let schemeURL = eventPanelDir.appendingPathComponent("scheme.json")
             try data.write(to: schemeURL)

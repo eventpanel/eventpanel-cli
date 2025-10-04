@@ -5,7 +5,7 @@ import StencilEventPanelKit
 enum SwiftGenError: LocalizedError {
     case generateFailed(String)
     case saveFailed(String)
-    
+
     var errorDescription: String? {
         switch self {
         case .generateFailed(let message):
@@ -40,7 +40,7 @@ actor SwiftGen: CodeGeneratorPlugin {
         let scheme = try schemeManagerLoader.read()
         let swiftgenScheme = try SwiftGenWorkspaceScheme(from: scheme)
         let stencilTemplate = try SwiftGenStencilTemplate.default()
-        
+
         let rendered = try generator.generate(scheme: swiftgenScheme, stencilTemplate: stencilTemplate)
         try saveGeneratedCode(rendered: rendered)
     }

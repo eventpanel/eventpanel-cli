@@ -3,7 +3,7 @@ import Get
 
 enum OutdatedCommandError: LocalizedError {
     case eventCheckFailed(String)
-    
+
     var errorDescription: String? {
         switch self {
         case .eventCheckFailed(let message):
@@ -18,7 +18,7 @@ private struct OutdatedEvent {
     let eventId: String
     let currentVersion: Int
     let latestVersion: Int
-    
+
     var displayString: String {
         "- \(eventId) \(currentVersion) -> latest version \(latestVersion)"
     }
@@ -32,22 +32,22 @@ final class OutdatedCommand {
         self.apiService = apiService
         self.configProvider = configProvider
     }
-    
+
     func execute() async throws {
         ConsoleLogger.message("Checking for outdated events...")
 
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let events = await eventPanelYaml.getEvents()
-        
+
         let outdatedEvents = try await checkEventsForUpdates(
             events,
             source: eventPanelYaml.getSource()
         )
         displayResults(outdatedEvents)
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func checkEventsForUpdates(_ events: [Event], source: Source) async throws -> [OutdatedEvent] {
         do {
             let requestEvents = events.map { event in
@@ -82,13 +82,13 @@ final class OutdatedCommand {
             throw OutdatedCommandError.eventCheckFailed(error.localizedDescription)
         }
     }
-    
+
     private func displayResults(_ outdatedEvents: [OutdatedEvent]) {
         if outdatedEvents.isEmpty {
             ConsoleLogger.message("All events are up to date")
             return
         }
-        
+
         ConsoleLogger.message("\nThe following event updates are available:")
         for event in outdatedEvents {
             ConsoleLogger.message(event.displayString)

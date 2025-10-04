@@ -12,7 +12,7 @@ struct EventPanelConfig: Codable {
         case plugin
         case events
     }
-    
+
     init(source: Source, plugin: Plugin, events: [Event] = []) {
         self.source = source
         self.plugin = plugin

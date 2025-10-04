@@ -16,7 +16,7 @@ final class FileConfigProvider: @unchecked Sendable, ConfigProvider {
         self.configFileLocation = configFileLocation
         self.fileManager = fileManager
     }
-    
+
     func getEventPanelYaml() async throws -> EventPanelYaml {
         let eventPanelYaml = try EventPanelYaml(path: configFileLocation.configFilePath.relativePath)
         return eventPanelYaml

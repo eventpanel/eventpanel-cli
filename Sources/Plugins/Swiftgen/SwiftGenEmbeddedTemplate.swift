@@ -152,18 +152,30 @@ extension {{param.enumName|default:"GeneratedAnalyticsEvents"}} {
 }
 {% endif %}
 {% endfor %}
+
+private extension Dictionary where Value == Any? {
+  /// Returns dictionary with filtered out `nil` and `NSNull` values
+  func byExcludingNilValues() -> [Key: Any] {
+    return compactMapValues { value -> Any? in
+      value is NSNull ? nil : value
+    }
+  }
+}
+{% if param.shouldGenerateType %}
+
+{{accessModifier}} struct {{eventClassName}} {
+  {{accessModifier}} let name: String
+  {{accessModifier}} let parameters: [String: Any]
+
+  {{accessModifier}} init(name: String, parameters: [String: Any] = [:]) {
+    self.name = name
+    self.parameters = parameters
+  }
+}
+{% endif %}
 {% else %}
 // No files found
 {% endif %}
-
-private extension Dictionary where Value == Any? {
-    /// Returns dictionary with filtered out `nil` and `NSNull` values
-    func byExcludingNilValues() -> [Key: Any] {
-        return compactMapValues { value -> Any? in
-            value is NSNull ? nil : value
-        }
-    }
-} 
 // swiftlint:enable all
 """
 }

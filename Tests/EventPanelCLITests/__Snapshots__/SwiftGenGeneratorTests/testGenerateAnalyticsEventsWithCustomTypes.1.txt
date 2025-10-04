@@ -41,11 +41,21 @@ extension AnalyticsEvents {
 }
 
 private extension Dictionary where Value == Any? {
-    /// Returns dictionary with filtered out `nil` and `NSNull` values
-    func byExcludingNilValues() -> [Key: Any] {
-        return compactMapValues { value -> Any? in
-            value is NSNull ? nil : value
-        }
+  /// Returns dictionary with filtered out `nil` and `NSNull` values
+  func byExcludingNilValues() -> [Key: Any] {
+    return compactMapValues { value -> Any? in
+      value is NSNull ? nil : value
     }
-} 
+  }
+}
+
+internal struct AnalyticsEvent {
+  internal let name: String
+  internal let parameters: [String: Any]
+
+  internal init(name: String, parameters: [String: Any] = [:]) {
+    self.name = name
+    self.parameters = parameters
+  }
+}
 // swiftlint:enable all

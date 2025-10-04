@@ -29,7 +29,7 @@ final class AddCommand {
         self.apiService = apiService
         self.configProvider = configProvider
     }
-    
+
     func execute(eventId: String, version: Int?) async throws {
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let eventVersion = try await validateEvent(
@@ -43,9 +43,9 @@ final class AddCommand {
 
         ConsoleLogger.success("Added event '\(eventId)'")
     }
-    
+
     // MARK: - Private Methods
-    
+
     /// Validates the event name with the server
     private func validateEvent(eventId: String, version: Int?, source: Source) async throws -> Int {
         if let version, version < 0 {
@@ -72,7 +72,7 @@ final class AddCommand {
             throw AddCommandError.eventValidationFailed(error.localizedDescription)
         }
     }
-    
+
     /// Adds the validated event to the YAML configuration
     private func addEventToYaml(eventId: String, eventVersion: Int, eventPanelYaml: EventPanelYaml) async throws {
         try await eventPanelYaml.addEvent(eventId: eventId, eventVersion: eventVersion)
@@ -84,4 +84,4 @@ final class AddCommand {
 private struct EventValidationResponse: Decodable {
     let isValid: Bool
     let message: String?
-} 
+}

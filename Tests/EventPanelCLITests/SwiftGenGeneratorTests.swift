@@ -6,10 +6,9 @@ final class SwiftGenGeneratorTests: XCTestCase {
     let stencilTemplate = try! SwiftGenStencilTemplate.default()
 
     func testGenerateAnalyticsEvents() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
-        
+
         let scheme = SwiftGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -50,19 +49,17 @@ final class SwiftGenGeneratorTests: XCTestCase {
                 .init(id: "user", name: "User", description: nil)
             ]
         )
-        
-        // When
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithMultipleEvents() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
-        
+
         let scheme = SwiftGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -113,18 +110,16 @@ final class SwiftGenGeneratorTests: XCTestCase {
             ]
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithComplexProperties() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
-        
+
         let scheme = SwiftGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -182,19 +177,17 @@ final class SwiftGenGeneratorTests: XCTestCase {
                 .init(id: "ecommerce", name: "E-commerce", description: nil)
             ]
         )
-        
-        // When
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithCustomTypes() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
-        
+
         let scheme = SwiftGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -241,16 +234,14 @@ final class SwiftGenGeneratorTests: XCTestCase {
                 .init(id: "payment", name: "Payment", description: nil)
             ]
         )
-        
-        // When
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
 
     func testUncategorisedEvents() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -286,7 +277,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             categories: nil
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -294,7 +284,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithEmptyDescription() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -330,7 +319,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -338,7 +326,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithEmptyProperties() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -357,7 +344,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -365,7 +351,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithPropertyWithEmptyDescription() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -393,7 +378,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -401,7 +385,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testCategoryDescription() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -435,7 +418,52 @@ final class SwiftGenGeneratorTests: XCTestCase {
             ]
         )
 
-        // When
+        let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
+
+        // Then
+        assertSnapshot(of: output, as: .txt)
+    }
+
+    func testWithoutTypeDefinition() throws {
+        let config = SwiftGenPlugin(
+            outputFilePath: "GeneratedAnalyticsEvents.swift",
+            namespace: "AnalyticsEvents",
+            eventTypeName: "AnalyticsEvent",
+            documentation: true,
+            shouldGenerateType: false
+        )
+        let generator = SwiftGenGenerator(config: config)
+
+        let scheme = SwiftGenWorkspaceScheme(
+            workspace: "test-workspace",
+            events: [
+                .init(
+                    id: "productView",
+                    name: "Product View",
+                    description: "User viewed a product",
+                    categoryIds: ["ecommerce"],
+                    properties: [
+                        .init(
+                            id: "product_id",
+                            name: "product_id",
+                            description: "Unique identifier of the product",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        )
+                    ]
+                )
+            ],
+            customTypes: [],
+            categories: [
+                .init(
+                    id: "ecommerce",
+                    name: "E-commerce",
+                    description: "Screen represents a lot of products"
+                )
+            ]
+        )
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then

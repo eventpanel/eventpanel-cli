@@ -6,13 +6,13 @@ struct List: AsyncParsableCommand {
         abstract: "List events",
         discussion: """
         Lists all events configured in your EventPanel.yaml file.
-        
+
         USAGE:
             eventpanel list [--page-size <number>]
-        
+
         OPTIONS:
             --page-size <number>    Number of items to display per page (default: 20)
-        
+
         The list shows:
         - Event ID
         - Current version
@@ -25,4 +25,4 @@ struct List: AsyncParsableCommand {
     func run() async throws {
         try await DependencyContainer.shared.listCommand.execute(pageSize: pageSize)
     }
-} 
+}

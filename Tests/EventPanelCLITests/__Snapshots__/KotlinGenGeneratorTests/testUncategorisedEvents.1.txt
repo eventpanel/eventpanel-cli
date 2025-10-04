@@ -23,5 +23,10 @@ internal object GeneratedAnalyticsEvents {
   }
 }
 
+internal data class AnalyticsEvent(
+  internal val name: String,
+  internal val parameters: Map<String, Any> = emptyMap()
+)
+
 private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
     this.filterValues { it != null }.mapValues { it.value!! }

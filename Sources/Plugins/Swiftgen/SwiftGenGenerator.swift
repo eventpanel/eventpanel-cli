@@ -4,7 +4,7 @@ import StencilEventPanelKit
 
 enum SwiftGenGeneratorError: LocalizedError {
     case generateFailed(String)
-    
+
     var errorDescription: String? {
         switch self {
         case .generateFailed(let message):
@@ -15,11 +15,11 @@ enum SwiftGenGeneratorError: LocalizedError {
 
 struct SwiftGenGenerator {
     private let config: SwiftGenPlugin
-    
+
     init(config: SwiftGenPlugin) {
         self.config = config
     }
-    
+
     func generate(scheme: SwiftGenWorkspaceScheme, stencilTemplate: SwiftGenStencilTemplate) throws -> String {
         let environment = stencilSwiftEnvironment(
             templates: [stencilTemplate.name: stencilTemplate.template]
@@ -33,7 +33,8 @@ struct SwiftGenGenerator {
             SwiftGenParams(
                 enumName: config.namespace,
                 eventClassName: config.eventTypeName,
-                documentation: config.documentation
+                documentation: config.documentation,
+                shouldGenerateType: config.shouldGenerateType
             ),
             keyEncodingStrategy: .useDefaultKeys
         )!
@@ -50,4 +51,4 @@ struct SwiftGenGenerator {
             throw SwiftGenGeneratorError.generateFailed(error.localizedDescription)
         }
     }
-} 
+}

@@ -6,10 +6,9 @@ final class KotlinGenGeneratorTests: XCTestCase {
     let stencilTemplate = try! KotlinGenStencilTemplate.default()
 
     func testGenerateAnalyticsEvents() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
-        
+
         let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -50,19 +49,17 @@ final class KotlinGenGeneratorTests: XCTestCase {
                 .init(id: "user", name: "User", description: nil)
             ]
         )
-        
-        // When
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithMultipleEvents() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
-        
+
         let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -113,18 +110,16 @@ final class KotlinGenGeneratorTests: XCTestCase {
             ]
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithComplexProperties() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
-        
+
         let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -182,19 +177,17 @@ final class KotlinGenGeneratorTests: XCTestCase {
                 .init(id: "ecommerce", name: "E-commerce", description: nil)
             ]
         )
-        
-        // When
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
-    
+
     func testGenerateAnalyticsEventsWithCustomTypes() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
-        
+
         let scheme = KotlinGenWorkspaceScheme(
             workspace: "test-workspace",
             events: [
@@ -241,16 +234,14 @@ final class KotlinGenGeneratorTests: XCTestCase {
                 .init(id: "payment", name: "Payment", description: nil)
             ]
         )
-        
-        // When
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
-        
+
         // Then
         assertSnapshot(of: output, as: .txt)
     }
 
     func testUncategorisedEvents() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
 
@@ -286,7 +277,6 @@ final class KotlinGenGeneratorTests: XCTestCase {
             categories: nil
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -294,7 +284,6 @@ final class KotlinGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithEmptyDescription() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
 
@@ -330,7 +319,6 @@ final class KotlinGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -338,7 +326,6 @@ final class KotlinGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithEmptyProperties() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
 
@@ -357,7 +344,6 @@ final class KotlinGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -365,7 +351,6 @@ final class KotlinGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithPropertyWithEmptyDescription() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
 
@@ -393,7 +378,6 @@ final class KotlinGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -401,7 +385,6 @@ final class KotlinGenGeneratorTests: XCTestCase {
     }
 
     func testCategoryDescription() throws {
-        // Given
         let config = KotlinGenPlugin.default
         let generator = KotlinGenGenerator(config: config)
 
@@ -435,7 +418,52 @@ final class KotlinGenGeneratorTests: XCTestCase {
             ]
         )
 
-        // When
+        let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
+
+        // Then
+        assertSnapshot(of: output, as: .txt)
+    }
+
+    func testWithoutTypeDefinition() throws {
+        let config = KotlinGenPlugin(
+            outputFilePath: "GeneratedAnalyticsEvents.kt",
+            packageName: "com.analytics.events",
+            eventClassName: "AnalyticsEvent",
+            documentation: true,
+            shouldGenerateType: false
+        )
+        let generator = KotlinGenGenerator(config: config)
+
+        let scheme = KotlinGenWorkspaceScheme(
+            workspace: "test-workspace",
+            events: [
+                .init(
+                    id: "productView",
+                    name: "Product View",
+                    description: "User viewed a product",
+                    categoryIds: ["ecommerce"],
+                    properties: [
+                        .init(
+                            id: "product_id",
+                            name: "product_id",
+                            description: "Unique identifier of the product",
+                            dataType: .string,
+                            required: true,
+                            value: nil
+                        )
+                    ]
+                )
+            ],
+            customTypes: [],
+            categories: [
+                .init(
+                    id: "ecommerce",
+                    name: "E-commerce",
+                    description: "Screen represents a lot of products"
+                )
+            ]
+        )
+
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then

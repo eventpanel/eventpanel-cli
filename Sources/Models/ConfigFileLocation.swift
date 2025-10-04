@@ -10,9 +10,7 @@ struct ConfigFileLocation {
         configDirectory.appendingPathComponent(".eventpanel")
     }
 
-    static var configName: String {
-        "EventPanel.yaml"
-    }
+    static var configName: String { "EventPanel.yaml" }
 
     init(
         configPath: String? = nil,
@@ -27,15 +25,15 @@ struct ConfigFileLocation {
 }
 
 actor ConfigFileLocationProvider {
-    static private var _configFileLocation: ConfigFileLocation?
-    
+    static nonisolated(unsafe) private var _configFileLocation: ConfigFileLocation?
+
     static var configFileLocation: ConfigFileLocation {
         guard let location = _configFileLocation else {
             fatalError("ConfigFileLocationProvider not initialized. Call initialize() first.")
         }
         return location
     }
-    
+
     static func initialize(
         configPath: String?,
         workDir: String?,

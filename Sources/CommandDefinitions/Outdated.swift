@@ -6,10 +6,10 @@ struct Outdated: AsyncParsableCommand {
         abstract: "Show outdated events",
         discussion: """
         Checks for outdated events by comparing local versions with the latest available versions.
-        
+
         USAGE:
             eventpanel outdated
-        
+
         Display a list of events that have updates available
         """
     )
@@ -17,4 +17,4 @@ struct Outdated: AsyncParsableCommand {
     func run() async throws {
         try await DependencyContainer.shared.outdatedCommand.execute()
     }
-} 
+}

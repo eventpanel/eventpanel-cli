@@ -6,17 +6,17 @@ struct SetToken: AsyncParsableCommand {
         abstract: "Set API token",
         discussion: """
         Stores your EventPanel API token for authentication.
-        
+
         USAGE:
             eventpanel auth set-token <token>
-        
+
         ARGUMENTS:
             <token>    Your EventPanel API token
-        
+
         The token will be securely stored and used for all authenticated requests.
         """
     )
-    
+
     @Argument(help: "API token to store")
     var token: String
 
@@ -31,10 +31,10 @@ struct RemoveToken: AsyncParsableCommand {
         abstract: "Remove stored API token",
         discussion: """
         Removes your stored EventPanel API token.
-        
+
         USAGE:
             eventpanel auth remove-token
-        
+
         This will remove the stored API token and require re-authentication for future commands.
         """
     )
@@ -42,4 +42,4 @@ struct RemoveToken: AsyncParsableCommand {
     func run() async throws {
         try await DependencyContainer.shared.authCommand.removeToken()
     }
-} 
+}
