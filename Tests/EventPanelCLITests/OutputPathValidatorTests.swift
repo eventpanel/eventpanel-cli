@@ -27,11 +27,9 @@ final class OutputPathValidatorTests: XCTestCase {
     // MARK: - Valid Path Tests
     
     func testValidPath() throws {
-        // Given
         let outputPath = "Events.swift"
         let source = Source.iOS
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then
@@ -39,11 +37,9 @@ final class OutputPathValidatorTests: XCTestCase {
     }
     
     func testValidNestedPath() throws {
-        // Given
         let outputPath = "Analytics/Events.swift"
         let source = Source.iOS
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then
@@ -51,11 +47,9 @@ final class OutputPathValidatorTests: XCTestCase {
     }
     
     func testValidDeeplyNestedPath() throws {
-        // Given
         let outputPath = "Features/Analytics/Events/EventTracker.swift"
         let source = Source.iOS
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then
@@ -63,11 +57,9 @@ final class OutputPathValidatorTests: XCTestCase {
     }
     
     func testValidKotlinPath() throws {
-        // Given
         let outputPath = "Analytics/Events.kt"
         let source = Source.android
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then
@@ -77,68 +69,54 @@ final class OutputPathValidatorTests: XCTestCase {
     // MARK: - Directory Traversal Attack Tests
     
     func testDirectoryTraversalWithDoubleDots() {
-        // Given
         let outputPath = "../../../etc/passwd"
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory))
     }
     
     func testDirectoryTraversalWithMultipleDoubleDots() {
-        // Given
         let outputPath = "Analytics/../../../etc/passwd"
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory))
     }
     
     func testDirectoryTraversalWithAbsolutePath() {
-        // Given
         let outputPath = "/etc/passwd"
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory))
     }
     
     func testDirectoryTraversalWithDoubleSlash() {
-        // Given
         let outputPath = "Analytics//../../../etc/passwd"
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory))
     }
     
     func testDirectoryTraversalWithEncodedDoubleDots() {
-        // Given
         let outputPath = "Analytics%2F..%2F..%2F..%2Fetc%2Fpasswd"
         let source = Source.iOS
         
-        // When & Then
         // This should fail the basic .. check
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory))
     }
     
     func testDirectoryTraversalWithMixedSeparators() {
-        // Given
         let outputPath = "Analytics\\..\\..\\..\\etc\\passwd"
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory))
     }
     
     // MARK: - Edge Cases
     
     func testEmptyPath() {
-        // Given
         let outputPath = ""
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)) { error in
             XCTAssertTrue(error is OutputPathValidationError)
             if case OutputPathValidationError.emptyOutputPath = error {
@@ -150,11 +128,9 @@ final class OutputPathValidatorTests: XCTestCase {
     }
     
     func testWhitespaceOnlyPath() {
-        // Given
         let outputPath = "   "
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)) { error in
             XCTAssertTrue(error is OutputPathValidationError)
             if case OutputPathValidationError.emptyOutputPath = error {
@@ -166,11 +142,9 @@ final class OutputPathValidatorTests: XCTestCase {
     }
     
     func testPathWithWhitespace() throws {
-        // Given
         let outputPath = "  Events.swift  "
         let source = Source.iOS
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then
@@ -180,7 +154,6 @@ final class OutputPathValidatorTests: XCTestCase {
     // MARK: - Symlink Tests
     
     func testPathWithSymlink() throws {
-        // Given
         let symlinkTarget = tempDirectory.appendingPathComponent("target")
         let symlink = tempDirectory.appendingPathComponent("symlink")
         
@@ -193,7 +166,6 @@ final class OutputPathValidatorTests: XCTestCase {
         let outputPath = "symlink/Events.swift"
         let source = Source.iOS
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then
@@ -201,7 +173,6 @@ final class OutputPathValidatorTests: XCTestCase {
     }
     
     func testDirectoryTraversalThroughSymlink() {
-        // Given
         let parentDirectory = tempDirectory.deletingLastPathComponent()
         let symlink = tempDirectory.appendingPathComponent("parent")
         
@@ -211,29 +182,24 @@ final class OutputPathValidatorTests: XCTestCase {
         let outputPath = "parent/../../../etc/passwd"
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory))
     }
     
     // MARK: - File Name Validation Tests
     
     func testInvalidFileName() {
-        // Given
         let outputPath = "Events.txt" // Wrong extension for iOS
         let source = Source.iOS
         
-        // When & Then
         XCTAssertThrowsError(try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)) { error in
             XCTAssertTrue(error is SwiftFileNameValidationError)
         }
     }
     
     func testValidFileNameWithSpecialCharacters() throws {
-        // Given
         let outputPath = "Events+File.swift"
         let source = Source.iOS
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then
@@ -243,11 +209,9 @@ final class OutputPathValidatorTests: XCTestCase {
     // MARK: - Path Normalization Tests
     
     func testPathWithSingleDots() throws {
-        // Given
         let outputPath = "./Analytics/./Events.swift"
         let source = Source.iOS
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then
@@ -255,11 +219,9 @@ final class OutputPathValidatorTests: XCTestCase {
     }
     
     func testPathWithTrailingSlash() throws {
-        // Given
         let outputPath = "Analytics/Events.swift/"
         let source = Source.iOS
         
-        // When
         let result = try validator.validate(outputPath, for: source, workingDirectory: tempDirectory)
         
         // Then

@@ -6,7 +6,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     let stencilTemplate = try! SwiftGenStencilTemplate.default()
 
     func testGenerateAnalyticsEvents() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
         
@@ -51,7 +50,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             ]
         )
         
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
         
         // Then
@@ -59,7 +57,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
     
     func testGenerateAnalyticsEventsWithMultipleEvents() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
         
@@ -113,7 +110,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             ]
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
         
         // Then
@@ -121,7 +117,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
     
     func testGenerateAnalyticsEventsWithComplexProperties() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
         
@@ -183,7 +178,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             ]
         )
         
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
         
         // Then
@@ -191,7 +185,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
     
     func testGenerateAnalyticsEventsWithCustomTypes() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
         
@@ -242,7 +235,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             ]
         )
         
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
         
         // Then
@@ -250,7 +242,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testUncategorisedEvents() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -286,7 +277,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             categories: nil
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -294,7 +284,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithEmptyDescription() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -330,7 +319,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -338,7 +326,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithEmptyProperties() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -357,7 +344,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -365,7 +351,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testEventWithPropertyWithEmptyDescription() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -393,7 +378,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             categories: []
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -401,7 +385,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testCategoryDescription() throws {
-        // Given
         let config = SwiftGenPlugin.default
         let generator = SwiftGenGenerator(config: config)
 
@@ -435,7 +418,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             ]
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
@@ -443,7 +425,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
     }
 
     func testWithoutTypeDefinition() throws {
-        // Given
         let config = SwiftGenPlugin(
             outputFilePath: "GeneratedAnalyticsEvents.swift",
             namespace: "AnalyticsEvents",
@@ -483,7 +464,6 @@ final class SwiftGenGeneratorTests: XCTestCase {
             ]
         )
 
-        // When
         let output = try generator.generate(scheme: scheme, stencilTemplate: stencilTemplate)
 
         // Then
