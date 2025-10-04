@@ -18,15 +18,20 @@ final class InitCommand {
         self.outputPathValidator = outputPathValidator
     }
 
-    func execute(outputPath: String) async throws {
+    func execute(outputPath: String, source: Source? = nil) async throws {
         let eventPanelYaml = try? await configProvider.getEventPanelYaml()
         if eventPanelYaml != nil { throw InitCommandError.fileAlreadyExists }
 
-        let projectDirectory = try detectProject(in: configFileLocation.workingDirectory)
+        let projectDirectory: ProjectDirectory
+        if let providedSource = source {
+            projectDirectory = ProjectDirectory(source: providedSource)
+        } else {
+            projectDirectory = try detectProject(in: configFileLocation.workingDirectory)
+        }
+        
         let plugin = try initializePlugin(for: projectDirectory.source, outputPath: outputPath)
 
-        let projectInfo = ProjectInfo.init(
-            name: projectDirectory.name,
+        let projectInfo = ProjectInfo(
             source: projectDirectory.source,
             plugin: plugin
         )
@@ -51,6 +56,8 @@ final class InitCommand {
             return .swiftgen(.make(outputFilePath: outputFilePath))
         case .android:
             return .kotlingen(.make(outputFilePath: outputFilePath))
+        case .web:
+            return .typescriptgen(.make(outputFilePath: outputFilePath))
         }
     }
 
@@ -65,13 +72,16 @@ final class InitCommand {
 enum InitCommandError: LocalizedError {
     case fileAlreadyExists
     case noSupportedProject
+    case invalidSource(String)
 
     var errorDescription: String? {
         switch self {
         case .fileAlreadyExists:
             return "Existing EventPanel.yaml found in directory"
         case .noSupportedProject:
-            return "No supported project found in the current directory"
+            return "Specify the source using the --source parameter. Options: android, iOS, or web"
+        case .invalidSource(let source):
+            return "Invalid source '\(source)'. Valid options are: android, iOS, web"
         }
     }
 }

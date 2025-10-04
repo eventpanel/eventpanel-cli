@@ -113,9 +113,7 @@ actor EventPanelYaml {
     }
 }
 
-// Move ProjectInfo here since it's related to YAML configuration
 struct ProjectInfo {
-    let name: String
     let source: Source
     let plugin: Plugin
 }

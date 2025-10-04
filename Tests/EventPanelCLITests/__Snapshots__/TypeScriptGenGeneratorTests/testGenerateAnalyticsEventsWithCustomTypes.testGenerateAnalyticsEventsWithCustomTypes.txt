@@ -1,0 +1,32 @@
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+
+namespace AnalyticsEvents {
+
+  /**
+   * User status changed
+   * @param status New user status
+   */
+  function userStatusChanged(  
+    status: UserStatus
+  ): AnalyticsEvent {
+    return {
+      name: "user_status_changed",
+      parameters: {
+        "status": status
+      }
+    }
+  }
+}
+
+// Custom types for 
+enum UserStatus {
+  Active = "active",
+  Inactive = "inactive",
+  Suspended = "suspended"
+}
+
+interface AnalyticsEvent {
+  name: string;
+  parameters: Record<string, any>;
+}

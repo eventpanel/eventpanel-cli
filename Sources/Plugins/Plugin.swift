@@ -3,10 +3,12 @@ import Foundation
 enum Plugin: Codable {
     case swiftgen(SwiftGenPlugin)
     case kotlingen(KotlinGenPlugin)
+    case typescriptgen(TypeScriptGenPlugin)
 
     enum CodingKeys: String, CodingKey {
         case swiftgen
         case kotlingen
+        case typescriptgen
     }
 
     init(from decoder: Decoder) throws {
@@ -18,6 +20,9 @@ enum Plugin: Codable {
         } else if container.contains(.kotlingen) {
             let plugin = try container.decode(KotlinGenPlugin.self, forKey: .kotlingen)
             self = .kotlingen(plugin)
+        } else if container.contains(.typescriptgen) {
+            let plugin = try container.decode(TypeScriptGenPlugin.self, forKey: .typescriptgen)
+            self = .typescriptgen(plugin)
         } else {
             throw DecodingError.dataCorruptedError(
                 in: try decoder.singleValueContainer(),
@@ -39,6 +44,10 @@ enum Plugin: Codable {
             let data = try encoder.encode(plugin)
             let pluginDict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
             try container.encode(["kotlingen": pluginDict?.mapValues { AnyCodable($0) } ?? [:]])
+        case .typescriptgen(let plugin):
+            let data = try encoder.encode(plugin)
+            let pluginDict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            try container.encode(["typescriptgen": pluginDict?.mapValues { AnyCodable($0) } ?? [:]])
         }
     }
 }
