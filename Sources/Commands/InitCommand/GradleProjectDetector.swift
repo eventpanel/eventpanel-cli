@@ -8,9 +8,8 @@ struct GradleProjectDetector: ProjectDetector {
     }
 
     func detectProject(in directory: URL) -> ProjectDirectory? {
-        guard let projectName = findProjectName(in: directory) else { return nil }
+        guard findProjectName(in: directory) != nil else { return nil }
         return ProjectDirectory(
-            name: projectName,
             source: .android
         )
     }
