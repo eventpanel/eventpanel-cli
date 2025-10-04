@@ -29,7 +29,11 @@ struct Add: AsyncParsableCommand {
     )
     var version: Int?
 
-    @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
+    @Flag(
+        name: [.customLong("scheme-update")],
+        inversion: .prefixedNo,
+        help: "Apply scheme update during generation."
+    )
     var schemeUpdate: Bool = true
 
     func run() async throws {
