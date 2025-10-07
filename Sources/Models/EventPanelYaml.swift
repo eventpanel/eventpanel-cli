@@ -74,13 +74,32 @@ actor EventPanelYaml {
         return config.plugin
     }
 
-    func addEvent(eventId: String, eventVersion: Int) throws {
-        if config.events.contains(where: { $0.id == eventId }) {
-            throw EventPanelYamlError.eventAlreadyExists(eventId: eventId)
+    func addEvent(_ event: Event) throws {
+        if config.events.contains(where: { $0.id == event.id }) {
+            throw EventPanelYamlError.eventAlreadyExists(eventId: event.id)
         }
 
-        let version = eventVersion == 1 ? nil : eventVersion
-        config.events.append(Event(id: eventId, version: version))
+        config.events.append(event)
+        try save()
+    }
+
+    func addEvents(_ events: [Event]) throws {
+        var newEvents: [Event] = []
+        var duplicateEventIds: [String] = []
+
+        for event in events {
+            if config.events.contains(where: { $0.id == event.id }) {
+                duplicateEventIds.append(event.id)
+            } else {
+                newEvents.append(event)
+            }
+        }
+
+        if !duplicateEventIds.isEmpty {
+            throw EventPanelYamlError.eventAlreadyExists(eventId: duplicateEventIds.joined(separator: ", "))
+        }
+
+        config.events.append(contentsOf: newEvents)
         try save()
     }
 

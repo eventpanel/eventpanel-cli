@@ -116,6 +116,10 @@ final class DependencyContainer: @unchecked Sendable {
         return UpdateCommand(apiService: apiService, configProvider: configProvider)
     }()
 
+    private(set) lazy var addEventsCommand: AddEventsCommand = {
+        return AddEventsCommand(apiService: apiService, configProvider: configProvider)
+    }()
+
     // MARK: - Private Initializer
     private init() {}
 }

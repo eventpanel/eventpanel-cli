@@ -75,7 +75,7 @@ final class AddCommand {
 
     /// Adds the validated event to the YAML configuration
     private func addEventToYaml(eventId: String, eventVersion: Int, eventPanelYaml: EventPanelYaml) async throws {
-        try await eventPanelYaml.addEvent(eventId: eventId, eventVersion: eventVersion)
+        try await eventPanelYaml.addEvent(Event(id: eventId, version: eventVersion))
     }
 }
 

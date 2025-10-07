@@ -108,3 +108,36 @@ extension EventPanelAPIService {
         return response.value
     }
 }
+
+extension EventPanelAPIService {
+    func getEvents(
+        categoryId: String,
+        source: Source?
+    ) async throws -> [LatestEventData] {
+        var queryItems: [(String, String)] = []
+        if let source = source {
+            queryItems.append(("source", source.rawValue))
+        }
+        
+        let response: Response<[LatestEventData]> = try await networkClient.send(
+            Request(
+                path: "backend-api/external/events/category/\(categoryId)",
+                method: .get,
+                query: queryItems
+            )
+        )
+        return response.value
+    }
+    
+    func getEvents(
+        source: String
+    ) async throws -> [LatestEventData] {
+        let response: Response<[LatestEventData]> = try await networkClient.send(
+            Request(
+                path: "backend-api/external/events/source/\(source)",
+                method: .get
+            )
+        )
+        return response.value
+    }
+}
