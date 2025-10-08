@@ -32,14 +32,17 @@ final class AddCommand {
 
     func execute(eventId: String, version: Int?) async throws {
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
-        let eventVersion = try await validateEvent(
+        let event = try await validateEvent(
             eventId: eventId,
             version: version,
             source: eventPanelYaml.getSource()
         )
 
-        // Part 3: Add event to YAML file
-        try await addEventToYaml(eventId: eventId, eventVersion: version ?? eventVersion, eventPanelYaml: eventPanelYaml)
+        try await addEventToYaml(
+            eventId: eventId,
+            eventVersion: version ?? event.version,
+            eventPanelYaml: eventPanelYaml
+        )
 
         ConsoleLogger.success("Added event '\(eventId)'")
     }
@@ -47,22 +50,22 @@ final class AddCommand {
     // MARK: - Private Methods
 
     /// Validates the event name with the server
-    private func validateEvent(eventId: String, version: Int?, source: Source) async throws -> Int {
+    private func validateEvent(eventId: String, version: Int?, source: Source) async throws -> LatestEventData {
         if let version, version < 0 {
             throw AddCommandError.eventVersionIsNotValid(version: version)
         }
         do {
-            let response = try await apiService.getLatestEvent(
+            let event = try await apiService.getLatestEvent(
                 eventId: eventId,
                 source: source
             )
 
-            if let version, version > response.version {
+            if let version, version > event.version {
                 throw AddCommandError.eventVersionIsNotValid(version: version)
             }
 
             ConsoleLogger.debug("Event '\(eventId)' validation successful")
-            return response.version
+            return event
         } catch let error as APIError {
             if case .unacceptableStatusCode(404) = error {
                 throw AddCommandError.eventNotFound(eventId: eventId)

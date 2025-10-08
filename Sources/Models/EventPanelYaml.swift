@@ -86,7 +86,7 @@ actor EventPanelYaml {
         try save()
     }
 
-    func addEvents(_ events: [Event]) throws -> Int {
+    func addEvents(_ events: [Event]) throws -> [Event] {
         var newEvents: [Event] = []
 
         let existingIds = Set(config.events.map { $0.id })
@@ -99,7 +99,7 @@ actor EventPanelYaml {
         config.events.append(contentsOf: newEvents)
         try save()
 
-        return newEvents.count
+        return newEvents
     }
 
     func getEvents() -> [Event] {
