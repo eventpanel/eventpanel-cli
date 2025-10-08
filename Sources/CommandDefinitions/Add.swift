@@ -26,25 +26,25 @@ struct Add: AsyncParsableCommand {
         """
     )
 
-    @Argument(help: "Event id (for adding a single event).", completion: .none)
+    @Argument(help: "Event id (for adding a single event)", completion: .none)
     var eventId: String?
 
     @Option(
         name: [.customShort("v"), .long],
-        help: "Specific version of the event to add."
+        help: "Specific version of the event to add"
     )
     var version: Int?
 
-    @Flag(help: "Add all events from the configured source.")
+    @Flag(help: "Add all events for the configured source")
     var all: Bool = false
 
-    @Option(help: "Add all events from the specified category.")
+    @Option(help: "Add all events from the specified category")
     var categoryId: String?
 
     @Flag(
         name: [.customLong("scheme-update")],
         inversion: .prefixedNo,
-        help: "Apply scheme update during generation."
+        help: "Apply scheme update during generation"
     )
     var schemeUpdate: Bool = true
 
