@@ -121,7 +121,7 @@ extension EventPanelAPIService {
         if let source = source {
             queryItems.append(("source", source.rawValue))
         }
-        
+
         do {
             let response: Response<[LatestEventData]> = try await networkClient.send(
                 Request(
@@ -138,7 +138,7 @@ extension EventPanelAPIService {
             throw error
         }
     }
-    
+
     func getEvents(
         source: String
     ) async throws -> [LatestEventData] {
