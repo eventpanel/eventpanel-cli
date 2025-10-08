@@ -86,26 +86,20 @@ actor EventPanelYaml {
         try save()
     }
 
-    func addEvents(_ events: [Event]) throws {
+    func addEvents(_ events: [Event]) throws -> Int {
         var newEvents: [Event] = []
-        var duplicateEventIds: [String] = []
 
-        var existingIds = Set(config.events.map { $0.id })
+        let existingIds = Set(config.events.map { $0.id })
         for event in events {
-            if existingIds.contains(event.id) {
-                duplicateEventIds.append(event.id)
-            } else {
+            if !existingIds.contains(event.id) {
                 newEvents.append(event)
-                existingIds.insert(event.id)
             }
-        }
-
-        if !duplicateEventIds.isEmpty {
-            throw EventPanelYamlError.eventsAlreadyExists(eventIds: duplicateEventIds)
         }
 
         config.events.append(contentsOf: newEvents)
         try save()
+
+        return newEvents.count
     }
 
     func getEvents() -> [Event] {

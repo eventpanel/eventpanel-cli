@@ -43,12 +43,16 @@ final class AddEventsCommand {
 
         let eventsToAdd = events.map { Event(id: $0.eventId, version: $0.version) }
 
-        try await eventPanelYaml.addEvents(eventsToAdd)
+        let numberOfAddedEvents = try await eventPanelYaml.addEvents(eventsToAdd)
 
-        if let categoryId = categoryId {
-            ConsoleLogger.success("Successfully added \(events.count) events from category '\(categoryId)'")
+        if numberOfAddedEvents == 0 {
+            ConsoleLogger.success("All events are already present")
         } else {
-            ConsoleLogger.success("Successfully added \(events.count) events from source '\(source.rawValue)'")
+            if let categoryId = categoryId {
+                ConsoleLogger.success("Successfully added \(numberOfAddedEvents) events for category '\(categoryId)'")
+            } else {
+                ConsoleLogger.success("Successfully added \(numberOfAddedEvents) events")
+            }
         }
     }
 }
