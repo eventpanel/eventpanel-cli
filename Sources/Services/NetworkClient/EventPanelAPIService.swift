@@ -10,11 +10,14 @@ final class EventPanelAPIService {
 
     enum EventPanelError: LocalizedError {
         case invalidSource(String)
+        case categoryNotFound(String)
 
         var errorDescription: String? {
             switch self {
             case .invalidSource(let message):
                 return message
+            case .categoryNotFound(let categoryId):
+                return "Category '\(categoryId)' not found or archived"
             }
         }
     }
@@ -119,14 +122,21 @@ extension EventPanelAPIService {
             queryItems.append(("source", source.rawValue))
         }
         
-        let response: Response<[LatestEventData]> = try await networkClient.send(
-            Request(
-                path: "backend-api/external/events/category/\(categoryId)",
-                method: .get,
-                query: queryItems
+        do {
+            let response: Response<[LatestEventData]> = try await networkClient.send(
+                Request(
+                    path: "backend-api/external/events/category/\(categoryId)",
+                    method: .get,
+                    query: queryItems
+                )
             )
-        )
-        return response.value
+            return response.value
+        } catch let error as BackendAPIError {
+            if error.status == 404 {
+                throw EventPanelError.categoryNotFound(categoryId)
+            }
+            throw error
+        }
     }
     
     func getEvents(
