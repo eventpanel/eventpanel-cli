@@ -4,6 +4,7 @@ import Yams
 enum EventPanelYamlError: LocalizedError {
     case invalidYamlStructure(String)
     case eventAlreadyExists(eventId: String)
+    case eventsAlreadyExists(eventIds: [String])
     case eventNotFound(eventId: String)
     case missingRequiredField(String)
 
@@ -13,6 +14,8 @@ enum EventPanelYamlError: LocalizedError {
             return "Invalid YAML structure: \(message)"
         case .eventAlreadyExists(let eventId):
             return "Event '\(eventId)' already exists"
+        case .eventsAlreadyExists(let eventIds):
+            return "Events already exists:\n- \(eventIds.joined(separator: "\n- "))"
         case .eventNotFound(let eventId):
             return "Event not found '\(eventId)'"
         case .missingRequiredField(let field):
@@ -74,14 +77,29 @@ actor EventPanelYaml {
         return config.plugin
     }
 
-    func addEvent(eventId: String, eventVersion: Int) throws {
-        if config.events.contains(where: { $0.id == eventId }) {
-            throw EventPanelYamlError.eventAlreadyExists(eventId: eventId)
+    func addEvent(_ event: Event) throws {
+        if config.events.contains(where: { $0.id == event.id }) {
+            throw EventPanelYamlError.eventAlreadyExists(eventId: event.id)
         }
 
-        let version = eventVersion == 1 ? nil : eventVersion
-        config.events.append(Event(id: eventId, version: version))
+        config.events.append(event)
         try save()
+    }
+
+    func addEvents(_ events: [Event]) throws -> [Event] {
+        var newEvents: [Event] = []
+
+        let existingIds = Set(config.events.map { $0.id })
+        for event in events {
+            if !existingIds.contains(event.id) {
+                newEvents.append(event)
+            }
+        }
+
+        config.events.append(contentsOf: newEvents)
+        try save()
+
+        return newEvents
     }
 
     func getEvents() -> [Event] {

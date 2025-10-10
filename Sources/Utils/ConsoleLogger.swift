@@ -39,12 +39,8 @@ final class ConsoleLogger {
     }
 
     static func debug(_ message: String) {
-        #if DEBUG
-        print(message)
-        #else
         if isVerbose {
             print(message)
         }
-        #endif
     }
 }
