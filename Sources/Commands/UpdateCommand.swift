@@ -121,17 +121,17 @@ final class UpdateCommand {
                 source: source
             )
 
-            var updatedEvents = 0
+            var updatedEvents: [LatestEventData] = []
             for event in latestEvents where eventIds?.contains(event.eventId) ?? true {
                 guard eventVersions[event.eventId] != event.version else { continue }
                 try await eventPanelYaml.updateEvent(
                     eventId: event.eventId,
                     version: event.version
                 )
-                updatedEvents += 1
+                updatedEvents.append(event)
             }
-            if updatedEvents > 0 {
-                ConsoleLogger.success("All events are successfully up to date.")
+            if updatedEvents.count > 0 {
+                ConsoleLogger.success("Successfully updated events:\n-\(updatedEvents.map(\.eventId).joined(separator: "\n- "))")
             } else {
                 ConsoleLogger.success("Event synchronization complete. No changes detected")
             }
