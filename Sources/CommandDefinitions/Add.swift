@@ -9,18 +9,21 @@ struct Add: AsyncParsableCommand {
 
         USAGE:
             eventpanel add <event-id> [--version <version>]
+            eventpanel add --name <event-name>
             eventpanel add --all
             eventpanel add --category <category-id>
 
         ARGUMENTS:
             <event-id>      The unique identifier of the event to add
-            --version       (Optional) Specific version of the event to add
+            --name          The name of the event to add (fetches latest version)
+            --version       (Optional) Specific version of the event to add (only with event-id)
             --all           Add all available events
             --category      Add all events from the specified category
 
         EXAMPLES:
             eventpanel add DWnQMGoYrvUyaTGpbmvr9
             eventpanel add DWnQMGoYrvUyaTGpbmvr9 --version 2
+            eventpanel add --name "User Login"
             eventpanel add --all
             eventpanel add --category "Login Screen"
         """
@@ -28,6 +31,12 @@ struct Add: AsyncParsableCommand {
 
     @Argument(help: "Event id (for adding a single event)", completion: .none)
     var eventId: String?
+
+    @Option(
+        name: [.customShort("n"), .long],
+        help: "Event name (for adding a single event by name)"
+    )
+    var name: String?
 
     @Option(
         name: [.customShort("v"), .long],
@@ -50,11 +59,12 @@ struct Add: AsyncParsableCommand {
 
     func validate() throws {
         // Ensure mutual exclusivity
-        let modesUsed = [eventId != nil, all, categoryId != nil].filter { $0 }
+        let modesUsed = [eventId != nil, name != nil, all, categoryId != nil].filter { $0 }
         guard modesUsed.count == 1 else {
             throw ValidationError("""
             You must specify exactly one of:
               - <event-id>
+              - --name <event-name>
               - --all
               - --category <id>
             """)
@@ -66,6 +76,10 @@ struct Add: AsyncParsableCommand {
             try await DependencyContainer.shared.addCommand.execute(
                 eventId: eventId,
                 version: version
+            )
+        } else if let name = name {
+            try await DependencyContainer.shared.addCommand.executeByName(
+                eventName: name
             )
         } else if all {
             try await DependencyContainer.shared.addEventsCommand.execute(categoryId: nil)

@@ -41,6 +41,20 @@ extension EventPanelAPIService {
         )
         return response.value
     }
+    
+    func getLatestEventByName(
+        name: String,
+        source: Source
+    ) async throws -> LatestEventData {
+        let response: Response<LatestEventData> = try await networkClient.send(
+            Request(
+                path: "backend-api/external/events/latest",
+                method: .get,
+                query: [("name", name), ("source", source.rawValue)]
+            )
+        )
+        return response.value
+    }
 }
 
 struct LatestEventsRequest: Encodable {
