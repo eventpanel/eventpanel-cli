@@ -120,6 +120,10 @@ final class DependencyContainer: @unchecked Sendable {
         return AddEventsCommand(apiService: apiService, configProvider: configProvider)
     }()
 
+    private(set) lazy var removeCommand: RemoveCommand = {
+        return RemoveCommand(configProvider: configProvider)
+    }()
+
     // MARK: - Private Initializer
     private init() {}
 }
