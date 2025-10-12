@@ -26,6 +26,6 @@ struct Event: Codable {
 
     init(id: String, version: Int? = nil) {
         self.id = id
-        self.version = version
+        self.version = version == 1 ? nil : version
     }
 }

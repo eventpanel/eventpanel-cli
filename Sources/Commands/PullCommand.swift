@@ -5,7 +5,6 @@ enum PullCommandError: LocalizedError {
     case fetchFailed(String)
     case invalidResponse
     case saveFailed(String)
-    case eventsAreMissing
 
     var errorDescription: String? {
         switch self {
@@ -15,8 +14,6 @@ enum PullCommandError: LocalizedError {
             return "Invalid response from server"
         case .saveFailed(let message):
             return "Failed to save scheme: \(message)"
-        case .eventsAreMissing:
-            return "No events found in EventPanel.yaml"
         }
     }
 }
@@ -42,26 +39,18 @@ final class PullCommand {
     func execute() async throws {
         ConsoleLogger.message("Fetching latest scheme...")
 
-        // Validate events
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let events = await eventPanelYaml.getEvents()
-        guard !events.isEmpty else {
-            throw PullCommandError.eventsAreMissing
-        }
 
-        // Fetch scheme from server
         let scheme = try await fetchScheme(
             events: events,
             source: eventPanelYaml.getSource()
         )
 
-        // Save scheme to disk
         try saveScheme(scheme)
 
         ConsoleLogger.success("Successfully pulled and stored scheme")
     }
-
-    // MARK: - Private Methods
 
     private func fetchScheme(
         events: [Event],
@@ -90,7 +79,6 @@ final class PullCommand {
         do {
             let data = try encoder.encode(scheme)
 
-            // Create .eventpanel directory if it doesn't exist
             let eventPanelDir = configFileLocation.cacheDirectory
             try fileManager.createDirectory(
                 at: eventPanelDir,

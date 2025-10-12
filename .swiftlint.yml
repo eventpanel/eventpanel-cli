@@ -1,0 +1,39 @@
+swiftlint_version: 0.61.0
+
+# Basic configuration
+included:
+  - Sources
+  - Tests
+
+excluded:
+  - .build
+  - .github
+
+# Disable rules that might conflict with generated code
+disabled_rules:
+  - blanket_disable_command
+  - todo
+
+# Analyzer rules
+analyzer_rules:
+  - unused_import
+  - unused_declaration
+
+# Line length
+line_length:
+  warning: 120
+  error: 200
+
+# Identifier naming
+identifier_name:
+  excluded:
+    - cr
+    - ln
+    - no
+
+# Nesting
+nesting:
+  type_level: 2
+
+# Large tuple
+large_tuple: 3

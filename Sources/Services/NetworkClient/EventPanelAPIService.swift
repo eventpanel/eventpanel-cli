@@ -10,11 +10,14 @@ final class EventPanelAPIService {
 
     enum EventPanelError: LocalizedError {
         case invalidSource(String)
+        case categoryNotFound(String)
 
         var errorDescription: String? {
             switch self {
             case .invalidSource(let message):
                 return message
+            case .categoryNotFound(let categoryId):
+                return "Category '\(categoryId)' not found or archived"
             }
         }
     }
@@ -45,16 +48,12 @@ struct LatestEventsRequest: Encodable {
     let source: Source
 }
 
-struct EventLatestResponse: Decodable {
-    let events: [LatestEventData]
-}
-
 extension EventPanelAPIService {
     func getLatestEvents(
         events: [LocalEventDefenitionData],
         source: Source
-    ) async throws -> EventLatestResponse {
-        let response: Response<EventLatestResponse> = try await networkClient.send(
+    ) async throws -> [LatestEventData] {
+        let response: Response<[LatestEventData]> = try await networkClient.send(
             Request(
                 path: "backend-api/external/events/latest/list",
                 method: .post,
@@ -102,6 +101,46 @@ extension EventPanelAPIService {
         let response: Response<WorkspaceResponse> = try await networkClient.send(
             Request(
                 path: "backend-api/external/workspace",
+                method: .get
+            )
+        )
+        return response.value
+    }
+}
+
+extension EventPanelAPIService {
+    func getEvents(
+        categoryId: String,
+        source: Source?
+    ) async throws -> [LatestEventData] {
+        var queryItems: [(String, String)] = []
+        if let source = source {
+            queryItems.append(("source", source.rawValue))
+        }
+
+        do {
+            let response: Response<[LatestEventData]> = try await networkClient.send(
+                Request(
+                    path: "backend-api/external/events/category/\(categoryId)",
+                    method: .get,
+                    query: queryItems
+                )
+            )
+            return response.value
+        } catch let error as BackendAPIError {
+            if error.status == 404 {
+                throw EventPanelError.categoryNotFound(categoryId)
+            }
+            throw error
+        }
+    }
+
+    func getEvents(
+        source: String
+    ) async throws -> [LatestEventData] {
+        let response: Response<[LatestEventData]> = try await networkClient.send(
+            Request(
+                path: "backend-api/external/events/source/\(source)",
                 method: .get
             )
         )

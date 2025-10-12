@@ -19,11 +19,10 @@ enum Environment: String, CaseIterable {
             return env
         }
 
-        if ProcessInfo.processInfo.environment["DEBUG"] != nil ||
-            ProcessInfo.processInfo.environment["DEVELOPMENT"] != nil {
-            return .development
-        }
-
+        #if DEBUG
+        return .development
+        #else
         return .production
+        #endif
     }
 }

@@ -31,7 +31,11 @@ struct Update: AsyncParsableCommand {
     @Argument(help: "Event ids to update (if not provided, updates all outdated events)")
     var eventIds: [String] = []
 
-    @Flag(name: [.customLong("scheme-update")], help: "Apply scheme update during generation.")
+    @Flag(
+        name: [.customLong("scheme-update")],
+        inversion: .prefixedNo,
+        help: "Apply scheme update after"
+    )
     var schemeUpdate: Bool = true
 
     func run() async throws {
