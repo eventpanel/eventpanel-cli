@@ -60,12 +60,12 @@ final class OutdatedCommand {
                 result[event.id] = event.version
             }
 
-            let response = try await apiService.getLatestEvents(
+            let latestEvents = try await apiService.getLatestEvents(
                 events: requestEvents,
                 source: source
             )
 
-            return response.events.compactMap { event in
+            return latestEvents.compactMap { event in
                 guard
                     let currentVersion = eventVersions[event.eventId],
                     currentVersion < event.version

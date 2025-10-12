@@ -116,13 +116,13 @@ final class UpdateCommand {
             }
 
             // Check if event has a new version
-            let response = try await apiService.getLatestEvents(
+            let latestEvents = try await apiService.getLatestEvents(
                 events: requestEvents,
                 source: source
             )
 
             var updatedEvents = 0
-            for event in response.events where eventIds?.contains(event.eventId) ?? true {
+            for event in latestEvents where eventIds?.contains(event.eventId) ?? true {
                 guard eventVersions[event.eventId] != event.version else { continue }
                 try await eventPanelYaml.updateEvent(
                     eventId: event.eventId,

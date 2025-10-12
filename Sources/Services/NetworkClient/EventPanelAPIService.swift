@@ -48,16 +48,12 @@ struct LatestEventsRequest: Encodable {
     let source: Source
 }
 
-struct EventLatestResponse: Decodable {
-    let events: [LatestEventData]
-}
-
 extension EventPanelAPIService {
     func getLatestEvents(
         events: [LocalEventDefenitionData],
         source: Source
-    ) async throws -> EventLatestResponse {
-        let response: Response<EventLatestResponse> = try await networkClient.send(
+    ) async throws -> [LatestEventData] {
+        let response: Response<[LatestEventData]> = try await networkClient.send(
             Request(
                 path: "backend-api/external/events/latest/list",
                 method: .post,
