@@ -50,7 +50,7 @@ final class AddCommand {
         ConsoleLogger.success("Added event '\(eventId)'")
     }
 
-    func executeByName(eventName: String) async throws {
+    func execute(eventName: String) async throws {
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let event = try await validateEventByName(
             eventName: eventName,

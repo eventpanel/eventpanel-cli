@@ -20,7 +20,7 @@ final class AddEventsCommand {
         self.configProvider = configProvider
     }
 
-    func execute(categoryId: String?) async throws {
+    func execute(categoryId: String?, categoryName: String?) async throws {
         let eventPanelYaml = try await configProvider.getEventPanelYaml()
         let source = await eventPanelYaml.getSource()
 
@@ -29,6 +29,11 @@ final class AddEventsCommand {
         if let categoryId = categoryId {
             events = try await apiService.getEvents(
                 categoryId: categoryId,
+                source: source
+            )
+        } else if let categoryName = categoryName {
+            events = try await apiService.getEventsByCategoryName(
+                categoryName: categoryName,
                 source: source
             )
         } else {
@@ -47,7 +52,7 @@ final class AddEventsCommand {
         if addedEvents.isEmpty {
             ConsoleLogger.success("All events are already present")
         } else {
-            ConsoleLogger.success("Successfully added events:\n-\(addedEvents.map(\.id).joined(separator: "\n- "))")
+            ConsoleLogger.success("Successfully added events:\n- \(addedEvents.map(\.id).joined(separator: "\n- "))")
         }
     }
 }

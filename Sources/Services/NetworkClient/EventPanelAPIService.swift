@@ -149,6 +149,32 @@ extension EventPanelAPIService {
         }
     }
 
+    func getEventsByCategoryName(
+        categoryName: String,
+        source: Source?
+    ) async throws -> [LatestEventData] {
+        var queryItems: [(String, String)] = [("categoryName", categoryName)]
+        if let source = source {
+            queryItems.append(("source", source.rawValue))
+        }
+
+        do {
+            let response: Response<[LatestEventData]> = try await networkClient.send(
+                Request(
+                    path: "backend-api/external/events/category",
+                    method: .get,
+                    query: queryItems
+                )
+            )
+            return response.value
+        } catch let error as BackendAPIError {
+            if error.status == 404 {
+                throw EventPanelError.categoryNotFound(categoryName)
+            }
+            throw error
+        }
+    }
+
     func getEvents(
         source: String
     ) async throws -> [LatestEventData] {

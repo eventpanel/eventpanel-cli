@@ -131,7 +131,7 @@ final class UpdateCommand {
                 updatedEvents.append(event)
             }
             if updatedEvents.count > 0 {
-                ConsoleLogger.success("Successfully updated events:\n-\(updatedEvents.map(\.eventId).joined(separator: "\n- "))")
+                ConsoleLogger.success("Successfully updated events:\n -\(updatedEvents.map(\.eventId).joined(separator: "\n- "))")
             } else {
                 ConsoleLogger.success("Event synchronization complete. No changes detected")
             }
