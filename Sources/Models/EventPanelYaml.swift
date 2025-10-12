@@ -115,6 +115,15 @@ actor EventPanelYaml {
         try save()
     }
 
+    func removeEvent(eventId: String) throws {
+        guard let eventIndex = config.events.firstIndex(where: { $0.id == eventId }) else {
+            throw EventPanelYamlError.eventNotFound(eventId: eventId)
+        }
+
+        config.events.remove(at: eventIndex)
+        try save()
+    }
+
     func getWorkspaceId() -> String? {
         config.workspaceId
     }

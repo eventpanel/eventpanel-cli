@@ -15,6 +15,7 @@ struct EventPanel: AsyncParsableCommand {
             List.self,
             Outdated.self,
             Pull.self,
+            Remove.self,
             Update.self
         ],
         groupedSubcommands: [CommandGroup(name: "auth", subcommands: [
