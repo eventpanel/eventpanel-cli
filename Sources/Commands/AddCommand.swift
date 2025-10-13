@@ -13,7 +13,7 @@ enum AddCommandError: LocalizedError {
         case .eventAlreadyExists(let event):
             return "Event '\(event)' already exists"
         case .eventValidationFailed(let message):
-            return "Event validation failed: \(message)"
+            return message
         case .eventNotFound(let eventId):
             return "Unable to find a specification for event `\(eventId)`"
         case .eventNotFoundByName(let name):

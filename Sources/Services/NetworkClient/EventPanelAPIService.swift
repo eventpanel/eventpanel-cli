@@ -23,10 +23,6 @@ final class EventPanelAPIService {
     }
 }
 
-struct LatestEventRequest: Encodable {
-    let source: Source
-}
-
 extension EventPanelAPIService {
     func getLatestEvent(
         eventId: String,
@@ -46,14 +42,24 @@ extension EventPanelAPIService {
         name: String,
         source: Source
     ) async throws -> LatestEventData {
-        let response: Response<LatestEventData> = try await networkClient.send(
-            Request(
-                path: "backend-api/external/events/latest",
-                method: .get,
-                query: [("name", name), ("source", source.rawValue)]
+        do {
+            let response: Response<LatestEventData> = try await networkClient.send(
+                Request(
+                    path: "backend-api/external/events/latest",
+                    method: .get,
+                    query: [
+                        ("name", name),
+                        ("source", source.rawValue)
+                    ]
+                )
             )
-        )
-        return response.value
+            return response.value
+        } catch let error as BackendAPIError {
+            if error.error == "Unsupported Source" {
+                throw EventPanelError.invalidSource(error.message)
+            }
+            throw error
+        }
     }
 }
 
