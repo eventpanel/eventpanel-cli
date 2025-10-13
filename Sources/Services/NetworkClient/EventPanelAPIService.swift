@@ -23,10 +23,6 @@ final class EventPanelAPIService {
     }
 }
 
-struct LatestEventRequest: Encodable {
-    let source: Source
-}
-
 extension EventPanelAPIService {
     func getLatestEvent(
         eventId: String,
@@ -40,6 +36,30 @@ extension EventPanelAPIService {
             )
         )
         return response.value
+    }
+    
+    func getLatestEventByName(
+        name: String,
+        source: Source
+    ) async throws -> LatestEventData {
+        do {
+            let response: Response<LatestEventData> = try await networkClient.send(
+                Request(
+                    path: "backend-api/external/events/latest",
+                    method: .get,
+                    query: [
+                        ("name", name),
+                        ("source", source.rawValue)
+                    ]
+                )
+            )
+            return response.value
+        } catch let error as BackendAPIError {
+            if error.error == "Unsupported Source" {
+                throw EventPanelError.invalidSource(error.message)
+            }
+            throw error
+        }
     }
 }
 
@@ -130,6 +150,32 @@ extension EventPanelAPIService {
         } catch let error as BackendAPIError {
             if error.status == 404 {
                 throw EventPanelError.categoryNotFound(categoryId)
+            }
+            throw error
+        }
+    }
+
+    func getEventsByCategoryName(
+        categoryName: String,
+        source: Source?
+    ) async throws -> [LatestEventData] {
+        var queryItems: [(String, String)] = [("categoryName", categoryName)]
+        if let source = source {
+            queryItems.append(("source", source.rawValue))
+        }
+
+        do {
+            let response: Response<[LatestEventData]> = try await networkClient.send(
+                Request(
+                    path: "backend-api/external/events/category",
+                    method: .get,
+                    query: queryItems
+                )
+            )
+            return response.value
+        } catch let error as BackendAPIError {
+            if error.status == 404 {
+                throw EventPanelError.categoryNotFound(categoryName)
             }
             throw error
         }
