@@ -42,22 +42,22 @@ cp .build/release/eventpanel /usr/local/bin/
 
 1. **Initialize EventPanel in your project:**
    ```bash
-   eventpanel init
+   eventpanel init --output MyApp/Analytics/GeneratedEvents.swift
    ```
 
-2. **Add your first event:**
-   ```bash
-   eventpanel add user_login
-   ```
-
-3. **Generate code:**
-   ```bash
-   eventpanel generate
-   ```
-
-4. **Set up authentication (optional):**
+2. **Set up authentication (optional):**
    ```bash
    eventpanel set-token YOUR_API_TOKEN
+   ```
+
+3. **Add your first event:**
+   ```bash
+   eventpanel add "Profile Screen Closed"
+   ```
+
+4. **Generate code:**
+   ```bash
+   eventpanel generate
    ```
 
 ## Usage
@@ -69,7 +69,7 @@ cp .build/release/eventpanel /usr/local/bin/
 eventpanel init
 
 # Add a new event
-eventpanel add event_name
+eventpanel add "Profile Screen Closed"
 
 # List all events
 eventpanel list
@@ -114,9 +114,11 @@ plugin:
   swiftgen:
     accessModifier: public
     outputPath: "Generated/Events.swift"
+    shouldGenerateType: true
+    namespace: AnalyticsEvents
+    documentation: true
 events:
   - id: user_login
-    version: 1
   - id: purchase_completed
     version: 2
 ```
