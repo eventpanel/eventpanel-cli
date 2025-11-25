@@ -1,0 +1,36 @@
+/* eslint-disable */
+// @ts-nocheck
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+
+export namespace AnalyticsEvents {
+
+  /**
+   * User performed an action
+   * @param action_type Type of action
+   * @param count Number of items
+   * @param tags Associated tags
+   * @param metadata Additional metadata
+   */
+  export function userAction(  
+    actionType: String,
+    count: Number,
+    tags: String | undefined,
+    metadata: RecordStringAny | undefined
+  ): AnalyticsEvent {
+    return {
+      name: "user_action",
+      parameters: {
+        "action_type": actionType,
+        "count": count,
+        "tags": tags,
+        "metadata": metadata
+      }
+    }
+  }
+}
+
+export interface AnalyticsEvent {
+  name: string;
+  parameters: Record<string, any>;
+}

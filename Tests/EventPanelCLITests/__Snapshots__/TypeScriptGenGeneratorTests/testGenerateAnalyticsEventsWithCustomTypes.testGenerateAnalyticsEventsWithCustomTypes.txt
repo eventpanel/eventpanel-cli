@@ -1,0 +1,34 @@
+/* eslint-disable */
+// @ts-nocheck
+// Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
+
+
+export namespace AnalyticsEvents {
+
+  /**
+   * User status changed
+   * @param status New user status
+   */
+  export function userStatusChanged(  
+    status: UserStatus
+  ): AnalyticsEvent {
+    return {
+      name: "user_status_changed",
+      parameters: {
+        "status": status
+      }
+    }
+  }
+}
+
+// Custom types for 
+export enum UserStatus {
+  Active = "active",
+  Inactive = "inactive",
+  Suspended = "suspended"
+}
+
+export interface AnalyticsEvent {
+  name: string;
+  parameters: Record<string, any>;
+}

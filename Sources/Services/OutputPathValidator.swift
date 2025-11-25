@@ -57,6 +57,8 @@ final class DefaultOutputPathValidator: OutputPathValidator {
             return try SwiftFileNameValidator.validate(fileName)
         case .android:
             return try KotlinFileNameValidator.validate(fileName)
+        case .web:
+            return try TypeScriptFileNameValidator.validate(fileName)
         }
     }
 }

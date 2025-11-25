@@ -1,8 +1,13 @@
+import Foundation
+
+struct TypeScriptGenEmbeddedTemplate {
+    static let template: String = """
+/* eslint-disable */
+// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 {% if files %}
-package {{param.packageName}}
-{% set accessModifier %}{% if param.publicAccess %}public{% else %}internal{% endif %}{% endset %}
+{% set accessModifier %}{% if param.publicAccess %}export{% else %}{% endif %}{% endset %}
 {% set eventClassName %}{{param.eventClassName|default:"AnalyticsEvent"}}{% endset %}
 {% macro fileBlock file %}
   {% call documentBlock file file.document %}
@@ -15,13 +20,13 @@ package {{param.packageName}}
   {% if param.documentation %}
   {% call categoryDocumentationBlock category %}
   {% endif %}
-  {{accessModifier}} object {{category.name|kotlinIdentifier:"pretty"|escapeReservedKeywords}} {
+  {{accessModifier}} namespace {{category.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
     {% call categoryBlock document category.id %}
   }
   {% endfor %}
 
   {% for event in document.data.events %}
-  {% if event.category_ids.count == 0 %}
+  {% if not event.category_ids or event.category_ids.count == 0 %}
     {% call eventBlock event %}
   {% endif %}
   {% endfor %}
@@ -29,9 +34,9 @@ package {{param.packageName}}
 {% macro customTypesBlock document %}
 {% for customType in document.data.custom_types %}
 {% if customType.type == "enum" %}
-{{accessModifier}} enum class {{customType.name|kotlinIdentifier:"pretty"|escapeReservedKeywords}}(val value: {{customType.data_type}}) {
+{{accessModifier}} enum {{customType.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
   {% for case in customType.cases %}
-  {{case|kotlinIdentifier:"pretty"}}("{{case}}"){% if not forloop.last %},{% endif +%}
+  {{case|swiftIdentifier:"pretty"}} = "{{case}}"{% if not forloop.last %},{% endif +%}
   {% endfor %}
 }
 {% endif %}
@@ -58,16 +63,16 @@ package {{param.packageName}}
 {%- endmacro %}
 {% macro propertyType property %}
   {%- if property.type == "enum" -%}
-    {{property.name|kotlinIdentifier:"pretty"}}
+    {{property.name|swiftIdentifier:"pretty"}}
   {%- else -%}
-    {{property.data_type|kotlinIdentifier:"pretty"}}
+    {{property.data_type|swiftIdentifier:"pretty"}}
   {%- endif -%}
 {% endmacro %}
 {% macro typeBlock property -%}
   {%- if property.required -%}
   {% call propertyType property %}
   {%- else -%}
-  {% call propertyType property %}?
+  {% call propertyType property %} | undefined
   {%- endif -%}
 {%- endmacro -%}
 {% macro categoryBlock document categoryId %}
@@ -81,56 +86,56 @@ package {{param.packageName}}
   {% endfor %}
 {% endmacro %}
 {% macro eventBlock event %}
-  {% set functionName %}{{event.name|kotlinIdentifier:"pretty"|lowerFirstWord}}{% endset %}
+  {% set functionName %}{{event.name|swiftIdentifier:"pretty"|lowerFirstWord}}{% endset %}
   {% set arguments %}{% call eventArgumentsBlock event.properties %}{% endset %}
   {% set functionBody %}{% call eventInstanceBlock event %}{% endset %}
   {% if param.documentation %}
   {%- call eventDocumentationBlock event %}
   {% endif %}
   {% if event.properties.count > 0 %}
-  {{accessModifier}} fun {{functionName}}(
+  {{accessModifier}} function {{functionName}}(
   {%- filter indent:2," ",true %}{{arguments}}{% endfilter %}
   ): {{eventClassName}} {
   {% else %}
-  {{accessModifier}} fun {{functionName}}(): {{eventClassName}} {
+  {{accessModifier}} function {{functionName}}(): {{eventClassName}} {
   {% endif %}
   {% filter indent:2," ",true %}{{functionBody}}{% endfilter %}
   }
 {% endmacro %}
 {% macro eventInstanceBlock event %}
-  return {{eventClassName}}(
+  return {
   {% filter indent:2," ",true %}
-  name = "{{event.name}}",
-  parameters = {%+ call eventPropertiesBlock event.properties +%}
+  name: "{{event.name}}",
+  parameters: {%+ call eventPropertiesBlock event.properties +%}
   {% endfilter %}
-  )
+  }
 {% endmacro %}
 {% macro eventArgumentsBlock properties %}
   {% if properties.count > 0 +%}
   {% for property in properties %}
   {% set type %}{% call typeBlock property %}{% endset %}
-  {{property.name|kotlinIdentifier:"pretty"|lowerFirstWord}}: {{type}}{{ "," if not forloop.last }}
+  {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}: {{type}}{{ "," if not forloop.last }}
   {% endfor %}
   {% endif %}
 {% endmacro %}
 {% macro eventPropertiesBlock properties %}
   {%- if not properties -%}
-  emptyMap()
+  {}
   {%- else -%}
-  mapOf(
+  {
   {% filter indent:2," ",true %}
   {% for property in properties %}
-  "{{property.name}}" to {{property.name|kotlinIdentifier:"pretty"|lowerFirstWord}}{{ "," if not forloop.last }}
+  "{{property.name}}": {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}{{ "," if not forloop.last }}
   {% endfor %}
   {% endfilter %}
-  ){% for property in properties %}{% if not property.required and not property.value %}.withoutNulls(){% break %}{% endif %}{% endfor %}
+  }{% for property in properties %}{% if not property.required and not property.value %}{% if forloop.first %}{% else %}{% endif %}{% endif %}{% endfor %}
   {% endif %}
 {% endmacro %}
 
-{{accessModifier}} object {{param.enumName|default:"GeneratedAnalyticsEvents"}} {
+{{accessModifier}} namespace {{param.namespace|default:"GeneratedAnalyticsEvents"}} {
   {% if files.count > 1 or param.forceFileNameEnum %}
   {% for file in files %}
-  {{accessModifier}} object {{file.name|kotlinIdentifier:"pretty"|escapeReservedKeywords}} {
+  {{accessModifier}} namespace {{file.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
     {% filter indent:2," ",true %}{% call fileBlock file %}{% endfilter %}
   }
   {% endfor %}
@@ -147,14 +152,13 @@ package {{param.packageName}}
 {% endfor %}
 {% if param.shouldGenerateType %}
 
-{{accessModifier}} data class {{eventClassName}}(
-  {{accessModifier}} val name: String,
-  {{accessModifier}} val parameters: Map<String, Any> = emptyMap()
-)
+{{accessModifier}} interface {{eventClassName}} {
+  name: string;
+  parameters: Record<string, any>;
+}
 {% endif %}
 {% else %}
 // No files found
 {% endif %}
-
-private fun Map<String, Any?>.withoutNulls(): Map<String, Any> =
-    this.filterValues { it != null }.mapValues { it.value!! }
+"""
+}
