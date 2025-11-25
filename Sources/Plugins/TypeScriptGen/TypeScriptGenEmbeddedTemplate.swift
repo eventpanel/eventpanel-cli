@@ -2,10 +2,7 @@ import Foundation
 
 struct TypeScriptGenEmbeddedTemplate {
     static let template: String = """
-/* eslint-disable */
-// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
-
 {% if files %}
 {% set accessModifier %}{% if param.publicAccess %}export{% else %}{% endif %}{% endset %}
 {% set eventClassName %}{{param.eventClassName|default:"AnalyticsEvent"}}{% endset %}
@@ -55,7 +52,7 @@ struct TypeScriptGenEmbeddedTemplate {
    * {{event.description}}
   {% for property in event.properties %}
   {% if property.description.count > 0 %}
-   * @param {{property.name}} {{property.description}}
+   * @param {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}} {{property.description}}
   {% endif %}
   {% endfor %}
    */
@@ -105,16 +102,16 @@ struct TypeScriptGenEmbeddedTemplate {
 {% macro eventInstanceBlock event %}
   return {
   {% filter indent:2," ",true %}
-  name: "{{event.name}}",
-  parameters: {%+ call eventPropertiesBlock event.properties +%}
+  name: '{{event.name}}',
+  parameters: {%+ call eventPropertiesBlock event.properties +%},
   {% endfilter %}
-  }
+  };
 {% endmacro %}
 {% macro eventArgumentsBlock properties %}
   {% if properties.count > 0 +%}
   {% for property in properties %}
   {% set type %}{% call typeBlock property %}{% endset %}
-  {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}: {{type}}{{ "," if not forloop.last }}
+  {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}: {{type}},
   {% endfor %}
   {% endif %}
 {% endmacro %}
@@ -125,7 +122,7 @@ struct TypeScriptGenEmbeddedTemplate {
   {
   {% filter indent:2," ",true %}
   {% for property in properties %}
-  "{{property.name}}": {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}}{{ "," if not forloop.last }}
+  {{property.name}}: {{property.name|swiftIdentifier:"pretty"|lowerFirstWord}},
   {% endfor %}
   {% endfilter %}
   }{% for property in properties %}{% if not property.required and not property.value %}{% if forloop.first %}{% else %}{% endif %}{% endif %}{% endfor %}
@@ -154,7 +151,7 @@ struct TypeScriptGenEmbeddedTemplate {
 
 {{accessModifier}} interface {{eventClassName}} {
   name: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }
 {% endif %}
 {% else %}
