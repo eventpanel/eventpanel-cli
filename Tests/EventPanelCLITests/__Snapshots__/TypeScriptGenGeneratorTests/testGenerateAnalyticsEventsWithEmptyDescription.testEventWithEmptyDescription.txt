@@ -1,9 +1,11 @@
+/* eslint-disable */
+// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 
-namespace AnalyticsEvents {
+export namespace AnalyticsEvents {
 
-  function userAction(  
+  export function userAction(  
     action: String
   ): AnalyticsEvent {
     return {
@@ -15,7 +17,7 @@ namespace AnalyticsEvents {
   }
 }
 
-interface AnalyticsEvent {
+export interface AnalyticsEvent {
   name: string;
   parameters: Record<string, any>;
 }

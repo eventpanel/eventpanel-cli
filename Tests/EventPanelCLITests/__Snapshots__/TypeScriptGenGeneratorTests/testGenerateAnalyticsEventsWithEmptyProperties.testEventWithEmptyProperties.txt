@@ -1,12 +1,14 @@
+/* eslint-disable */
+// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 
-namespace AnalyticsEvents {
+export namespace AnalyticsEvents {
 
   /**
    * A simple event with no properties
    */
-  function simpleEvent(): AnalyticsEvent {
+  export function simpleEvent(): AnalyticsEvent {
     return {
       name: "simple_event",
       parameters: {}
@@ -14,7 +16,7 @@ namespace AnalyticsEvents {
   }
 }
 
-interface AnalyticsEvent {
+export interface AnalyticsEvent {
   name: string;
   parameters: Record<string, any>;
 }

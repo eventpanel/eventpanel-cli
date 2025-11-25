@@ -1,13 +1,15 @@
+/* eslint-disable */
+// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 
-namespace AnalyticsEvents {
+export namespace AnalyticsEvents {
 
   /**
    * User performed an action
    * @param user_id User identifier
    */
-  function userAction(  
+  export function userAction(  
     action: String,
     userId: String
   ): AnalyticsEvent {
@@ -21,7 +23,7 @@ namespace AnalyticsEvents {
   }
 }
 
-interface AnalyticsEvent {
+export interface AnalyticsEvent {
   name: string;
   parameters: Record<string, any>;
 }

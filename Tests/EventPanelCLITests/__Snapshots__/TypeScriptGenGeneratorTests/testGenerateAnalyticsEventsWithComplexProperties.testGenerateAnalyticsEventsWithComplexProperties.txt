@@ -1,7 +1,9 @@
+/* eslint-disable */
+// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 
-namespace AnalyticsEvents {
+export namespace AnalyticsEvents {
 
   /**
    * User performed an action
@@ -10,7 +12,7 @@ namespace AnalyticsEvents {
    * @param tags Associated tags
    * @param metadata Additional metadata
    */
-  function userAction(  
+  export function userAction(  
     actionType: String,
     count: Number,
     tags: String | undefined,
@@ -28,7 +30,7 @@ namespace AnalyticsEvents {
   }
 }
 
-interface AnalyticsEvent {
+export interface AnalyticsEvent {
   name: string;
   parameters: Record<string, any>;
 }

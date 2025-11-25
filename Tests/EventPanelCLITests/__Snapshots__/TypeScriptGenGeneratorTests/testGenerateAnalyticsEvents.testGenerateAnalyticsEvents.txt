@@ -1,14 +1,16 @@
+/* eslint-disable */
+// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 
-namespace AnalyticsEvents {
+export namespace AnalyticsEvents {
 
   /**
    * User logged in
    * @param user_id User identifier
    * @param timestamp Login timestamp
    */
-  function userLogin(  
+  export function userLogin(  
     userId: String,
     timestamp: Date | undefined
   ): AnalyticsEvent {
@@ -22,7 +24,7 @@ namespace AnalyticsEvents {
   }
 }
 
-interface AnalyticsEvent {
+export interface AnalyticsEvent {
   name: string;
   parameters: Record<string, any>;
 }

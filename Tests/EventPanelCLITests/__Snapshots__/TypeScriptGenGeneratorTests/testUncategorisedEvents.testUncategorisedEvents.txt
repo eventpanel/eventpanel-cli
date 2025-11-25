@@ -1,18 +1,20 @@
+/* eslint-disable */
+// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 
-namespace AnalyticsEvents {
+export namespace AnalyticsEvents {
   /**
    * Authentication related events
    */
-  namespace Authentication {
+  export namespace Authentication {
   }
 
   /**
    * An event without category
    * @param value Some value
    */
-  function uncategorisedEvent(  
+  export function uncategorisedEvent(  
     value: String
   ): AnalyticsEvent {
     return {
@@ -24,7 +26,7 @@ namespace AnalyticsEvents {
   }
 }
 
-interface AnalyticsEvent {
+export interface AnalyticsEvent {
   name: string;
   parameters: Record<string, any>;
 }
