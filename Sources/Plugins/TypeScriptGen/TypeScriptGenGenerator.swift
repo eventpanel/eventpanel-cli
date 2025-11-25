@@ -35,6 +35,7 @@ struct TypeScriptGenGenerator {
         let parameters = try codableToDictionary(
             TypeScriptGenParams(
                 namespace: config.namespace,
+                publicAccess: true,
                 eventClassName: config.eventClassName,
                 documentation: config.documentation,
                 shouldGenerateType: config.shouldGenerateType

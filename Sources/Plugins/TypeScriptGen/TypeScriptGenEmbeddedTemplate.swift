@@ -2,10 +2,12 @@ import Foundation
 
 struct TypeScriptGenEmbeddedTemplate {
     static let template: String = """
+/* eslint-disable */
+// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
 
 {% if files %}
-{% set accessModifier %}{% if param.publicAccess %}export {% else %}{% endif %}{% endset %}
+{% set accessModifier %}{% if param.publicAccess %}export{% else %}{% endif %}{% endset %}
 {% set eventClassName %}{{param.eventClassName|default:"AnalyticsEvent"}}{% endset %}
 {% macro fileBlock file %}
   {% call documentBlock file file.document %}
@@ -18,7 +20,7 @@ struct TypeScriptGenEmbeddedTemplate {
   {% if param.documentation %}
   {% call categoryDocumentationBlock category %}
   {% endif %}
-  {{accessModifier}}namespace {{category.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
+  {{accessModifier}} namespace {{category.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
     {% call categoryBlock document category.id %}
   }
   {% endfor %}
@@ -32,7 +34,7 @@ struct TypeScriptGenEmbeddedTemplate {
 {% macro customTypesBlock document %}
 {% for customType in document.data.custom_types %}
 {% if customType.type == "enum" %}
-{{accessModifier}}enum {{customType.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
+{{accessModifier}} enum {{customType.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
   {% for case in customType.cases %}
   {{case|swiftIdentifier:"pretty"}} = "{{case}}"{% if not forloop.last %},{% endif +%}
   {% endfor %}
@@ -91,11 +93,11 @@ struct TypeScriptGenEmbeddedTemplate {
   {%- call eventDocumentationBlock event %}
   {% endif %}
   {% if event.properties.count > 0 %}
-  {{accessModifier}}function {{functionName}}(
+  {{accessModifier}} function {{functionName}}(
   {%- filter indent:2," ",true %}{{arguments}}{% endfilter %}
   ): {{eventClassName}} {
   {% else %}
-  {{accessModifier}}function {{functionName}}(): {{eventClassName}} {
+  {{accessModifier}} function {{functionName}}(): {{eventClassName}} {
   {% endif %}
   {% filter indent:2," ",true %}{{functionBody}}{% endfilter %}
   }
@@ -130,10 +132,10 @@ struct TypeScriptGenEmbeddedTemplate {
   {% endif %}
 {% endmacro %}
 
-{{accessModifier}}namespace {{param.namespace|default:"GeneratedAnalyticsEvents"}} {
+{{accessModifier}} namespace {{param.namespace|default:"GeneratedAnalyticsEvents"}} {
   {% if files.count > 1 or param.forceFileNameEnum %}
   {% for file in files %}
-  {{accessModifier}}namespace {{file.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
+  {{accessModifier}} namespace {{file.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
     {% filter indent:2," ",true %}{% call fileBlock file %}{% endfilter %}
   }
   {% endfor %}
@@ -150,7 +152,7 @@ struct TypeScriptGenEmbeddedTemplate {
 {% endfor %}
 {% if param.shouldGenerateType %}
 
-{{accessModifier}}interface {{eventClassName}} {
+{{accessModifier}} interface {{eventClassName}} {
   name: string;
   parameters: Record<string, any>;
 }
