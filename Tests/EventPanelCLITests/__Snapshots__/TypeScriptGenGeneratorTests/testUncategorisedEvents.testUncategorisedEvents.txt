@@ -12,7 +12,7 @@ export namespace AnalyticsEvents {
    * @param value Some value
    */
   export function uncategorisedEvent(  
-    value: String,
+    value: string,
   ): AnalyticsEvent {
     return {
       name: 'uncategorised_event',

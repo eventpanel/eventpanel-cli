@@ -7,8 +7,8 @@ export namespace AnalyticsEvents {
    * @param userId User identifier
    */
   export function userAction(  
-    action: String,
-    userId: String,
+    action: string,
+    userId: string,
   ): AnalyticsEvent {
     return {
       name: 'user_action',

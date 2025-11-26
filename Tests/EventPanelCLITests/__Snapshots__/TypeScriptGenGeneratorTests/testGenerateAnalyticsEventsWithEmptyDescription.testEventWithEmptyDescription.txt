@@ -3,7 +3,7 @@
 export namespace AnalyticsEvents {
 
   export function userAction(  
-    action: String,
+    action: string,
   ): AnalyticsEvent {
     return {
       name: 'user_action',

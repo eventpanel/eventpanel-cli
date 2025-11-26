@@ -10,10 +10,10 @@ export namespace AnalyticsEvents {
    * @param metadata Additional metadata
    */
   export function userAction(  
-    actionType: String,
-    count: Number,
-    tags: String | undefined,
-    metadata: RecordStringAny | undefined,
+    actionType: string,
+    count: number,
+    tags: string[] | undefined,
+    metadata: Record<string, unknown> | undefined,
   ): AnalyticsEvent {
     return {
       name: 'user_action',

@@ -8,8 +8,8 @@ export namespace AnalyticsEvents {
    * @param timestamp Login timestamp
    */
   export function userLogin(  
-    userId: String,
-    timestamp: Date | undefined,
+    userId: string,
+    timestamp: string | undefined,
   ): AnalyticsEvent {
     return {
       name: 'user_login',

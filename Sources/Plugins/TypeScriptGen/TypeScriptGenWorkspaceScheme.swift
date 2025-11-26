@@ -47,14 +47,14 @@ struct TypeScriptGenWorkspaceScheme: Codable {
             case .int: return "number"
             case .float: return "number"
             case .bool: return "boolean"
-            case .date: return "Date"
+            case .date: return "string"
             case .stringArray: return "string[]"
             case .intArray: return "number[]"
             case .floatArray: return "number[]"
             case .boolArray: return "boolean[]"
-            case .dateArray: return "Date[]"
-            case .dictionary: return "Record<string, any>"
-            case .dictionaryArray: return "Record<string, any>[]"
+            case .dateArray: return "string[]"
+            case .dictionary: return "Record<string, unknown>"
+            case .dictionaryArray: return "Record<string, unknown>[]"
             case .custom(let value): return value
             }
         }
