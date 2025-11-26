@@ -1,7 +1,4 @@
-/* eslint-disable */
-// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
-
 
 export namespace AnalyticsEvents {
 
@@ -10,14 +7,14 @@ export namespace AnalyticsEvents {
    * @param status New user status
    */
   export function userStatusChanged(  
-    status: UserStatus
+    status: UserStatus,
   ): AnalyticsEvent {
     return {
-      name: "user_status_changed",
+      name: 'user_status_changed',
       parameters: {
-        "status": status
-      }
-    }
+        status: status,
+      },
+    };
   }
 }
 
@@ -30,5 +27,5 @@ export enum UserStatus {
 
 export interface AnalyticsEvent {
   name: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }

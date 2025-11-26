@@ -1,30 +1,27 @@
-/* eslint-disable */
-// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
-
 
 export namespace AnalyticsEvents {
 
   /**
    * User logged in
-   * @param user_id User identifier
+   * @param userId User identifier
    * @param timestamp Login timestamp
    */
   export function userLogin(  
-    userId: String,
-    timestamp: Date | undefined
+    userId: string,
+    timestamp: string | undefined,
   ): AnalyticsEvent {
     return {
-      name: "user_login",
+      name: 'user_login',
       parameters: {
-        "user_id": userId,
-        "timestamp": timestamp
-      }
-    }
+        user_id: userId,
+        timestamp: timestamp,
+      },
+    };
   }
 }
 
 export interface AnalyticsEvent {
   name: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }
