@@ -1,22 +1,19 @@
-/* eslint-disable */
-// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
-
 
 export namespace AnalyticsEvents {
 
   /**
    * User logged in
-   * @param user_id User identifier
+   * @param userId User identifier
    */
   export function userLogin(  
-    userId: String
+    userId: String,
   ): AnalyticsEvent {
     return {
-      name: "user_login",
+      name: 'user_login',
       parameters: {
-        "user_id": userId
-      }
-    }
+        user_id: userId,
+      },
+    };
   }
 }

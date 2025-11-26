@@ -1,7 +1,4 @@
-/* eslint-disable */
-// @ts-nocheck
 // Generated using EventPanel — https://github.com/eventpanel/eventpanel-cli
-
 
 export namespace AnalyticsEvents {
   /**
@@ -15,18 +12,18 @@ export namespace AnalyticsEvents {
    * @param value Some value
    */
   export function uncategorisedEvent(  
-    value: String
+    value: String,
   ): AnalyticsEvent {
     return {
-      name: "uncategorised_event",
+      name: 'uncategorised_event',
       parameters: {
-        "value": value
-      }
-    }
+        value: value,
+      },
+    };
   }
 }
 
 export interface AnalyticsEvent {
   name: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }
