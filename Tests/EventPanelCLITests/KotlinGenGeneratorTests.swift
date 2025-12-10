@@ -22,7 +22,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "login_method",
                             name: "login_method",
                             description: "Login method used",
-                            dataType: .custom("Method"),
+                            dataType: "Method",
                             required: true,
                             value: nil
                         ),
@@ -30,7 +30,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "is_successful",
                             name: "is_successful",
                             description: "Whether login was successful",
-                            dataType: .bool,
+                            dataType: "Boolean",
                             required: true,
                             value: nil
                         )
@@ -41,7 +41,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                 .init(
                     name: "Method",
                     type: "enum",
-                    dataType: .string,
+                    dataType: "String",
                     cases: ["email", "google", "apple"]
                 )
             ],
@@ -73,7 +73,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "source",
                             name: "source",
                             description: "Where the onboarding was initiated from",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         )
@@ -89,7 +89,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "completion_time",
                             name: "completion_time",
                             description: "Time taken to complete onboarding in seconds",
-                            dataType: .int,
+                            dataType: "Int",
                             required: true,
                             value: nil
                         ),
@@ -97,7 +97,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "skipped_steps",
                             name: "skipped_steps",
                             description: "Number of steps skipped during onboarding",
-                            dataType: .int,
+                            dataType: "Int",
                             required: false,
                             value: nil
                         )
@@ -133,7 +133,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "product_id",
                             name: "product_id",
                             description: "Unique identifier of the product",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         ),
@@ -141,7 +141,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "product_price",
                             name: "product_price",
                             description: "Price of the product",
-                            dataType: .float,
+                            dataType: "Double",
                             required: true,
                             value: nil
                         ),
@@ -149,7 +149,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "currency",
                             name: "currency",
                             description: "Currency code",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: "USD"
                         ),
@@ -157,7 +157,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "is_on_sale",
                             name: "is_on_sale",
                             description: "Whether the product is on sale",
-                            dataType: .bool,
+                            dataType: "Boolean",
                             required: false,
                             value: "false"
                         ),
@@ -165,7 +165,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "discount_percentage",
                             name: "discount_percentage",
                             description: "Discount percentage if on sale",
-                            dataType: .float,
+                            dataType: "Double",
                             required: false,
                             value: nil
                         )
@@ -201,7 +201,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "payment_method",
                             name: "payment_method",
                             description: "Method of payment",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         ),
@@ -209,7 +209,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "payment_status",
                             name: "payment_status",
                             description: "Status of the payment",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         )
@@ -220,13 +220,13 @@ final class KotlinGenGeneratorTests: XCTestCase {
                 .init(
                     name: "paymentMethod",
                     type: "enum",
-                    dataType: .string,
+                    dataType: "String",
                     cases: ["credit_card", "paypal", "apple_pay", "google_pay"]
                 ),
                 .init(
                     name: "paymentStatus",
                     type: "enum",
-                    dataType: .string,
+                    dataType: "String",
                     cases: ["pending", "completed", "failed", "refunded"]
                 )
             ],
@@ -258,7 +258,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "payment_method",
                             name: "payment_method",
                             description: "Method of payment",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         ),
@@ -266,7 +266,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "payment_status",
                             name: "payment_status",
                             description: "Status of the payment",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         )
@@ -300,7 +300,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "payment_method",
                             name: "payment_method",
                             description: "Method of payment",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         ),
@@ -308,7 +308,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "payment_status",
                             name: "payment_status",
                             description: "Status of the payment",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         )
@@ -367,7 +367,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "payment_method",
                             name: "payment_method",
                             description: "",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         )
@@ -401,7 +401,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "product_id",
                             name: "product_id",
                             description: "Unique identifier of the product",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         )
@@ -447,7 +447,7 @@ final class KotlinGenGeneratorTests: XCTestCase {
                             id: "product_id",
                             name: "product_id",
                             description: "Unique identifier of the product",
-                            dataType: .string,
+                            dataType: "String",
                             required: true,
                             value: nil
                         )
