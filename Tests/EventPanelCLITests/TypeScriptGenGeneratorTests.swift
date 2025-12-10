@@ -26,7 +26,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "user_id",
                             description: "User identifier",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         ),
@@ -34,7 +34,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop2",
                             name: "timestamp",
                             description: "Login timestamp",
-                            dataType: .date,
+                            dataType: "string",
                             required: false,
                             value: nil
                         )
@@ -65,7 +65,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "action_type",
                             description: "Type of action",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         ),
@@ -73,7 +73,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop2",
                             name: "count",
                             description: "Number of items",
-                            dataType: .int,
+                            dataType: "number",
                             required: true,
                             value: nil
                         ),
@@ -81,7 +81,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop3",
                             name: "tags",
                             description: "Associated tags",
-                            dataType: .stringArray,
+                            dataType: "string[]",
                             required: false,
                             value: nil
                         ),
@@ -89,7 +89,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop4",
                             name: "metadata",
                             description: "Additional metadata",
-                            dataType: .dictionary,
+                            dataType: "Record<string, unknown>",
                             required: false,
                             value: nil
                         )
@@ -120,7 +120,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "status",
                             description: "New user status",
-                            dataType: .custom("UserStatus"),
+                            dataType: "UserStatus",
                             required: true,
                             value: nil
                         )
@@ -131,7 +131,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                 TypeScriptGenWorkspaceScheme.CustomType(
                     name: "UserStatus",
                     type: "enum",
-                    dataType: .string,
+                    dataType: "string",
                     cases: ["active", "inactive", "suspended"]
                 )
             ],
@@ -158,7 +158,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "user_id",
                             description: "User identifier",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         )
@@ -196,7 +196,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "user_id",
                             description: "User identifier",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         )
@@ -233,7 +233,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "action",
                             description: "",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         )
@@ -286,7 +286,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "action",
                             description: "",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         ),
@@ -294,7 +294,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop2",
                             name: "user_id",
                             description: "User identifier",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         )
@@ -334,7 +334,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "user_id",
                             description: "User identifier",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         )
@@ -365,7 +365,7 @@ final class TypeScriptGenGeneratorTests: XCTestCase {
                             id: "prop1",
                             name: "value",
                             description: "Some value",
-                            dataType: .string,
+                            dataType: "string",
                             required: true,
                             value: nil
                         )

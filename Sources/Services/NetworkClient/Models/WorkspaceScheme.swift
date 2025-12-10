@@ -18,7 +18,7 @@ struct WorkspaceScheme: Codable {
         let id: String
         let name: String
         let description: String
-        let dataType: String
+        let dataType: EventPanelDataType
         let required: Bool
         let value: String?
     }
@@ -26,7 +26,7 @@ struct WorkspaceScheme: Codable {
     struct CustomType: Codable {
         let name: String
         let type: String
-        let dataType: String
+        let dataType: EventPanelDataType
         let values: [String]
     }
 
