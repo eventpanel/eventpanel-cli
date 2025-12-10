@@ -97,7 +97,7 @@ extension EventPanelDataType {
         case .string: return "String"
         case .stringList: return "[String]"
         case .integer: return "Int"
-        case .integerList: return "[Integer]"
+        case .integerList: return "[Int]"
         case .float: return "Float"
         case .floatList: return "[Float]"
         case .boolean: return "Bool"
