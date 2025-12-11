@@ -311,7 +311,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Fair-Core-1.0-ALv2 License - see the [LICENSE](LICENSE) file for details.
 
 ## Support
 
