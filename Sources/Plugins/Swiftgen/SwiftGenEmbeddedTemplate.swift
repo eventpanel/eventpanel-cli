@@ -66,7 +66,7 @@ import Foundation
   {%- if property.type == "enum" -%}
     {{property.name|swiftIdentifier:"pretty"}}
   {%- else -%}
-    {{property.data_type|swiftIdentifier:"pretty"}}
+    {{property.data_type}}
   {%- endif -%}
 {% endmacro %}
 {% macro typeBlock property -%}
