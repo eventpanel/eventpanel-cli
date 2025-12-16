@@ -36,6 +36,3 @@ jobs:
       
     - name: Test
       run: swift test
-      
-    - name: Test with Verbose Output
-      run: swift test --verbose
