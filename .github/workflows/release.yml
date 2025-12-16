@@ -61,33 +61,47 @@ jobs:
       id: version
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
       
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: ${{ github.ref }}
-        name: EventPanel CLI ${{ steps.version.outputs.VERSION }}
-        body: |
-          ## EventPanel CLI ${{ steps.version.outputs.VERSION }}
-          
-          ### Installation
-          
-          **Homebrew (Recommended):**
-          ```bash
-          brew tap eventpanel/eventpanel
-          brew install eventpanel
-          ```
-          
-          **Manual Installation:**
-          1. Download `eventpanel-macos.tar.gz` from this release
-          2. Extract: `tar -xzf eventpanel-macos.tar.gz`
-          3. Move to PATH: `sudo mv eventpanel-macos /usr/local/bin/eventpanel`
-          4. Make executable: `chmod +x /usr/local/bin/eventpanel`
-          
-          ### What's New
-          - Pre-built binaries for faster installation
-          - No more Command Line Tools required
-        files: |
-          dist/eventpanel-macos.tar.gz
-          dist/eventpanel-macos.tar.gz.sha256
-        draft: false
-        prerelease: false
+    - name: Create or Update Release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ steps.version.outputs.VERSION }}
+      run: |
+        # Release notes content
+        NOTES="## EventPanel CLI ${VERSION}
+        
+        ### Installation
+        
+        **Homebrew (Recommended):**
+        \`\`\`bash
+        brew tap eventpanel/eventpanel
+        brew install eventpanel
+        \`\`\`
+        
+        **Manual Installation:**
+        1. Download \`eventpanel-macos.tar.gz\` from this release
+        2. Extract: \`tar -xzf eventpanel-macos.tar.gz\`
+        3. Move to PATH: \`sudo mv eventpanel-macos /usr/local/bin/eventpanel\`
+        4. Make executable: \`chmod +x /usr/local/bin/eventpanel\`
+        
+        ### What's New
+        - Pre-built binaries for faster installation
+        - No more Command Line Tools required"
+        
+        TAG_NAME="v${VERSION}"
+        
+        # Check if release exists
+        if gh release view "$TAG_NAME" &>/dev/null; then
+          echo "Release exists, updating..."
+          # Delete existing assets and upload new ones
+          gh release upload "$TAG_NAME" \
+            dist/eventpanel-macos.tar.gz \
+            dist/eventpanel-macos.tar.gz.sha256 \
+            --clobber
+        else
+          echo "Creating new release..."
+          gh release create "$TAG_NAME" \
+            --title "EventPanel CLI ${VERSION}" \
+            --notes "$NOTES" \
+            dist/eventpanel-macos.tar.gz \
+            dist/eventpanel-macos.tar.gz.sha256
+        fi
