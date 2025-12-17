@@ -64,7 +64,7 @@ package {{param.packageName}}
   {%- if property.type == "enum" -%}
     {{property.name|kotlinIdentifier:"pretty"}}
   {%- else -%}
-    {{property.data_type|kotlinIdentifier:"pretty"}}
+    {{property.data_type}}
   {%- endif -%}
 {% endmacro %}
 {% macro typeBlock property -%}
