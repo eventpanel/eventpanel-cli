@@ -25,7 +25,7 @@ brew install eventpanel
 
 ### Manual Installation
 
-1. Download `eventpanel-macos.tar.gz` from [GitHub Releases](https://github.com/eventpanel/eventpanel-cli-releases/releases)
+1. Download `eventpanel-macos.tar.gz` from [GitHub Releases](https://github.com/eventpanel/eventpanel-cli/releases)
 2. Extract: `tar -xzf eventpanel-macos.tar.gz`
 3. Move to PATH: `sudo mv eventpanel-macos /usr/local/bin/eventpanel`
 4. Make executable: `chmod +x /usr/local/bin/eventpanel`
@@ -308,8 +308,8 @@ This project is licensed under the Fair-Core-1.0-ALv2 License - see the [LICENSE
 ## Support
 
 - 📖 [Documentation](https://eventpanel.net/docs)
-- 🐛 [Report Issues](https://github.com/eventpanel/eventpanel-cli-releases/issues)
-- 💬 [Discussions](https://github.com/eventpanel/eventpanel-cli-releases/discussions)
+- 🐛 [Report Issues](https://github.com/eventpanel/eventpanel-cli/issues)
+- 💬 [Discussions](https://github.com/eventpanel/eventpanel-cli/discussions)
 - 🌐 [Website](https://eventpanel.net)
 
 ## Changelog
